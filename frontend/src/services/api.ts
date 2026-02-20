@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
+import axios, { type AxiosInstance } from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
 const api: AxiosInstance = axios.create({
@@ -35,14 +35,15 @@ api.interceptors.response.use(
 export default api
 
 export const authApi = {
-  login: (username: string, password: string) =>
-    api.post('/auth/login', { username, password }),
+  login: (username: string, email: string, password: string) =>
+    api.post('/auth/login', { username, email, password }),
   logout: () => api.post('/auth/logout'),
 }
 
 export const usersApi = {
   register: (data: { username: string; email: string; password: string; displayName?: string }) =>
     api.post('/users/', data),
+  getMe: () => api.get('/users/me'),
   getProfile: (userId: string) => api.get(`/users/${userId}`),
   updateProfile: (userId: string, data: { displayName?: string; bio?: string; avatarUrl?: string }) =>
     api.put(`/users/${userId}`, data),
@@ -82,6 +83,7 @@ export const commentsApi = {
   update: (commentId: string, data: { content: string }) =>
     api.put(`/comments/${commentId}`, data),
   delete: (commentId: string) => api.delete(`/comments/${commentId}`),
+  getByArticle: (articleId: string) => api.get(`/comments/article/${articleId}`),
 }
 
 export const connectionsApi = {
@@ -94,4 +96,77 @@ export const connectionsApi = {
 export const searchApi = {
   search: (query: string, params?: { page?: number; limit?: number }) =>
     api.get('/search/', { params: { q: query, ...params } }),
+}
+
+export const metroApi = {
+  getLines: () => api.get('/metro/lines'),
+  getStations: () => api.get('/metro/stations'),
+  getStationByKey: (pathKey: string) => api.get(`/metro/station/${pathKey}`),
+}
+
+export const musicApi = {
+  getTracks: () => api.get('/music/tracks'),
+  getAlbums: () => api.get('/music/albums'),
+  getArtists: () => api.get('/music/artists'),
+}
+
+export const mediaApi = {
+  uploadFile: (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post('/media/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
+  uploadMultipleFiles: (files: File[]) => {
+    const formData = new FormData()
+    files.forEach(file => {
+      formData.append('files', file)
+    })
+    return api.post('/media/upload-multiple', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
+}
+
+export const adminApi = {
+  // Dashboard and Stats
+  getModerationStats: () => api.get('/moderation/stats'),
+  
+  // Users Management
+  getUsers: (params?: { page?: number; limit?: number; search?: string }) =>
+    api.get('/admin/users', { params }),
+  getUser: (userId: string) => api.get(`/admin/users/${userId}`),
+  updateUser: (userId: string, data: any) => api.put(`/admin/users/${userId}`, data),
+  resetPassword: (userId: string, data: { new_password: string }) =>
+    api.post(`/admin/users/${userId}/reset-password`, data),
+  deleteUser: (userId: string) => api.delete(`/admin/users/${userId}`),
+  
+  // Articles Management
+  getArticles: (params?: { page?: number; limit?: number; search?: string; status?: string }) =>
+    api.get('/articles', { params }),
+  
+  // Comments Management
+  getComments: (params?: { page?: number; limit?: number; article_id?: string }) =>
+    api.get('/comments/article/:article_id', { params }),
+  
+  // Moderation
+  getPendingArticles: (params?: { page?: number; limit?: number }) =>
+    api.get('/moderation/articles/pending', { params }),
+  approveArticle: (articleId: string) => api.put(`/moderation/articles/${articleId}/approve`),
+  rejectArticle: (articleId: string) => api.put(`/moderation/articles/${articleId}/reject`),
+  
+  getPendingComments: (params?: { page?: number; limit?: number; article_id?: string }) =>
+    api.get('/moderation/comments/pending', { params }),
+  approveComment: (commentId: string) => api.put(`/moderation/comments/${commentId}/approve`),
+  rejectComment: (commentId: string) => api.put(`/moderation/comments/${commentId}/reject`),
+  deleteComment: (commentId: string) => api.put(`/moderation/comments/${commentId}/delete`),
+  
+  // Audit Logs
+  getLogs: (params?: { page?: number; limit?: number; user_id?: string; action?: string }) =>
+    api.get('/admin/logs', { params }),
 }

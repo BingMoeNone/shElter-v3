@@ -18,6 +18,7 @@ from src.schemas import (
     UserResponse,
 )
 from src.auth.jwt import get_current_user
+from src.auth.permissions import can_edit_article, can_delete_article
 
 router = APIRouter()
 
@@ -63,6 +64,9 @@ async def create_article(
     db.add(article)
     db.commit()
     db.refresh(article)
+    
+    # 更新用户贡献计数
+    current_user.contribution_count += 1
     
     revision = Revision(
         article_id=article.id,
@@ -190,7 +194,7 @@ async def update_article(
     if not article:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Article not found")
     
-    if str(article.author_id) != str(current_user.id):
+    if not can_edit_article(current_user, article.author_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to update this article"
@@ -230,6 +234,9 @@ async def update_article(
     )
     db.add(revision)
     
+    # 更新用户贡献计数
+    current_user.contribution_count += 1
+    
     db.commit()
     db.refresh(article)
     
@@ -261,7 +268,7 @@ async def delete_article(
     if not article:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Article not found")
     
-    if str(article.author_id) != str(current_user.id) and current_user.role not in ["admin", "moderator"]:
+    if not can_delete_article(current_user, article.author_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to delete this article"

@@ -14,7 +14,11 @@ def test_create_article(client: TestClient):
     
     login_response = client.post(
         "/api/v1/auth/login",
-        json={"username": "author", "password": "TestPassword123"},
+        json={
+            "username": "author",
+            "email": "author@example.com",
+            "password": "TestPassword123"
+        },
     )
     token = login_response.json()["access_token"]
     
@@ -44,7 +48,11 @@ def test_list_articles(client: TestClient):
     )
     login_response = client.post(
         "/api/v1/auth/login",
-        json={"username": "author2", "password": "TestPassword123"},
+        json={
+            "username": "author2",
+            "email": "author2@example.com",
+            "password": "TestPassword123"
+        },
     )
     token = login_response.json()["access_token"]
     
@@ -75,7 +83,11 @@ def test_publish_article(client: TestClient):
     )
     login_response = client.post(
         "/api/v1/auth/login",
-        json={"username": "publisher", "password": "TestPassword123"},
+        json={
+            "username": "publisher",
+            "email": "publisher@example.com",
+            "password": "TestPassword123"
+        },
     )
     token = login_response.json()["access_token"]
     

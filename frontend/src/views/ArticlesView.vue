@@ -118,6 +118,8 @@ function changePage(page: number) {
 
 .page-header h1 {
   margin: 0;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary);
 }
 
 .search-section {
@@ -127,13 +129,39 @@ function changePage(page: number) {
 
 .search-section input {
   width: 250px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--color-primary);
+  color: var(--color-text);
+  border-radius: 4px;
+}
+
+.search-section input:focus {
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
+.search-section button {
+  padding: 8px 16px;
+  background: rgba(0, 255, 157, 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.search-section button:hover {
+  background: var(--color-primary);
+  color: #000;
+  box-shadow: 0 0 15px var(--color-primary);
 }
 
 .loading,
 .no-articles {
   text-align: center;
   padding: 40px;
-  color: #666;
+  color: var(--color-text-muted);
+  border: 1px dashed var(--color-text-muted);
+  border-radius: 8px;
 }
 
 .articles-list {
@@ -151,6 +179,28 @@ function changePage(page: number) {
 }
 
 .pagination span {
-  color: #666;
+  color: var(--color-text-muted);
+}
+
+.pagination button {
+  padding: 8px 16px;
+  background: rgba(0, 255, 157, 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: var(--color-primary);
+  color: #000;
+  box-shadow: 0 0 15px var(--color-primary);
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--color-text-muted);
+  color: var(--color-text-muted);
 }
 </style>

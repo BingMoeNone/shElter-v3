@@ -3,6 +3,16 @@
 **Input**: Design documents from `/specs/001-wiki-platform/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
+**Version**: 3.1.0 (Security Enhanced)
+
+**Security Tasks Completed (2026-02-17)**:
+- [x] T-SEC01 Upgrade JWT from HS256 to RS256
+- [x] T-SEC02 Implement Rate Limiting (slowapi)
+- [x] T-SEC03 Add unified response format
+- [x] T-SEC04 Add security headers middleware
+- [x] T-SEC05 Create RSA key generation script
+- [x] T-SEC06 Create UPGRADE_GUIDE.md
+
 **Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.

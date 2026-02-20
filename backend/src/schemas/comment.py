@@ -1,15 +1,14 @@
 from datetime import datetime
 from typing import Optional
-from uuid import UUID
 from pydantic import BaseModel, Field
 
 from src.schemas.user import UserResponse
 
 
 class CommentCreate(BaseModel):
-    article_id: UUID
+    article_id: str
     content: str = Field(..., min_length=1, max_length=10000)
-    parent_id: Optional[UUID] = None
+    parent_id: Optional[str] = None
 
 
 class CommentUpdate(BaseModel):
@@ -17,11 +16,11 @@ class CommentUpdate(BaseModel):
 
 
 class CommentResponse(BaseModel):
-    id: UUID
+    id: str
     content: str
     author: UserResponse
-    article_id: UUID
-    parent_id: Optional[UUID]
+    article_id: str
+    parent_id: Optional[str]
     created_at: datetime
     updated_at: datetime
     is_approved: bool

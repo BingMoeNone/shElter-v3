@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { User, LoginResponse } from '@/types'
+import type { User } from '@/types'
 import { authApi, usersApi } from '@/services/api'
+import { useToastStore } from './toast'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
@@ -12,18 +13,41 @@ export const useAuthStore = defineStore('auth', () => {
   const isAdmin = computed(() => user.value?.role === 'admin')
   const isModerator = computed(() => user.value?.role === 'moderator' || user.value?.role === 'admin')
 
-  async function login(username: string, password: string): Promise<void> {
+  function mapUser(data: any): User {
+    return {
+      id: data.id,
+      username: data.username,
+      email: data.email,
+      displayName: data.display_name || data.displayName,
+      bio: data.bio,
+      avatarUrl: data.avatar_url || data.avatarUrl,
+      isActive: data.is_active !== undefined ? data.is_active : data.isActive,
+      role: data.role,
+      createdAt: data.created_at || data.createdAt,
+      updatedAt: data.updated_at || data.updatedAt,
+      contributionCount: data.contribution_count || data.contributionCount || 0
+    }
+  }
+
+  async function login(username: string, email: string, password: string): Promise<void> {
     try {
-      const response = await authApi.login(username, password)
-      const data: LoginResponse = response.data
-      
-      token.value = data.accessToken
-      refreshToken.value = data.refreshToken
-      user.value = data.user
-      
-      localStorage.setItem('token', data.accessToken)
-      localStorage.setItem('refreshToken', data.refreshToken)
-    } catch (error) {
+      const response = await authApi.login(username, email, password)
+      // 适配 v3.1.0 统一响应格式: { data: {...}, message, status }
+      const responseData = response.data.data || response.data
+
+      const accessToken = responseData.access_token || responseData.accessToken
+      const refreshTokenValue = responseData.refresh_token || responseData.refreshToken
+
+      token.value = accessToken
+      refreshToken.value = refreshTokenValue
+      user.value = mapUser(responseData.user)
+
+      localStorage.setItem('token', accessToken)
+      localStorage.setItem('refreshToken', refreshTokenValue)
+
+      useToastStore().success(`欢迎回来，${user.value?.displayName || user.value?.username}！`)
+    } catch (error: any) {
+      useToastStore().error(error.response?.data?.message || '登录失败，请检查用户名和密码')
       throw error
     }
   }
@@ -31,8 +55,10 @@ export const useAuthStore = defineStore('auth', () => {
   async function register(userData: { username: string; email: string; password: string; displayName?: string }): Promise<void> {
     try {
       await usersApi.register(userData)
-      await login(userData.username, userData.password)
-    } catch (error) {
+      await login(userData.username, userData.email, userData.password)
+      useToastStore().success('注册成功！')
+    } catch (error: any) {
+      useToastStore().error(error.response?.data?.message || '注册失败')
       throw error
     }
   }
@@ -48,6 +74,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null
       localStorage.removeItem('token')
       localStorage.removeItem('refreshToken')
+      useToastStore().info('您已安全退出')
     }
   }
 
@@ -55,8 +82,8 @@ export const useAuthStore = defineStore('auth', () => {
     if (!token.value) return
     
     try {
-      const response = await usersApi.getProfile(user.value?.id || '')
-      user.value = response.data
+      const response = await usersApi.getMe()
+      user.value = mapUser(response.data)
     } catch (error) {
       logout()
     }

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { User } from '@/types'
+import type { User, UserProfile } from '@/types'
 import { useAuthStore } from '@/stores/auth'
 import { connectionsApi } from '@/services/api'
 import { ref, computed } from 'vue'
+import { useToastStore } from '@/stores/toast'
 
 const props = defineProps<{
-  user: User
+  user: User | UserProfile
   isFollowing: boolean
 }>()
 
@@ -14,7 +15,9 @@ const emit = defineEmits<{
 }>()
 
 const authStore = useAuthStore()
+const toast = useToastStore()
 const loading = ref(false)
+const actionType = ref<'follow' | 'friend' | null>(null)
 
 const isOwnProfile = computed(() => {
   return authStore.user?.id === props.user.id
@@ -23,6 +26,7 @@ const isOwnProfile = computed(() => {
 async function handleConnect(type: 'friend' | 'follow') {
   if (loading.value) return
   loading.value = true
+  actionType.value = type
   
   try {
     await connectionsApi.create({
@@ -30,10 +34,18 @@ async function handleConnect(type: 'friend' | 'follow') {
       connectionType: type,
     })
     emit('connectionChanged')
-  } catch (error) {
-    console.error('Failed to create connection:', error)
+    
+    if (type === 'follow') {
+      toast.success(`已关注 ${props.user.displayName || props.user.username}`)
+    } else {
+      toast.success(`已向 ${props.user.displayName || props.user.username} 发送好友请求`)
+    }
+  } catch (err: any) {
+    console.error('Failed to create connection:', err)
+    toast.error(err.response?.data?.message || '操作失败，请重试')
   } finally {
     loading.value = false
+    actionType.value = null
   }
 }
 </script>
@@ -58,7 +70,10 @@ async function handleConnect(type: 'friend' | 'follow') {
       
       <div class="stats">
         <span class="stat">
-          <strong>{{ user.contributionCount }}</strong> contributions
+          <strong>{{ user.contributionCount }}</strong> 贡献
+        </span>
+        <span v-if="'role' in user" class="stat role-badge" :class="user.role">
+          {{ user.role }}
         </span>
       </div>
     </div>
@@ -70,21 +85,23 @@ async function handleConnect(type: 'friend' | 'follow') {
         :disabled="loading"
         class="btn-follow"
       >
-        Follow
+        <span v-if="loading && actionType === 'follow'" class="btn-spinner"></span>
+        <span v-else>关注</span>
       </button>
       <button
         v-else
         disabled
         class="btn-following"
       >
-        Following
+        已关注
       </button>
       <button
         @click="handleConnect('friend')"
         :disabled="loading"
         class="btn-friend"
       >
-        Add Friend
+        <span v-if="loading && actionType === 'friend'" class="btn-spinner"></span>
+        <span v-else>添加好友</span>
       </button>
     </div>
   </div>
@@ -97,6 +114,9 @@ async function handleConnect(type: 'friend' | 'follow') {
   align-items: center;
   text-align: center;
   padding: 32px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
 }
 
 .user-avatar {
@@ -105,6 +125,8 @@ async function handleConnect(type: 'friend' | 'follow') {
   border-radius: 50%;
   overflow: hidden;
   margin-bottom: 20px;
+  border: 3px solid var(--color-primary);
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
 }
 
 .user-avatar img {
@@ -116,8 +138,8 @@ async function handleConnect(type: 'friend' | 'follow') {
 .avatar-placeholder {
   width: 100%;
   height: 100%;
-  background: #42b883;
-  color: white;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,53 +150,129 @@ async function handleConnect(type: 'friend' | 'follow') {
 .user-info h2 {
   margin: 0 0 4px;
   font-size: 1.5rem;
+  color: var(--color-primary);
+  text-shadow: 0 0 5px var(--color-primary);
 }
 
 .username {
-  color: #666;
+  color: var(--color-text-muted);
   margin: 0 0 12px;
 }
 
 .bio {
-  color: #444;
+  color: var(--color-text);
   line-height: 1.6;
   margin-bottom: 16px;
+  max-width: 400px;
 }
 
 .stats {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .stat {
-  color: #666;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .stat strong {
-  color: #333;
+  color: var(--color-accent);
+}
+
+.role-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.role-badge.admin {
+  background: rgba(255, 68, 68, 0.2);
+  color: #ff4444;
+}
+
+.role-badge.moderator {
+  background: rgba(255, 170, 0, 0.2);
+  color: #ffaa00;
+}
+
+.role-badge.user {
+  background: rgba(0, 255, 157, 0.2);
+  color: var(--color-primary);
 }
 
 .user-actions {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .btn-follow,
 .btn-friend {
   padding: 10px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+}
+
+.btn-follow {
+  background: rgba(0, 255, 157, 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-follow:hover:not(:disabled) {
+  background: var(--color-primary);
+  color: #000;
+  box-shadow: 0 0 15px var(--color-primary);
 }
 
 .btn-following {
-  background: #ccc;
   padding: 10px 24px;
+  border-radius: 4px;
+  background: rgba(0, 255, 157, 0.2);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  cursor: default;
 }
 
 .btn-friend {
-  background: #666;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-text-muted);
+  color: var(--color-text);
 }
 
 .btn-friend:hover:not(:disabled) {
-  background: #555;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-text);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style>

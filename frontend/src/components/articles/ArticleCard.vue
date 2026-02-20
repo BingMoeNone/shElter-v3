@@ -61,6 +61,16 @@ const excerpt = computed(() => {
 <style scoped>
 .article-card {
   margin-bottom: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
+  transition: all 0.3s ease;
+}
+
+.article-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+  border-color: var(--color-primary);
 }
 
 .article-link {
@@ -69,25 +79,27 @@ const excerpt = computed(() => {
 
 .article-title {
   font-size: 1.5rem;
-  color: #333;
+  color: var(--color-primary);
   margin-bottom: 8px;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  font-family: var(--font-family-heading);
 }
 
 .article-link:hover .article-title {
-  color: #42b883;
+  text-shadow: 0 0 8px var(--color-primary);
 }
 
 .article-meta {
   display: flex;
   gap: 16px;
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 0.9rem;
   margin-bottom: 12px;
+  font-family: var(--font-family-base);
 }
 
 .article-excerpt {
-  color: #444;
+  color: var(--color-text);
   line-height: 1.6;
   margin-bottom: 12px;
 }
@@ -100,13 +112,15 @@ const excerpt = computed(() => {
 }
 
 .tag {
-  color: #42b883;
+  color: var(--color-accent);
   font-size: 0.85rem;
   text-decoration: none;
+  transition: all 0.2s;
 }
 
 .tag:hover {
-  text-decoration: underline;
+  color: var(--color-primary);
+  text-shadow: 0 0 5px var(--color-primary);
 }
 
 .article-categories {
@@ -115,15 +129,19 @@ const excerpt = computed(() => {
 }
 
 .category {
-  background: #f0f0f0;
+  background: rgba(255, 255, 255, 0.05);
   padding: 4px 12px;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--color-text-muted);
   text-decoration: none;
+  transition: all 0.2s;
 }
 
 .category:hover {
-  background: #e0e0e0;
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+  box-shadow: 0 0 5px var(--color-secondary);
 }
 </style>

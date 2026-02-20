@@ -1,4 +1,66 @@
+# 文本文件统一使用CRLF行结束符
 * text=auto eol=crlf
+
+# 二进制文件不转换行结束符
 *.png binary
 *.jpg binary
+*.jpeg binary
+*.gif binary
+*.bmp binary
+*.ico binary
+*.svg binary
+*.mp3 binary
 *.wav binary
+*.mp4 binary
+*.avi binary
+*.mov binary
+*.pdf binary
+*.zip binary
+*.rar binary
+*.7z binary
+*.exe binary
+*.dll binary
+*.so binary
+*.a binary
+*.lib binary
+*.obj binary
+*.class binary
+
+# 代码文件特定规则
+*.py text=auto eol=crlf
+*.vue text=auto eol=crlf
+*.ts text=auto eol=crlf
+*.tsx text=auto eol=crlf
+*.js text=auto eol=crlf
+*.jsx text=auto eol=crlf
+*.html text=auto eol=crlf
+*.css text=auto eol=crlf
+*.scss text=auto eol=crlf
+*.less text=auto eol=crlf
+*.json text=auto eol=crlf
+*.xml text=auto eol=crlf
+*.yml text=auto eol=crlf
+*.yaml text=auto eol=crlf
+*.md text=auto eol=crlf
+*.rst text=auto eol=crlf
+*.txt text=auto eol=crlf
+*.ini text=auto eol=crlf
+*.conf text=auto eol=crlf
+*.cfg text=auto eol=crlf
+*.env text=auto eol=crlf
+*.sh text=auto eol=crlf
+*.bat text=auto eol=crlf
+*.cmd text=auto eol=crlf
+*.ps1 text=auto eol=crlf
+
+# Git配置文件
+.gitignore text=auto eol=crlf
+.gitattributes text=auto eol=crlf
+
+# 数据库文件
+*.sql text=auto eol=crlf
+*.db binary
+*.sqlite binary
+
+# 日志文件
+*.log text=auto eol=crlf

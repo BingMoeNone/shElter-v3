@@ -71,21 +71,40 @@ function handleSearch() {
 .hero {
   text-align: center;
   padding: 60px 20px;
-  background: linear-gradient(135deg, #42b883 0%, #35495e 100%);
-  color: white;
+  background: linear-gradient(135deg, rgba(0, 255, 157, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 0 20px rgba(0, 255, 157, 0.1);
+  color: var(--color-text);
   border-radius: 8px;
   margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-primary);
+  box-shadow: 0 0 10px var(--color-primary);
 }
 
 .hero h1 {
   font-size: 2.5rem;
   margin-bottom: 16px;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary);
+  font-family: var(--font-family-heading);
 }
 
 .hero p {
   font-size: 1.2rem;
   opacity: 0.9;
   margin-bottom: 32px;
+  color: var(--color-text-muted);
 }
 
 .search-section {
@@ -98,27 +117,46 @@ function handleSearch() {
 .search-section input {
   flex: 1;
   padding: 12px 16px;
-  border: none;
+  border: 1px solid var(--color-primary);
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--color-text);
   border-radius: 4px;
   font-size: 16px;
+  font-family: var(--font-family-base);
+}
+
+.search-section input:focus {
+  box-shadow: 0 0 10px var(--color-primary);
 }
 
 .search-section button {
   padding: 12px 24px;
-  background: white;
-  color: #42b883;
+  background: rgba(0, 255, 157, 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
   font-weight: 600;
+  transition: all 0.3s;
+}
+
+.search-section button:hover {
+  background: var(--color-primary);
+  color: #000;
+  box-shadow: 0 0 15px var(--color-primary);
 }
 
 .featured-articles h2 {
   margin-bottom: 24px;
+  color: var(--color-secondary);
+  text-shadow: 0 0 5px var(--color-secondary);
 }
 
 .loading,
 .no-articles {
   text-align: center;
   padding: 40px;
-  color: #666;
+  color: var(--color-text-muted);
+  border: 1px dashed var(--color-text-muted);
+  border-radius: 8px;
 }
 
 .articles-grid {
@@ -130,5 +168,11 @@ function handleSearch() {
   display: inline-block;
   margin-top: 24px;
   font-weight: 500;
+  color: var(--color-accent);
+}
+
+.view-all:hover {
+  color: var(--color-primary);
+  text-shadow: 0 0 5px var(--color-primary);
 }
 </style>

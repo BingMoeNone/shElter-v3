@@ -74,6 +74,47 @@ const router = createRouter({
       component: () => import('@/views/ProfileView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/metro',
+      name: 'metro',
+      component: () => import('@/views/MetroView.vue'),
+    },
+    {
+      path: '/music',
+      name: 'music',
+      component: () => import('@/views/MusicView.vue'),
+    },
+    // Admin Routes
+    {
+      path: '/admin',
+      name: 'admin-dashboard',
+      component: () => import('@/views/admin/DashboardView.vue'),
+      meta: { requiresAuth: true, requiresModerator: true },
+    },
+    {
+      path: '/admin/users',
+      name: 'admin-users',
+      component: () => import('@/views/admin/UsersView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/admin/articles',
+      name: 'admin-articles',
+      component: () => import('@/views/admin/ArticlesView.vue'),
+      meta: { requiresAuth: true, requiresModerator: true },
+    },
+    {
+      path: '/admin/comments',
+      name: 'admin-comments',
+      component: () => import('@/views/admin/CommentsView.vue'),
+      meta: { requiresAuth: true, requiresModerator: true },
+    },
+    {
+      path: '/admin/moderation',
+      name: 'admin-moderation',
+      component: () => import('@/views/admin/ModerationView.vue'),
+      meta: { requiresAuth: true, requiresModerator: true },
+    },
   ],
 })
 
@@ -83,6 +124,10 @@ router.beforeEach((to, _from, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'login', query: { redirect: to.fullPath } })
   } else if (to.meta.guest && authStore.isAuthenticated) {
+    next({ name: 'home' })
+  } else if (to.meta.requiresAdmin && authStore.user?.role !== 'admin') {
+    next({ name: 'home' })
+  } else if (to.meta.requiresModerator && !['admin', 'moderator'].includes(authStore.user?.role || '')) {
     next({ name: 'home' })
   } else {
     next()

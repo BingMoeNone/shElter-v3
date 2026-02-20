@@ -23,6 +23,7 @@ class Article(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     view_count = Column(Integer, default=0, nullable=False)
     is_featured = Column(Boolean, default=False, nullable=False)
+    is_approved = Column(Boolean, default=True, nullable=False)
 
     author = relationship("User", back_populates="articles")
     revisions = relationship("Revision", back_populates="article", cascade="all, delete-orphan")

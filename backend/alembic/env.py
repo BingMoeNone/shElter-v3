@@ -7,7 +7,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.database import Base
-from src.models import User, Article, Revision, Category, Tag, Connection, Comment, article_categories, article_tags
+from src.models import User, Article, Revision, Category, Tag, Connection, Comment, AuditLog, article_categories, article_tags
+from src.models.metro import Station, Line, StationLineJunction
+from src.models.music import Track, Album, Artist, album_artists, track_artists
 
 config = context.config
 

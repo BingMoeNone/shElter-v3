@@ -6,6 +6,7 @@ from src.database import get_db
 from src.models import Comment, User, Article
 from src.schemas import CommentCreate, CommentUpdate, CommentResponse, UserResponse
 from src.auth.jwt import get_current_user
+from src.auth.permissions import can_edit_comment, can_delete_comment
 
 router = APIRouter()
 
@@ -32,6 +33,10 @@ async def create_comment(
         parent_id=comment_data.parent_id,
     )
     db.add(comment)
+    
+    # 更新用户贡献计数
+    current_user.contribution_count += 1
+    
     db.commit()
     db.refresh(comment)
     
@@ -58,7 +63,7 @@ async def update_comment(
     if not comment:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
     
-    if str(comment.author_id) != str(current_user.id):
+    if not can_edit_comment(current_user, comment.author_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to update this comment"
@@ -90,7 +95,7 @@ async def delete_comment(
     if not comment:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
     
-    if str(comment.author_id) != str(current_user.id) and current_user.role not in ["admin", "moderator"]:
+    if not can_delete_comment(current_user, comment.author_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to delete this comment"

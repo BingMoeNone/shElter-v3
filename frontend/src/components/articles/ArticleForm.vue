@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { Article } from '@/types'
 import { useArticlesStore } from '@/stores/articles'
-import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { mediaApi } from '@/services/api'
+import type Quill from 'quill'
 
 const props = defineProps<{
   article?: Article
@@ -15,7 +16,6 @@ const emit = defineEmits<{
 }>()
 
 const articlesStore = useArticlesStore()
-const authStore = useAuthStore()
 const router = useRouter()
 
 const title = ref(props.article?.title || '')
@@ -24,6 +24,59 @@ const summary = ref(props.article?.summary || '')
 const tagNames = ref(props.article?.tags.map(t => t.name).join(', ') || '')
 const saving = ref(false)
 const error = ref<string | null>(null)
+const quillEditor = ref<InstanceType<typeof Quill> | null>(null)
+
+// 处理图片上传
+const handleImageUpload = async (file: File) => {
+  try {
+    const response = await mediaApi.uploadFile(file)
+    return response.data.url
+  } catch (err) {
+    console.error('Image upload failed:', err)
+    throw new Error('图片上传失败')
+  }
+}
+
+const editorOptions = {
+  theme: 'snow',
+  modules: {
+    toolbar: {
+      container: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ indent: '-1' }, { indent: '+1' }],
+        [{ align: [] }],
+        ['link', 'image'],
+        ['clean']
+      ],
+      handlers: {
+        image: function() {
+          const input = document.createElement('input')
+          input.setAttribute('type', 'file')
+          input.setAttribute('accept', 'image/*')
+          input.click()
+          
+          input.onchange = async (e: Event) => {
+            const target = e.target as HTMLInputElement
+            if (target.files && target.files[0]) {
+              const file = target.files[0]
+              try {
+                const url = await handleImageUpload(file)
+                const range = this.quill.getSelection(true)
+                this.quill.insertEmbed(range.index, 'image', url)
+              } catch (err) {
+                console.error('Image insertion failed:', err)
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  placeholder: 'Write your article content here...',
+  readOnly: false
+}
 
 const canSubmit = computed(() => {
   return title.value.trim() && content.value.trim().length >= 10
@@ -95,14 +148,14 @@ async function handleSubmit(publish: boolean = false) {
     
     <div class="form-group">
       <label for="content">Content</label>
-      <textarea
+      <QuillEditor
         id="content"
-        v-model="content"
+        v-model:content="content"
         placeholder="Write your article content here..."
-        rows="15"
-        required
-        minlength="10"
-      ></textarea>
+        :options="editorOptions"
+        class="rich-text-editor"
+        @editor-ready="(editor) => quillEditor = editor"
+      />
     </div>
     
     <div class="form-group">
@@ -136,6 +189,11 @@ async function handleSubmit(publish: boolean = false) {
 <style scoped>
 .article-form {
   max-width: 800px;
+  background: var(--color-surface);
+  padding: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
 }
 
 .form-group {
@@ -146,31 +204,63 @@ async function handleSubmit(publish: boolean = false) {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #333;
+  color: var(--color-text);
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 14px;
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  transition: all 0.3s;
 }
 
-.form-group textarea {
-  resize: vertical;
-  min-height: 300px;
-  font-family: inherit;
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
 }
 
-.error-message {
-  color: #e74c3c;
-  margin-bottom: 16px;
-  padding: 12px;
-  background: #fdf2f2;
-  border-radius: 4px;
-}
+.rich-text-editor {
+      min-height: 400px;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+    }
+
+    .rich-text-editor :deep(.ql-container) {
+      font-family: var(--font-family-base);
+      color: var(--color-text);
+      min-height: 300px;
+    }
+
+    .rich-text-editor :deep(.ql-editor) {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .rich-text-editor :deep(.ql-toolbar) {
+      background: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .rich-text-editor :deep(.ql-toolbar button:hover),
+    .rich-text-editor :deep(.ql-toolbar .ql-picker-label:hover) {
+      color: var(--color-primary);
+    }
+
+    .error-message {
+      color: #ff4444;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: rgba(255, 68, 68, 0.1);
+      border-radius: 4px;
+      border-left: 3px solid #ff4444;
+    }
 
 .form-actions {
   display: flex;
@@ -178,18 +268,36 @@ async function handleSubmit(publish: boolean = false) {
 }
 
 .btn-save {
-  background: #666;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  padding: 10px 20px;
+  border-radius: 4px;
+  transition: all 0.3s;
 }
 
 .btn-publish {
-  background: #42b883;
+  background: rgba(0, 255, 157, 0.1);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  padding: 10px 20px;
+  border-radius: 4px;
+  transition: all 0.3s;
 }
 
 .btn-save:hover:not(:disabled) {
-  background: #555;
+  background: var(--color-surface-hover);
+  border-color: var(--color-text);
 }
 
 .btn-publish:hover:not(:disabled) {
-  background: #3aa876;
+  background: var(--color-primary);
+  color: #000;
+  box-shadow: 0 0 15px var(--color-primary);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>

@@ -35,10 +35,12 @@
 
 <style scoped>
 .footer {
-  background: #333;
-  color: white;
+  background: var(--color-surface);
+  color: var(--color-text);
   padding: 40px 20px 20px;
   margin-top: auto;
+  border-top: 1px solid var(--color-primary);
+  box-shadow: 0 0 10px rgba(0, 255, 157, 0.1);
 }
 
 .footer-content {
@@ -52,14 +54,12 @@
 .footer-section h3,
 .footer-section h4 {
   margin-bottom: 16px;
-}
-
-.footer-section h3 {
-  color: #42b883;
+  color: var(--color-primary);
+  text-shadow: 0 0 5px var(--color-primary);
 }
 
 .footer-section p {
-  color: #aaa;
+  color: var(--color-text-muted);
   line-height: 1.6;
 }
 
@@ -73,21 +73,22 @@
 }
 
 .footer-section a {
-  color: #aaa;
+  color: var(--color-text-muted);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: all 0.2s;
 }
 
 .footer-section a:hover {
-  color: #42b883;
+  color: var(--color-primary);
+  text-shadow: 0 0 5px var(--color-primary);
 }
 
 .footer-bottom {
   max-width: 1200px;
   margin: 40px auto 0;
   padding-top: 20px;
-  border-top: 1px solid #444;
+  border-top: 1px solid var(--color-border);
   text-align: center;
-  color: #aaa;
+  color: var(--color-text-muted);
 }
 </style>

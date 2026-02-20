@@ -12,7 +12,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    username = Column(String(30), unique=True, nullable=False, index=True)
+    username = Column(String(30), nullable=False, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
     display_name = Column(String(50), nullable=True)
@@ -22,6 +22,7 @@ class User(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
     role = Column(String(20), default="user", nullable=False)
+    level = Column(Integer, default=1, nullable=False)  # v1 integration: User Level (1-10)
     contribution_count = Column(Integer, default=0, nullable=False)
 
     articles = relationship("Article", back_populates="author")

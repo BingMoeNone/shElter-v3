@@ -31,7 +31,6 @@ def upgrade() -> None:
         sa.Column('role', sa.String(20), nullable=False, server_default='user'),
         sa.Column('contribution_count', sa.Integer(), nullable=False, server_default='0'),
         sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('username'),
         sa.UniqueConstraint('email')
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=False)

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { Comment, User } from '@/types'
+import type { Comment } from '@/types'
 import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { commentsApi } from '@/services/api'
+import { useToastStore } from '@/stores/toast'
 
 const props = defineProps<{
   comments: Comment[]
@@ -15,11 +16,13 @@ const emit = defineEmits<{
 }>()
 
 const authStore = useAuthStore()
+const toast = useToastStore()
 
 const newComment = ref('')
 const replyingTo = ref<string | null>(null)
 const replyContent = ref('')
 const submitting = ref(false)
+const deletingId = ref<string | null>(null)
 
 const sortedComments = computed(() => {
   return [...props.comments].sort((a, b) => 
@@ -28,7 +31,7 @@ const sortedComments = computed(() => {
 })
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -49,8 +52,10 @@ async function submitComment() {
     })
     emit('commentAdded', response.data)
     newComment.value = ''
-  } catch (error) {
-    console.error('Failed to post comment:', error)
+    toast.success('评论发表成功！')
+  } catch (err: any) {
+    console.error('Failed to post comment:', err)
+    toast.error(err.response?.data?.message || '评论发表失败，请重试')
   } finally {
     submitting.value = false
   }
@@ -70,21 +75,29 @@ async function submitReply(commentId: string) {
     emit('commentAdded', response.data)
     replyContent.value = ''
     replyingTo.value = null
-  } catch (error) {
-    console.error('Failed to post reply:', error)
+    toast.success('回复发表成功！')
+  } catch (err: any) {
+    console.error('Failed to post reply:', err)
+    toast.error(err.response?.data?.message || '回复发表失败，请重试')
   } finally {
     submitting.value = false
   }
 }
 
 async function deleteComment(commentId: string) {
-  if (!confirm('Are you sure you want to delete this comment?')) return
+  if (!confirm('确定要删除这条评论吗？')) return
+  
+  deletingId.value = commentId
   
   try {
     await commentsApi.delete(commentId)
     emit('commentDeleted', commentId)
-  } catch (error) {
-    console.error('Failed to delete comment:', error)
+    toast.success('评论已删除')
+  } catch (err: any) {
+    console.error('Failed to delete comment:', err)
+    toast.error(err.response?.data?.message || '删除评论失败')
+  } finally {
+    deletingId.value = null
   }
 }
 
@@ -141,8 +154,9 @@ function canDelete(comment: Comment): boolean {
             v-if="canDelete(comment)"
             @click="deleteComment(comment.id)"
             class="btn-delete"
+            :disabled="deletingId === comment.id"
           >
-            Delete
+            {{ deletingId === comment.id ? '删除中...' : 'Delete' }}
           </button>
         </div>
         
@@ -175,6 +189,8 @@ function canDelete(comment: Comment): boolean {
 
 .comment-section h3 {
   margin-bottom: 20px;
+  color: var(--color-primary);
+  text-shadow: 0 0 5px var(--color-primary);
 }
 
 .comment-form {
@@ -184,17 +200,48 @@ function canDelete(comment: Comment): boolean {
 .comment-form textarea {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   margin-bottom: 12px;
   font-family: inherit;
+  color: var(--color-text);
+  transition: all 0.3s;
+}
+
+.comment-form textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+}
+
+.comment-form button {
+  padding: 8px 16px;
+  background: rgba(0, 255, 157, 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 4px;
+}
+
+.comment-form button:hover:not(:disabled) {
+  background: var(--color-primary);
+  color: #000;
+  box-shadow: 0 0 15px var(--color-primary);
 }
 
 .login-prompt {
   padding: 16px;
-  background: #f5f5f5;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   margin-bottom: 24px;
+  color: var(--color-text-muted);
+}
+
+.login-prompt a {
+  color: var(--color-primary);
+  font-weight: bold;
 }
 
 .comments-list {
@@ -205,9 +252,11 @@ function canDelete(comment: Comment): boolean {
 
 .comment {
   padding: 16px;
-  background: #f9f9f9;
+  background: var(--color-surface);
   border-radius: 8px;
-  border-left: 3px solid #42b883;
+  border-left: 3px solid var(--color-primary);
+  border: 1px solid var(--color-border);
+  border-left-width: 3px;
 }
 
 .comment-header {
@@ -219,18 +268,23 @@ function canDelete(comment: Comment): boolean {
 
 .author {
   font-weight: 600;
-  color: #42b883;
+  color: var(--color-accent);
   text-decoration: none;
 }
 
+.author:hover {
+  text-shadow: 0 0 5px var(--color-accent);
+}
+
 .date {
-  color: #888;
+  color: var(--color-text-muted);
   font-size: 0.85rem;
 }
 
 .comment-content {
   margin: 0;
   line-height: 1.6;
+  color: var(--color-text);
 }
 
 .comment-actions {
@@ -243,27 +297,52 @@ function canDelete(comment: Comment): boolean {
 .btn-delete,
 .btn-cancel {
   background: transparent;
-  color: #666;
+  color: var(--color-text-muted);
   padding: 4px 12px;
   font-size: 0.85rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reply:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .btn-delete {
-  color: #e74c3c;
+  color: #ff4444;
+}
+
+.btn-delete:hover {
+  border-color: #ff4444;
+  background: rgba(255, 68, 68, 0.1);
+}
+
+.btn-cancel:hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
 }
 
 .reply-form {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-border);
 }
 
 .reply-form textarea {
   width: 100%;
   padding: 8px;
-  border: 1px solid #ddd;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   margin-bottom: 8px;
+  color: var(--color-text);
+}
+
+.reply-form textarea:focus {
+  border-color: var(--color-primary);
 }
 
 .reply-actions {
@@ -271,9 +350,25 @@ function canDelete(comment: Comment): boolean {
   gap: 8px;
 }
 
+.reply-actions button {
+  padding: 6px 12px;
+  background: rgba(0, 255, 157, 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.reply-actions button:hover:not(:disabled) {
+  background: var(--color-primary);
+  color: #000;
+}
+
 .no-comments {
   text-align: center;
-  color: #888;
+  color: var(--color-text-muted);
   padding: 40px;
+  border: 1px dashed var(--color-text-muted);
+  border-radius: 8px;
 }
 </style>

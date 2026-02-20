@@ -1,15 +1,14 @@
 from datetime import datetime
 from typing import Optional
-from uuid import UUID
 from pydantic import BaseModel
 
 
 class CategoryResponse(BaseModel):
-    id: UUID
+    id: str
     name: str
     slug: str
     description: Optional[str]
-    parent_id: Optional[UUID]
+    parent_id: Optional[str]
     article_count: int
 
     class Config:
@@ -19,10 +18,10 @@ class CategoryResponse(BaseModel):
 class CategoryCreate(BaseModel):
     name: str
     description: Optional[str] = None
-    parent_id: Optional[UUID] = None
+    parent_id: Optional[str] = None
 
 
 class CategoryUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
-    parent_id: Optional[UUID] = None
+    parent_id: Optional[str] = None

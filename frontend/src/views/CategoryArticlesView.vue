@@ -5,12 +5,15 @@ import { articlesApi } from '@/services/api'
 import type { Article, Category } from '@/types'
 import { categoriesApi } from '@/services/api'
 import ArticleCard from '@/components/articles/ArticleCard.vue'
+import { useToastStore } from '@/stores/toast'
 
 const route = useRoute()
+const toast = useToastStore()
 
 const category = ref<Category | null>(null)
 const articles = ref<Article[]>([])
 const loading = ref(true)
+const error = ref<string | null>(null)
 
 onMounted(async () => {
   await fetchData()
@@ -22,19 +25,24 @@ watch(() => route.params.slug, () => {
 
 async function fetchData() {
   loading.value = true
+  error.value = null
   
   try {
     const slug = route.params.slug as string
     
     const categoriesResponse = await categoriesApi.list()
-    category.value = categoriesResponse.data.categories.find(
+    category.value = categoriesResponse.data.categories?.find(
+      (c: Category) => c.slug === slug
+    ) || categoriesResponse.data?.find(
       (c: Category) => c.slug === slug
     ) || null
     
     const articlesResponse = await articlesApi.list({ category: slug })
-    articles.value = articlesResponse.data.articles
-  } catch (error) {
-    console.error('Failed to fetch data:', error)
+    articles.value = articlesResponse.data.articles || []
+  } catch (err: any) {
+    console.error('Failed to fetch data:', err)
+    error.value = err.response?.data?.message || '加载失败'
+    toast.error('无法加载分类文章')
   } finally {
     loading.value = false
   }
@@ -44,17 +52,27 @@ async function fetchData() {
 <template>
   <div class="category-articles-page">
     <div v-if="loading" class="loading">
-      Loading...
+      <div class="loading-spinner"></div>
+      <p>加载中...</p>
+    </div>
+    
+    <div v-else-if="error" class="error-state">
+      <span class="error-icon">⚠️</span>
+      <p>{{ error }}</p>
+      <button @click="fetchData" class="retry-btn">重试</button>
     </div>
     
     <template v-else>
       <header class="page-header">
-        <h1>{{ category?.name || 'Category' }}</h1>
+        <h1>{{ category?.name || '分类' }}</h1>
         <p v-if="category?.description">{{ category.description }}</p>
+        <p v-else class="no-description">暂无描述</p>
       </header>
       
-      <div v-if="articles.length === 0" class="no-articles">
-        No articles in this category.
+      <div v-if="articles.length === 0" class="empty-state">
+        <span class="empty-icon">📝</span>
+        <p>该分类下暂无文章</p>
+        <RouterLink to="/articles/create" class="create-link">创建第一篇文章</RouterLink>
       </div>
       
       <div v-else class="articles-list">
@@ -80,17 +98,99 @@ async function fetchData() {
 
 .page-header h1 {
   margin-bottom: 8px;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary);
 }
 
 .page-header p {
-  color: #666;
+  color: var(--color-text-muted);
 }
 
-.loading,
-.no-articles {
+.no-description {
+  font-style: italic;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px;
+  color: var(--color-text-muted);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px;
+  color: #ff4444;
   text-align: center;
-  padding: 40px;
-  color: #666;
+}
+
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.retry-btn {
+  margin-top: 16px;
+  padding: 8px 24px;
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid #ff4444;
+  color: #ff4444;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.retry-btn:hover {
+  background: #ff4444;
+  color: white;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px;
+  color: var(--color-text-muted);
+  text-align: center;
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.create-link {
+  margin-top: 16px;
+  color: var(--color-primary);
+  padding: 8px 24px;
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.create-link:hover {
+  background: var(--color-primary);
+  color: #000;
 }
 
 .articles-list {

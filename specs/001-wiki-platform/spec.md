@@ -2,7 +2,7 @@
 
 **Feature Branch**: `001-wiki-platform`
 **Created**: 2026-02-12
-**Status**: Draft
+**Status**: Design Complete
 **Input**: User description: "我将完成一个wiki的项目 要求是可让用户完成文章的编写 发布 交友 社交 等功能 具体功能类似当前市面上的archwiki或者scpwiki"
 
 ## User Scenarios & Testing *(mandatory)*
@@ -61,6 +61,7 @@ As a visitor or user, I want to easily search, browse, and navigate through arti
 - How does the system handle simultaneous edits to the same article by different users?
 - What occurs when a user attempts to connect with themselves?
 - How does the system handle inappropriate content during publishing?
+- What occurs when a user tries to access restricted administrative functions?
 
 ## Requirements *(mandatory)*
 
@@ -76,6 +77,11 @@ As a visitor or user, I want to easily search, browse, and navigate through arti
 - **FR-008**: Users MUST be able to comment on articles and engage in discussions
 - **FR-009**: System MUST categorize articles and provide navigation through categories and tags
 - **FR-010**: System MUST track user contributions and display contribution statistics
+- **FR-011**: System MUST implement role-based access control with user, moderator, and admin permissions
+- **FR-012**: System MUST support article versioning with change summaries and author attribution
+- **FR-013**: System MUST provide real-time collaborative editing capabilities with operational transformation
+- **FR-014**: System MUST implement content moderation workflows for flagged articles and users
+- **FR-015**: System MUST provide rich text editing capabilities with media upload support
 
 ### Key Entities
 
@@ -85,6 +91,33 @@ As a visitor or user, I want to easily search, browse, and navigate through arti
 - **Category**: Represents a classification system for organizing articles by topic
 - **Comment**: Represents user-generated discussion attached to articles
 - **Revision**: Represents a version of an article with timestamp, author, and change summary
+- **Tag**: Represents tags that can be associated with articles for categorization
+- **CommentThread**: Represents threaded discussions on articles with parent-child relationships
+
+## Technical Architecture
+
+### Frontend Stack
+- **Framework**: Vue 3 with Composition API
+- **Language**: TypeScript 5.x
+- **State Management**: Pinia
+- **Routing**: Vue Router
+- **UI Components**: Custom component library with reusable elements
+- **Rich Text Editor**: Integration with a modern WYSIWYG editor supporting collaborative features
+
+### Backend Stack
+- **Framework**: FastAPI
+- **Language**: Python 3.11+
+- **Database**: PostgreSQL 15+ with JSON field support
+- **ORM**: SQLAlchemy with async support
+- **Authentication**: JWT-based with refresh tokens
+- **API Documentation**: Automatic OpenAPI/Swagger generation
+
+### Infrastructure
+- **Deployment**: Docker containers with docker-compose orchestration
+- **Database Migrations**: Alembic
+- **Testing Framework**: pytest for backend, Vitest for frontend
+- **End-to-End Testing**: Playwright
+- **Upgrade Interfaces**: Abstraction layers at key technology points to facilitate future migrations
 
 ## Success Criteria *(mandatory)*
 
@@ -95,3 +128,6 @@ As a visitor or user, I want to easily search, browse, and navigate through arti
 - **SC-003**: At least 80% of registered users establish at least one social connection within 30 days of registration
 - **SC-004**: Users can find relevant articles through search or navigation 90% of the time
 - **SC-005**: The platform retains 60% of active users after 3 months of registration
+- **SC-006**: System achieves 99.9% uptime with graceful degradation during partial outages
+- **SC-007**: Support for 1000+ concurrent users with acceptable response times
+- **SC-008**: Rich text editor loads and responds within 2 seconds on standard hardware

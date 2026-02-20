@@ -1,18 +1,17 @@
 from datetime import datetime
 from typing import Optional
-from uuid import UUID
 from pydantic import BaseModel
 
 from src.schemas.user import UserResponse
 
 
 class ConnectionCreate(BaseModel):
-    user_id: UUID
+    user_id: str
     connection_type: str
 
 
 class ConnectionResponse(BaseModel):
-    id: UUID
+    id: str
     follower: UserResponse
     followed: UserResponse
     status: str

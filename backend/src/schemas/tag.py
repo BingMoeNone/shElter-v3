@@ -1,10 +1,9 @@
 from datetime import datetime
-from uuid import UUID
 from pydantic import BaseModel
 
 
 class TagResponse(BaseModel):
-    id: UUID
+    id: str
     name: str
     slug: str
     usage_count: int

@@ -8,23 +8,49 @@ const router = useRouter()
 const route = useRoute()
 
 const username = ref('')
+const email = ref('')
 const password = ref('')
 const error = ref<string | null>(null)
+const errorDetails = ref<any>(null)
+const success = ref<string | null>(null)
 const loading = ref(false)
 
 async function handleLogin() {
-  if (!username.value || !password.value) return
+  if (!username.value || !email.value || !password.value) return
   
   error.value = null
+  errorDetails.value = null
+  success.value = null
   loading.value = true
   
   try {
-    await authStore.login(username.value, password.value)
-    const redirect = route.query.redirect as string
-    router.push(redirect || '/')
-  } catch (err) {
-    error.value = 'Invalid username or password'
-  } finally {
+    await authStore.login(username.value, email.value, password.value)
+    success.value = '登录成功！欢迎回来。'
+    
+    // Short delay to show success message
+    setTimeout(() => {
+      const redirect = route.query.redirect as string
+      if (redirect && redirect !== '/login') {
+        router.push(redirect)
+      } else {
+        router.push('/')
+      }
+    }, 1000)
+  } catch (err: any) {
+    password.value = ''
+    const response = err.response?.data
+    if (response?.detail) {
+      if (typeof response.detail === 'string') {
+        error.value = response.detail
+      } else {
+        error.value = response.detail.message || '登录失败'
+        errorDetails.value = response.detail
+      }
+    } else if (response?.message) {
+      error.value = response.message
+    } else {
+      error.value = '登录失败，请稍后重试'
+    }
     loading.value = false
   }
 }
@@ -33,39 +59,61 @@ async function handleLogin() {
 <template>
   <div class="login-page">
     <div class="login-card card">
-      <h1>Login</h1>
+      <h1>登录</h1>
       
       <form @submit.prevent="handleLogin">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">用户名</label>
           <input
             id="username"
             v-model="username"
             type="text"
             required
             autofocus
+            placeholder="请输入用户名"
           />
         </div>
         
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="email">邮箱</label>
+          <input
+            id="email"
+            v-model="email"
+            type="email"
+            required
+            placeholder="请输入注册时使用的邮箱"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">密码</label>
           <input
             id="password"
             v-model="password"
             type="password"
             required
+            placeholder="请输入密码"
           />
         </div>
         
-        <div v-if="error" class="error-message">{{ error }}</div>
+        <div v-if="success" class="success-message">
+          <p>{{ success }}</p>
+        </div>
+
+        <div v-if="error" class="error-message">
+          <p class="error-title">{{ error }}</p>
+          <p v-if="errorDetails?.suggestion" class="error-suggestion">
+            {{ errorDetails.suggestion }}
+          </p>
+        </div>
         
         <button type="submit" :disabled="loading" class="btn-login">
-          {{ loading ? 'Logging in...' : 'Login' }}
+          {{ success ? '登录成功' : (loading ? '登录中...' : '登录') }}
         </button>
       </form>
       
       <p class="register-link">
-        Don't have an account? <RouterLink to="/register">Register</RouterLink>
+        还没有账户？ <RouterLink to="/register">立即注册</RouterLink>
       </p>
     </div>
   </div>
@@ -81,12 +129,17 @@ async function handleLogin() {
 
 .login-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 0 20px rgba(0, 255, 157, 0.1);
 }
 
 .login-card h1 {
   text-align: center;
   margin-bottom: 24px;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary);
 }
 
 .form-group {
@@ -97,26 +150,87 @@ async function handleLogin() {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
+  color: var(--color-text);
+}
+
+.form-group input {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  transition: all 0.3s;
+}
+
+.form-group input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
 }
 
 .error-message {
-  color: #e74c3c;
+  color: #ff4444;
   margin-bottom: 16px;
   padding: 12px;
-  background: #fdf2f2;
+  background: rgba(255, 68, 68, 0.1);
   border-radius: 4px;
+  border-left: 3px solid #ff4444;
+}
+
+.error-title {
+  margin: 0 0 8px 0;
+  font-weight: 500;
+}
+
+.error-suggestion {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.success-message {
+  color: var(--color-primary);
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(0, 255, 157, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid var(--color-primary);
   text-align: center;
+  font-weight: bold;
 }
 
 .btn-login {
   width: 100%;
   padding: 12px;
   font-size: 16px;
+  margin-top: 10px;
+  background: rgba(0, 255, 157, 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  transition: all 0.3s;
+}
+
+.btn-login:hover {
+  background: var(--color-primary);
+  color: #000;
+  box-shadow: 0 0 20px var(--color-primary);
+}
+
+.btn-login:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .register-link {
   text-align: center;
   margin-top: 20px;
-  color: #666;
+  color: var(--color-text-muted);
+}
+
+.register-link a {
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+.register-link a:hover {
+  text-shadow: 0 0 5px var(--color-primary);
 }
 </style>

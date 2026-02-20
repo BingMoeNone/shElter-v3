@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Optional, List
-from uuid import UUID
 from pydantic import BaseModel, Field
 
 from src.schemas.user import UserResponse
@@ -13,7 +12,7 @@ class ArticleCreate(BaseModel):
     content: str = Field(..., min_length=10)
     summary: Optional[str] = Field(None, max_length=500)
     status: str = "draft"
-    category_ids: Optional[List[UUID]] = None
+    category_ids: Optional[List[str]] = None
     tag_names: Optional[List[str]] = None
 
 
@@ -22,12 +21,12 @@ class ArticleUpdate(BaseModel):
     content: Optional[str] = Field(None, min_length=10)
     summary: Optional[str] = Field(None, max_length=500)
     status: Optional[str] = None
-    category_ids: Optional[List[UUID]] = None
+    category_ids: Optional[List[str]] = None
     tag_names: Optional[List[str]] = None
 
 
 class ArticleResponse(BaseModel):
-    id: UUID
+    id: str
     title: str
     slug: str
     content: str
@@ -52,8 +51,8 @@ class ArticleListResponse(BaseModel):
 
 
 class RevisionResponse(BaseModel):
-    id: UUID
-    article_id: UUID
+    id: str
+    article_id: str
     author: UserResponse
     title: str
     content: str
