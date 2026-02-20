@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ref, computed } from 'vue'
@@ -12,7 +12,7 @@ const displayName = computed(() => {
   if (authStore.user) {
     return authStore.user.displayName || authStore.user.username
   }
-  return '个人资料'
+  return '涓汉璧勬枡'
 })
 
 function handleSearch() {
@@ -42,33 +42,33 @@ function closeMobileMenu() {
       </RouterLink>
       
       <nav class="nav" :class="{ 'nav-open': showMobileMenu }">
-        <RouterLink to="/" class="nav-link" @click="closeMobileMenu">首页</RouterLink>
-        <RouterLink to="/articles" class="nav-link" @click="closeMobileMenu">文章</RouterLink>
-        <RouterLink to="/categories" class="nav-link" @click="closeMobileMenu">分类</RouterLink>
-        <RouterLink to="/metro" class="nav-link special-link" @click="closeMobileMenu">地铁</RouterLink>
-        <RouterLink to="/music" class="nav-link special-link" @click="closeMobileMenu">音乐</RouterLink>
+        <RouterLink to="/" class="nav-link" @click="closeMobileMenu">棣栭〉</RouterLink>
+        <RouterLink to="/articles" class="nav-link" @click="closeMobileMenu">鏂囩珷</RouterLink>
+        <RouterLink to="/categories" class="nav-link" @click="closeMobileMenu">鍒嗙被</RouterLink>
+        <RouterLink to="/metro" class="nav-link special-link" @click="closeMobileMenu">鍦伴搧</RouterLink>
+        <RouterLink to="/music" class="nav-link special-link" @click="closeMobileMenu">闊充箰</RouterLink>
         
         <form class="search-form" @submit.prevent="handleSearch">
           <input
             v-model="searchQuery"
             type="search"
-            placeholder="搜索文章..."
+            placeholder="鎼滅储鏂囩珷..."
             class="search-input"
           />
-          <button type="submit" class="search-btn">搜索</button>
+          <button type="submit" class="search-btn">鎼滅储</button>
         </form>
         
         <div class="auth-section">
           <template v-if="authStore.isAuthenticated">
-            <RouterLink to="/articles/create" class="nav-link" @click="closeMobileMenu">写文章</RouterLink>
+            <RouterLink to="/articles/create" class="nav-link" @click="closeMobileMenu">鍐欐枃绔?/RouterLink>
             <RouterLink to="/profile" class="nav-link profile-link" @click="closeMobileMenu">
               <span class="user-name">{{ displayName }}</span>
             </RouterLink>
-            <button @click="handleLogout" class="logout-btn">退出</button>
+            <button @click="handleLogout" class="logout-btn">閫€鍑?/button>
           </template>
           <template v-else>
-            <RouterLink to="/login" class="nav-link" @click="closeMobileMenu">登录</RouterLink>
-            <RouterLink to="/register" class="nav-link register-link" @click="closeMobileMenu">注册</RouterLink>
+            <RouterLink to="/login" class="nav-link" @click="closeMobileMenu">鐧诲綍</RouterLink>
+            <RouterLink to="/register" class="nav-link register-link" @click="closeMobileMenu">娉ㄥ唽</RouterLink>
           </template>
         </div>
       </nav>

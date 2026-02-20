@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -25,7 +25,7 @@ async function handleLogin() {
   
   try {
     await authStore.login(username.value, email.value, password.value)
-    success.value = '登录成功！欢迎回来。'
+    success.value = '鐧诲綍鎴愬姛锛佹杩庡洖鏉ャ€?
     
     // Short delay to show success message
     setTimeout(() => {
@@ -43,13 +43,13 @@ async function handleLogin() {
       if (typeof response.detail === 'string') {
         error.value = response.detail
       } else {
-        error.value = response.detail.message || '登录失败'
+        error.value = response.detail.message || '鐧诲綍澶辫触'
         errorDetails.value = response.detail
       }
     } else if (response?.message) {
       error.value = response.message
     } else {
-      error.value = '登录失败，请稍后重试'
+      error.value = '鐧诲綍澶辫触锛岃绋嶅悗閲嶈瘯'
     }
     loading.value = false
   }
@@ -59,40 +59,40 @@ async function handleLogin() {
 <template>
   <div class="login-page">
     <div class="login-card card">
-      <h1>登录</h1>
+      <h1>鐧诲綍</h1>
       
       <form @submit.prevent="handleLogin">
         <div class="form-group">
-          <label for="username">用户名</label>
+          <label for="username">鐢ㄦ埛鍚?/label>
           <input
             id="username"
             v-model="username"
             type="text"
             required
             autofocus
-            placeholder="请输入用户名"
+            placeholder="璇疯緭鍏ョ敤鎴峰悕"
           />
         </div>
         
         <div class="form-group">
-          <label for="email">邮箱</label>
+          <label for="email">閭</label>
           <input
             id="email"
             v-model="email"
             type="email"
             required
-            placeholder="请输入注册时使用的邮箱"
+            placeholder="璇疯緭鍏ユ敞鍐屾椂浣跨敤鐨勯偖绠?
           />
         </div>
         
         <div class="form-group">
-          <label for="password">密码</label>
+          <label for="password">瀵嗙爜</label>
           <input
             id="password"
             v-model="password"
             type="password"
             required
-            placeholder="请输入密码"
+            placeholder="璇疯緭鍏ュ瘑鐮?
           />
         </div>
         
@@ -108,12 +108,12 @@ async function handleLogin() {
         </div>
         
         <button type="submit" :disabled="loading" class="btn-login">
-          {{ success ? '登录成功' : (loading ? '登录中...' : '登录') }}
+          {{ success ? '鐧诲綍鎴愬姛' : (loading ? '鐧诲綍涓?..' : '鐧诲綍') }}
         </button>
       </form>
       
       <p class="register-link">
-        还没有账户？ <RouterLink to="/register">立即注册</RouterLink>
+        杩樻病鏈夎处鎴凤紵 <RouterLink to="/register">绔嬪嵆娉ㄥ唽</RouterLink>
       </p>
     </div>
   </div>

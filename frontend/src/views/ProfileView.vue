@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { usersApi } from '@/services/api'
@@ -47,10 +47,10 @@ async function handleSave() {
     })
     
     authStore.user = response.data
-    toast.success('个人资料已更新！')
+    toast.success('涓汉璧勬枡宸叉洿鏂帮紒')
   } catch (err: any) {
-    error.value = err.response?.data?.message || '更新失败'
-    toast.error('保存失败，请重试')
+    error.value = err.response?.data?.message || '鏇存柊澶辫触'
+    toast.error('淇濆瓨澶辫触锛岃閲嶈瘯')
     console.error(err)
   } finally {
     saving.value = false
@@ -68,12 +68,12 @@ function formatDate(date: string) {
 
 <template>
   <div class="profile-page">
-    <h1>个人资料</h1>
+    <h1>涓汉璧勬枡</h1>
     
     <div v-if="user" class="profile-content">
       <div class="profile-card card">
         <div class="form-group">
-          <label for="username">用户名</label>
+          <label for="username">鐢ㄦ埛鍚?/label>
           <input
             id="username"
             :value="user.username"
@@ -82,7 +82,7 @@ function formatDate(date: string) {
         </div>
         
         <div class="form-group">
-          <label for="email">邮箱</label>
+          <label for="email">閭</label>
           <input
             id="email"
             :value="user.email"
@@ -91,25 +91,25 @@ function formatDate(date: string) {
         </div>
         
         <div class="form-group">
-          <label for="displayName">显示名称</label>
+          <label for="displayName">鏄剧ず鍚嶇О</label>
           <input
             id="displayName"
             v-model="displayName"
             type="text"
             maxlength="50"
-            placeholder="设置一个显示名称"
+            placeholder="璁剧疆涓€涓樉绀哄悕绉?
           />
           <span class="char-count">{{ displayName.length }}/50</span>
         </div>
         
         <div class="form-group">
-          <label for="bio">个人简介</label>
+          <label for="bio">涓汉绠€浠?/label>
           <textarea
             id="bio"
             v-model="bio"
             rows="4"
             maxlength="500"
-            placeholder="介绍一下自己..."
+            placeholder="浠嬬粛涓€涓嬭嚜宸?.."
           ></textarea>
           <span class="char-count">{{ bio.length }}/500</span>
         </div>
@@ -123,31 +123,31 @@ function formatDate(date: string) {
             class="btn-save"
           >
             <span v-if="saving" class="btn-spinner"></span>
-            <span v-else>{{ saving ? '保存中...' : '保存更改' }}</span>
+            <span v-else>{{ saving ? '淇濆瓨涓?..' : '淇濆瓨鏇存敼' }}</span>
           </button>
         </div>
       </div>
       
       <div class="stats-card card">
-        <h2>账户统计</h2>
+        <h2>璐︽埛缁熻</h2>
         <div class="stat">
-          <span class="label">贡献数</span>
+          <span class="label">璐＄尞鏁?/span>
           <span class="value">{{ user.contributionCount }}</span>
         </div>
         <div class="stat">
-          <span class="label">角色</span>
+          <span class="label">瑙掕壊</span>
           <span class="value role-badge" :class="user.role">{{ user.role }}</span>
         </div>
         <div class="stat">
-          <span class="label">注册时间</span>
+          <span class="label">娉ㄥ唽鏃堕棿</span>
           <span class="value">{{ formatDate(user.createdAt) }}</span>
         </div>
       </div>
     </div>
     
     <div v-else class="not-authenticated">
-      <span class="lock-icon">🔒</span>
-      <p>请<RouterLink to="/login">登录</RouterLink>查看个人资料</p>
+      <span class="lock-icon">馃敀</span>
+      <p>璇?RouterLink to="/login">鐧诲綍</RouterLink>鏌ョ湅涓汉璧勬枡</p>
     </div>
   </div>
 </template>

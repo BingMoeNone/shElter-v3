@@ -1,0 +1,525 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鍒嗙被鏂囩珷</title>
+    <style>
+        :root {
+            --color-primary: #00ff9d;
+            --color-text: #fff;
+            --color-text-muted: #aaa;
+            --color-surface: #1a1a1a;
+            --color-border: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0a0a0a;
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--color-surface);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--color-text);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .category-articles-page {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            margin-bottom: 8px;
+            color: var(--color-primary);
+            text-shadow: 0 0 10px var(--color-primary);
+        }
+
+        .page-header p {
+            color: var(--color-text-muted);
+        }
+
+        .no-description {
+            font-style: italic;
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: var(--color-text-muted);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: #ff4444;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .retry-btn {
+            margin-top: 16px;
+            padding: 8px 24px;
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: #ff4444;
+            color: white;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: var(--color-text-muted);
+            text-align: center;
+            border: 1px dashed var(--color-border);
+            border-radius: 8px;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .create-link {
+            margin-top: 16px;
+            color: var(--color-primary);
+            padding: 8px 24px;
+            border: 1px solid var(--color-primary);
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .create-link:hover {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .articles-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 鏂囩珷鍗＄墖鏍峰紡 */
+        .article-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 255, 157, 0.2);
+        }
+
+        .article-card-header {
+            margin-bottom: 16px;
+        }
+
+        .article-card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--color-primary);
+        }
+
+        .article-card-title a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .article-card-title a:hover {
+            text-decoration: underline;
+        }
+
+        .article-card-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+
+        .article-card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .article-card-excerpt {
+            color: var(--color-text);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .article-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .article-card-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .article-card-tag {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .article-card-tag:hover {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .article-card-read-more {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .article-card-read-more:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>鍒嗙被鏂囩珷</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">棣栭〉</a></li>
+                <li><a href="articles.html">鏂囩珷</a></li>
+                <li><a href="profile.html">涓汉璧勬枡</a></li>
+                <li><a href="login.html">鐧诲綍</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="category-articles-page">
+            <div id="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <p>鍔犺浇涓?..</p>
+            </div>
+            
+            <div id="errorState" class="error-state" style="display: none;">
+                <span class="error-icon">鈿狅笍</span>
+                <p id="errorMessage">鍔犺浇澶辫触</p>
+                <button id="retryBtn" class="retry-btn">閲嶈瘯</button>
+            </div>
+            
+            <div id="content" style="display: none;">
+                <header class="page-header">
+                    <h1 id="categoryName">鍒嗙被</h1>
+                    <p id="categoryDescription" class="no-description">鏆傛棤鎻忚堪</p>
+                </header>
+                
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <span class="empty-icon">馃摑</span>
+                    <p>璇ュ垎绫讳笅鏆傛棤鏂囩珷</p>
+                    <a href="create-article.html" class="create-link">鍒涘缓绗竴绡囨枃绔?/a>
+                </div>
+                
+                <div id="articlesList" class="articles-list">
+                    <!-- 鏂囩珷鍗＄墖灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 妯℃嫙鏁版嵁
+        const mockCategories = [
+            {
+                id: 1,
+                name: "鎶€鏈垎浜?,
+                slug: "tech",
+                description: "鍒嗕韩鍚勭鎶€鏈枃绔犲拰鏁欑▼"
+            },
+            {
+                id: 2,
+                name: "鐢熸椿闅忕瑪",
+                slug: "life",
+                description: "璁板綍鐢熸椿涓殑鐐规淮鎰熸偀"
+            },
+            {
+                id: 3,
+                name: "鏃呰鏃ヨ",
+                slug: "travel",
+                description: "鍒嗕韩鏃呰缁忓巻鍜岃闂?
+            }
+        ];
+
+        const mockArticles = [
+            {
+                id: 1,
+                title: "FastAPI鍚庣寮€鍙戞渶浣冲疄璺?,
+                slug: "fastapi-best-practices",
+                excerpt: "鏈枃浠嬬粛浜嗕娇鐢‵astAPI寮€鍙戝悗绔簲鐢ㄧ殑鏈€浣冲疄璺碉紝鍖呮嫭璺敱璁捐銆佹暟鎹簱闆嗘垚銆佽璇佹巿鏉冪瓑鏂归潰銆?,
+                author: { username: "admin" },
+                category: "tech",
+                tags: ["fastapi", "python", "backend"],
+                created_at: "2023-01-15T10:30:00Z",
+                updated_at: "2023-01-15T14:45:00Z",
+                view_count: 123,
+                comment_count: 8
+            },
+            {
+                id: 2,
+                title: "Vue椤圭洰杩佺Щ鎸囧崡",
+                slug: "vue-migration-guide",
+                excerpt: "鏈枃浠嬬粛浜嗗浣曞皢Vue 2椤圭洰杩佺Щ鍒癡ue 3锛屽寘鎷富瑕佸彉鏇寸偣銆佽縼绉荤瓥鐣ュ拰娉ㄦ剰浜嬮」銆?,
+                author: { username: "testuser" },
+                category: "tech",
+                tags: ["vue", "frontend", "migration"],
+                created_at: "2023-02-20T14:20:00Z",
+                updated_at: "2023-02-20T16:30:00Z",
+                view_count: 456,
+                comment_count: 15
+            },
+            {
+                id: 3,
+                title: "HTML/CSS/JS鍒嗙鏋舵瀯璁捐",
+                slug: "html-css-js-architecture",
+                excerpt: "鏈枃鎺㈣浜咹TML銆丆SS鍜孞avaScript鍒嗙鏋舵瀯鐨勮璁″師鍒欏拰鏈€浣冲疄璺碉紝浠ュ強濡備綍鏋勫缓鍙淮鎶ょ殑鍓嶇搴旂敤銆?,
+                author: { username: "admin" },
+                category: "tech",
+                tags: ["html", "css", "javascript", "architecture"],
+                created_at: "2023-03-10T09:15:00Z",
+                updated_at: "2023-03-10T11:20:00Z",
+                view_count: 789,
+                comment_count: 23
+            }
+        ];
+
+        // 鐘舵€佺鐞?        let category = null;
+        let articles = [];
+        let loading = true;
+        let error = null;
+
+        // 椤甸潰鍔犺浇鏃跺垵濮嬪寲
+        document.addEventListener('DOMContentLoaded', function() {
+            // 缁戝畾浜嬩欢鐩戝惉鍣?            bindEventListeners();
+            
+            // 鑾峰彇鏁版嵁
+            fetchData();
+        });
+
+        // 缁戝畾浜嬩欢鐩戝惉鍣?        function bindEventListeners() {
+            // 閲嶈瘯鎸夐挳浜嬩欢
+            document.getElementById('retryBtn').addEventListener('click', function() {
+                fetchData();
+            });
+        }
+
+        // 鑾峰彇鏁版嵁
+        function fetchData() {
+            loading = true;
+            error = null;
+            updateUI();
+            
+            // 妯℃嫙API璇锋眰寤惰繜
+            setTimeout(() => {
+                try {
+                    // 妯℃嫙浠嶶RL鑾峰彇鍒嗙被slug锛岃繖閲屼娇鐢ㄩ粯璁ゅ€?tech"
+                    const slug = "tech"; // 瀹為檯椤圭洰涓彲浠ヤ粠URL鍙傛暟鑾峰彇
+                    
+                    // 妯℃嫙鑾峰彇鍒嗙被
+                    category = mockCategories.find(c => c.slug === slug) || null;
+                    
+                    // 妯℃嫙鑾峰彇鏂囩珷
+                    articles = mockArticles.filter(article => article.category === slug);
+                } catch (err) {
+                    console.error('Failed to fetch data:', err);
+                    error = "鍔犺浇澶辫触";
+                } finally {
+                    loading = false;
+                    updateUI();
+                }
+            }, 800);
+        }
+
+        // 鏇存柊UI
+        function updateUI() {
+            const loadingElement = document.getElementById('loading');
+            const errorStateElement = document.getElementById('errorState');
+            const contentElement = document.getElementById('content');
+            
+            if (loading) {
+                loadingElement.style.display = 'flex';
+                errorStateElement.style.display = 'none';
+                contentElement.style.display = 'none';
+            } else if (error) {
+                loadingElement.style.display = 'none';
+                errorStateElement.style.display = 'flex';
+                document.getElementById('errorMessage').textContent = error;
+                contentElement.style.display = 'none';
+            } else {
+                loadingElement.style.display = 'none';
+                errorStateElement.style.display = 'none';
+                contentElement.style.display = 'block';
+                
+                // 鏇存柊鍒嗙被淇℃伅
+                if (category) {
+                    document.getElementById('categoryName').textContent = category.name;
+                    if (category.description) {
+                        document.getElementById('categoryDescription').textContent = category.description;
+                        document.getElementById('categoryDescription').classList.remove('no-description');
+                    } else {
+                        document.getElementById('categoryDescription').textContent = '鏆傛棤鎻忚堪';
+                        document.getElementById('categoryDescription').classList.add('no-description');
+                    }
+                }
+                
+                // 鏇存柊鏂囩珷鍒楄〃
+                if (articles.length === 0) {
+                    document.getElementById('emptyState').style.display = 'flex';
+                    document.getElementById('articlesList').style.display = 'none';
+                } else {
+                    document.getElementById('emptyState').style.display = 'none';
+                    document.getElementById('articlesList').style.display = 'flex';
+                    renderArticlesList();
+                }
+            }
+        }
+
+        // 娓叉煋鏂囩珷鍒楄〃
+        function renderArticlesList() {
+            const articlesList = document.getElementById('articlesList');
+            
+            // 娓呯┖鍒楄〃
+            articlesList.innerHTML = '';
+            
+            // 娓叉煋鏂囩珷鍗＄墖
+            articles.forEach(article => {
+                const articleCard = document.createElement('div');
+                articleCard.className = 'article-card';
+                
+                // 鏍煎紡鍖栨棩鏈?                const createdAt = new Date(article.created_at).toLocaleDateString('zh-CN');
+                
+                // 鐢熸垚鏍囩HTML
+                const tagsHTML = article.tags.map(tag => 
+                    `<a href="tag-articles.html?tag=${tag}" class="article-card-tag">${tag}</a>`
+                ).join('');
+                
+                articleCard.innerHTML = `
+                    <div class="article-card-header">
+                        <h2 class="article-card-title">
+                            <a href="article-detail.html?id=${article.id}">${article.title}</a>
+                        </h2>
+                        <div class="article-card-meta">
+                            <span class="article-card-meta-item">
+                                <span>馃懁</span>
+                                <span>${article.author.username}</span>
+                            </span>
+                            <span class="article-card-meta-item">
+                                <span>馃搮</span>
+                                <span>${createdAt}</span>
+                            </span>
+                            <span class="article-card-meta-item">
+                                <span>馃憗锔?/span>
+                                <span>${article.view_count}</span>
+                            </span>
+                            <span class="article-card-meta-item">
+                                <span>馃挰</span>
+                                <span>${article.comment_count}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="article-card-excerpt">${article.excerpt}</div>
+                    <div class="article-card-footer">
+                        <div class="article-card-tags">${tagsHTML}</div>
+                        <a href="article-detail.html?id=${article.id}" class="article-card-read-more">闃呰鏇村 鈫?/a>
+                    </div>
+                `;
+                
+                articlesList.appendChild(articleCard);
+            });
+        }
+    </script>
+</body>
+</html>

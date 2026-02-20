@@ -1,0 +1,571 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鐢ㄦ埛绠＄悊</title>
+    <style>
+        :root {
+            --color-primary: #00ff9d;
+            --color-text: #fff;
+            --color-text-muted: #aaa;
+            --color-surface: #1a1a1a;
+            --color-border: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0a0a0a;
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--color-surface);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--color-text);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-users {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .users-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            width: 300px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            color: var(--color-text);
+            font-size: 1rem;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--color-text-muted);
+            padding: 40px;
+        }
+
+        .users-table-container {
+            overflow-x: auto;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--color-surface);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .users-table th {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .users-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .users-table tr:hover {
+            background: rgba(0, 255, 157, 0.05);
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        .role-user {
+            background: rgba(79, 172, 254, 0.2);
+            color: #4facfe;
+        }
+
+        .role-moderator {
+            background: rgba(67, 233, 123, 0.2);
+            color: #43e97b;
+        }
+
+        .role-admin {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: rgba(67, 233, 123, 0.2);
+            color: #43e97b;
+        }
+
+        .status-inactive {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: rgba(79, 172, 254, 0.1);
+            color: #4facfe;
+        }
+
+        .btn-edit {
+            background: rgba(0, 242, 254, 0.1);
+            color: #00f2fe;
+        }
+
+        .btn-delete {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 255, 157, 0.2);
+        }
+
+        .btn-view:hover {
+            background: #4facfe;
+            color: #fff;
+        }
+
+        .btn-edit:hover {
+            background: #00f2fe;
+            color: #000;
+        }
+
+        .btn-delete:hover {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>绠＄悊鍛樺悗鍙?/h1>
+        <nav>
+            <ul>
+                <li><a href="admin-dashboard.html">浠〃鐩?/a></li>
+                <li><a href="admin-articles.html">鏂囩珷绠＄悊</a></li>
+                <li><a href="admin-users.html" class="active">鐢ㄦ埛绠＄悊</a></li>
+                <li><a href="admin-comments.html">璇勮绠＄悊</a></li>
+                <li><a href="admin-moderation.html">鍐呭瀹℃牳</a></li>
+                <li><a href="index.html">杩斿洖棣栭〉</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="admin-users">
+            <h1 class="page-title">鐢ㄦ埛绠＄悊</h1>
+            
+            <div class="users-header">
+                <div class="search-bar">
+                    <input
+                        type="text"
+                        id="searchQuery"
+                        placeholder="鎼滅储鐢ㄦ埛鍚嶃€侀偖绠辨垨鏄剧ず鍚?.."
+                    />
+                </div>
+            </div>
+            
+            <div id="loading" class="loading">鍔犺浇涓?..</div>
+            
+            <div id="usersTableContainer" class="users-table-container" style="display: none;">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>鐢ㄦ埛鍚?/th>
+                            <th>閭</th>
+                            <th>鏄剧ず鍚?/th>
+                            <th>瑙掕壊</th>
+                            <th>鐘舵€?/th>
+                            <th>娉ㄥ唽鏃堕棿</th>
+                            <th>鎿嶄綔</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- 鐢ㄦ埛鏁版嵁灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                    </tbody>
+                </table>
+                
+                <div id="pagination" class="pagination">
+                    <button 
+                        class="page-btn" 
+                        id="prevPageBtn"
+                        disabled
+                    >
+                        涓婁竴椤?                    </button>
+                    
+                    <span class="page-info" id="pageInfo">
+                        绗?1 / 1 椤?                    </span>
+                    
+                    <button 
+                        class="page-btn" 
+                        id="nextPageBtn"
+                        disabled
+                    >
+                        涓嬩竴椤?                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 妯℃嫙鐢ㄦ埛鏁版嵁
+        const mockUsers = [
+            {
+                id: 1,
+                username: "admin",
+                email: "admin@example.com",
+                display_name: "绠＄悊鍛?,
+                role: "admin",
+                is_active: true,
+                created_at: "2023-01-01T00:00:00Z"
+            },
+            {
+                id: 2,
+                username: "moderator",
+                email: "moderator@example.com",
+                display_name: "鐗堜富",
+                role: "moderator",
+                is_active: true,
+                created_at: "2023-01-02T10:30:00Z"
+            },
+            {
+                id: 3,
+                username: "testuser",
+                email: "test@example.com",
+                display_name: "娴嬭瘯鐢ㄦ埛",
+                role: "user",
+                is_active: true,
+                created_at: "2023-01-03T15:45:00Z"
+            },
+            {
+                id: 4,
+                username: "user1",
+                email: "user1@example.com",
+                display_name: "鏅€氱敤鎴?",
+                role: "user",
+                is_active: true,
+                created_at: "2023-01-04T09:15:00Z"
+            },
+            {
+                id: 5,
+                username: "user2",
+                email: "user2@example.com",
+                display_name: "",
+                role: "user",
+                is_active: false,
+                created_at: "2023-01-05T14:20:00Z"
+            }
+        ];
+
+        // 鐘舵€佺鐞?        let users = [];
+        let loading = true;
+        let searchQuery = '';
+        let currentPage = 1;
+        let limit = 20;
+        let totalItems = 0;
+        let totalPages = 0;
+
+        // 椤甸潰鍔犺浇鏃跺垵濮嬪寲
+        document.addEventListener('DOMContentLoaded', function() {
+            // 缁戝畾浜嬩欢鐩戝惉鍣?            bindEventListeners();
+            
+            // 鑾峰彇鐢ㄦ埛鏁版嵁
+            fetchUsers();
+        });
+
+        // 缁戝畾浜嬩欢鐩戝惉鍣?        function bindEventListeners() {
+            const searchInput = document.getElementById('searchQuery');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+
+            // 鎼滅储杈撳叆浜嬩欢
+            searchInput.addEventListener('input', function() {
+                searchQuery = this.value;
+                currentPage = 1;
+                fetchUsers();
+            });
+
+            // 鍒嗛〉鎸夐挳浜嬩欢
+            prevPageBtn.addEventListener('click', function() {
+                handlePageChange(currentPage - 1);
+            });
+
+            nextPageBtn.addEventListener('click', function() {
+                handlePageChange(currentPage + 1);
+            });
+        }
+
+        // 鑾峰彇鐢ㄦ埛鏁版嵁
+        function fetchUsers() {
+            loading = true;
+            updateUI();
+            
+            // 妯℃嫙API璇锋眰寤惰繜
+            setTimeout(() => {
+                try {
+                    // 妯℃嫙API鍝嶅簲
+                    let filteredUsers = [...mockUsers];
+                    
+                    // 搴旂敤鎼滅储绛涢€?                    if (searchQuery) {
+                        const query = searchQuery.toLowerCase();
+                        filteredUsers = filteredUsers.filter(user => 
+                            user.username.toLowerCase().includes(query) ||
+                            user.email.toLowerCase().includes(query) ||
+                            (user.display_name && user.display_name.toLowerCase().includes(query))
+                        );
+                    }
+                    
+                    users = filteredUsers;
+                    totalItems = users.length;
+                    totalPages = Math.ceil(totalItems / limit);
+                } catch (error) {
+                    console.error('Failed to fetch users:', error);
+                } finally {
+                    loading = false;
+                    updateUI();
+                }
+            }, 500);
+        }
+
+        // 鏇存柊UI
+        function updateUI() {
+            const loadingElement = document.getElementById('loading');
+            const usersTableContainer = document.getElementById('usersTableContainer');
+            
+            if (loading) {
+                loadingElement.style.display = 'block';
+                usersTableContainer.style.display = 'none';
+            } else {
+                loadingElement.style.display = 'none';
+                usersTableContainer.style.display = 'block';
+                renderUsersTable();
+                updatePagination();
+            }
+        }
+
+        // 娓叉煋鐢ㄦ埛琛ㄦ牸
+        function renderUsersTable() {
+            const tableBody = document.getElementById('usersTableBody');
+            
+            // 娓呯┖琛ㄦ牸
+            tableBody.innerHTML = '';
+            
+            // 璁＄畻褰撳墠椤电殑鐢ㄦ埛
+            const startIndex = (currentPage - 1) * limit;
+            const endIndex = startIndex + limit;
+            const currentUsers = users.slice(startIndex, endIndex);
+            
+            // 娓叉煋鐢ㄦ埛琛?            currentUsers.forEach(user => {
+                const row = document.createElement('tr');
+                
+                const createdAt = new Date(user.created_at).toLocaleString();
+                const displayName = user.display_name || '-';
+                const status = user.is_active ? 'active' : 'inactive';
+                const statusText = user.is_active ? '娲昏穬' : '绂佺敤';
+                
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>${displayName}</td>
+                    <td>
+                        <span class="role-badge role-${user.role}">
+                            ${user.role}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${status}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td>${createdAt}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-view" onclick="handleViewUser(${user.id})">鏌ョ湅</button>
+                            <button class="btn btn-edit" onclick="handleEditUser(${user.id})">缂栬緫</button>
+                            <button class="btn btn-delete" onclick="handleDeleteUser(${user.id})">鍒犻櫎</button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 鏇存柊鍒嗛〉
+        function updatePagination() {
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            pageInfo.textContent = `绗?${currentPage} / ${totalPages} 椤礰;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+        }
+
+        // 澶勭悊椤电爜鍙樺寲
+        function handlePageChange(page) {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            fetchUsers();
+        }
+
+        // 澶勭悊鏌ョ湅鐢ㄦ埛
+        function handleViewUser(userId) {
+            // 杩欓噷鍙互璺宠浆鍒扮敤鎴疯鎯呴〉闈?            console.log('鏌ョ湅鐢ㄦ埛:', userId);
+        }
+
+        // 澶勭悊缂栬緫鐢ㄦ埛
+        function handleEditUser(userId) {
+            // 杩欓噷鍙互璺宠浆鍒扮敤鎴风紪杈戦〉闈?            console.log('缂栬緫鐢ㄦ埛:', userId);
+        }
+
+        // 澶勭悊鍒犻櫎鐢ㄦ埛
+        function handleDeleteUser(userId) {
+            if (confirm('纭畾瑕佸垹闄よ繖涓敤鎴峰悧锛?)) {
+                // 妯℃嫙API璇锋眰
+                setTimeout(() => {
+                    // 浠庢ā鎷熸暟鎹腑鍒犻櫎鐢ㄦ埛
+                    mockUsers = mockUsers.filter(user => user.id !== userId);
+                    // 閲嶆柊鑾峰彇鐢ㄦ埛鏁版嵁
+                    fetchUsers();
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>

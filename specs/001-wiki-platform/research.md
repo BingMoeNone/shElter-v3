@@ -1,4 +1,4 @@
-# Research Summary: Wiki Platform Implementation
+﻿# Research Summary: Wiki Platform Implementation
 
 ## Decision: Technology Stack Selection
 **Rationale**: Selected Vue 3 + TypeScript for frontend, FastAPI for backend, and PostgreSQL for database based on project requirements for a robust wiki platform with social features.

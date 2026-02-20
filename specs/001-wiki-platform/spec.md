@@ -1,9 +1,9 @@
-# Feature Specification: Wiki Platform
+﻿# Feature Specification: Wiki Platform
 
 **Feature Branch**: `001-wiki-platform`
 **Created**: 2026-02-12
 **Status**: Design Complete
-**Input**: User description: "我将完成一个wiki的项目 要求是可让用户完成文章的编写 发布 交友 社交 等功能 具体功能类似当前市面上的archwiki或者scpwiki"
+**Input**: User description: "鎴戝皢瀹屾垚涓€涓獁iki鐨勯」鐩?瑕佹眰鏄彲璁╃敤鎴峰畬鎴愭枃绔犵殑缂栧啓 鍙戝竷 浜ゅ弸 绀句氦 绛夊姛鑳?鍏蜂綋鍔熻兘绫讳技褰撳墠甯傞潰涓婄殑archwiki鎴栬€卻cpwiki"
 
 ## User Scenarios & Testing *(mandatory)*
 

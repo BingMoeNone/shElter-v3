@@ -1,0 +1,803 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鍐呭瀹℃牳</title>
+    <style>
+        :root {
+            --color-primary: #00ff9d;
+            --color-text: #fff;
+            --color-text-muted: #aaa;
+            --color-surface: #1a1a1a;
+            --color-border: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0a0a0a;
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--color-surface);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--color-text);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-moderation {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .moderation-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: var(--color-surface);
+            color: var(--color-text);
+            border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            top: 2px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--color-primary);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+        }
+
+        .tab-count {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--color-text);
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+
+        .tab-btn.active .tab-count {
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+        }
+
+        .tab-content {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 0 4px 4px 4px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--color-text-muted);
+            padding: 40px;
+        }
+
+        .moderation-table-container {
+            overflow-x: auto;
+        }
+
+        .moderation-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--color-surface);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .moderation-table th,
+        .moderation-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .moderation-table th {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .moderation-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .moderation-table tr:hover {
+            background: rgba(0, 255, 157, 0.05);
+        }
+
+        .article-title {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .comment-content {
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .article-link {
+            background: none;
+            border: none;
+            color: var(--color-primary);
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0;
+        }
+
+        .article-link:hover {
+            color: #00c853;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: rgba(79, 172, 254, 0.1);
+            color: #4facfe;
+        }
+
+        .btn-approve {
+            background: rgba(67, 233, 123, 0.1);
+            color: #43e97b;
+        }
+
+        .btn-reject {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+        }
+
+        .btn-view:hover {
+            background: #4facfe;
+            color: #fff;
+        }
+
+        .btn-approve:hover {
+            background: #43e97b;
+            color: #000;
+        }
+
+        .btn-reject:hover {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .empty-state {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--color-text-muted);
+            padding: 40px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>绠＄悊鍛樺悗鍙?/h1>
+        <nav>
+            <ul>
+                <li><a href="admin-dashboard.html">浠〃鐩?/a></li>
+                <li><a href="admin-articles.html">鏂囩珷绠＄悊</a></li>
+                <li><a href="admin-users.html">鐢ㄦ埛绠＄悊</a></li>
+                <li><a href="admin-comments.html">璇勮绠＄悊</a></li>
+                <li><a href="admin-moderation.html" class="active">鍐呭瀹℃牳</a></li>
+                <li><a href="index.html">杩斿洖棣栭〉</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="admin-moderation">
+            <h1 class="page-title">鍐呭瀹℃牳</h1>
+            
+            <div class="moderation-tabs">
+                <button 
+                    class="tab-btn active" 
+                    data-tab="articles"
+                >
+                    寰呭鏍告枃绔?                    <span class="tab-count" id="articlesCount">0</span>
+                </button>
+                <button 
+                    class="tab-btn" 
+                    data-tab="comments"
+                >
+                    寰呭鏍歌瘎璁?                    <span class="tab-count" id="commentsCount">0</span>
+                </button>
+            </div>
+            
+            <!-- Articles Tab -->
+            <div id="articlesTab" class="tab-content active">
+                <div id="articlesLoading" class="loading">鍔犺浇涓?..</div>
+                
+                <div id="articlesContent" style="display: none;">
+                    <div id="articlesTableContainer" class="moderation-table-container">
+                        <table id="articlesTable" class="moderation-table" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>鏍囬</th>
+                                    <th>浣滆€?/th>
+                                    <th>鍒涘缓鏃堕棿</th>
+                                    <th>鎿嶄綔</th>
+                                </tr>
+                            </thead>
+                            <tbody id="articlesTableBody">
+                                <!-- 鏂囩珷鏁版嵁灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                            </tbody>
+                        </table>
+                        
+                        <div id="articlesEmptyState" class="empty-state">
+                            娌℃湁寰呭鏍哥殑鏂囩珷
+                        </div>
+                    </div>
+                    
+                    <div id="articlesPagination" class="pagination">
+                        <button 
+                            class="page-btn" 
+                            id="articlesPrevPageBtn"
+                            disabled
+                        >
+                            涓婁竴椤?                        </button>
+                        
+                        <span class="page-info" id="articlesPageInfo">
+                            绗?1 / 1 椤?                        </span>
+                        
+                        <button 
+                            class="page-btn" 
+                            id="articlesNextPageBtn"
+                            disabled
+                        >
+                            涓嬩竴椤?                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comments Tab -->
+            <div id="commentsTab" class="tab-content">
+                <div id="commentsLoading" class="loading">鍔犺浇涓?..</div>
+                
+                <div id="commentsContent" style="display: none;">
+                    <div id="commentsTableContainer" class="moderation-table-container">
+                        <table id="commentsTable" class="moderation-table" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>鍐呭</th>
+                                    <th>浣滆€?/th>
+                                    <th>鏂囩珷</th>
+                                    <th>鍒涘缓鏃堕棿</th>
+                                    <th>鎿嶄綔</th>
+                                </tr>
+                            </thead>
+                            <tbody id="commentsTableBody">
+                                <!-- 璇勮鏁版嵁灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                            </tbody>
+                        </table>
+                        
+                        <div id="commentsEmptyState" class="empty-state">
+                            娌℃湁寰呭鏍哥殑璇勮
+                        </div>
+                    </div>
+                    
+                    <div id="commentsPagination" class="pagination">
+                        <button 
+                            class="page-btn" 
+                            id="commentsPrevPageBtn"
+                            disabled
+                        >
+                            涓婁竴椤?                        </button>
+                        
+                        <span class="page-info" id="commentsPageInfo">
+                            绗?1 / 1 椤?                        </span>
+                        
+                        <button 
+                            class="page-btn" 
+                            id="commentsNextPageBtn"
+                            disabled
+                        >
+                            涓嬩竴椤?                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 妯℃嫙鏁版嵁
+        const mockPendingArticles = [
+            {
+                id: 6,
+                title: "FastAPI鍚庣寮€鍙戞渶浣冲疄璺?,
+                author: { username: "admin" },
+                created_at: "2023-03-15T14:30:00Z"
+            },
+            {
+                id: 7,
+                title: "HTML/CSS/JS鍒嗙鏋舵瀯璁捐",
+                author: { username: "testuser" },
+                created_at: "2023-03-16T09:15:00Z"
+            }
+        ];
+
+        const mockPendingComments = [
+            {
+                id: 6,
+                content: "鎴戞湁涓嶅悓鐨勭湅娉?..",
+                author: { username: "user4" },
+                article_id: 2,
+                created_at: "2023-03-17T16:10:00Z"
+            },
+            {
+                id: 7,
+                content: "杩欑瘒鏂囩珷鏈夊緢澶氶敊璇紒",
+                author: { username: "user6" },
+                article_id: 3,
+                created_at: "2023-03-18T10:45:00Z"
+            },
+            {
+                id: 8,
+                content: "鎰熻阿鍒嗕韩锛屽鍒颁簡寰堝锛?,
+                author: { username: "user7" },
+                article_id: 4,
+                created_at: "2023-03-19T13:20:00Z"
+            }
+        ];
+
+        // 鐘舵€佺鐞?        let activeTab = 'articles';
+        let pendingArticles = [];
+        let pendingComments = [];
+        let loading = {
+            articles: true,
+            comments: true
+        };
+        let currentPage = {
+            articles: 1,
+            comments: 1
+        };
+        let limit = 20;
+        let totalItems = {
+            articles: 0,
+            comments: 0
+        };
+        let totalPages = {
+            articles: 0,
+            comments: 0
+        };
+
+        // 椤甸潰鍔犺浇鏃跺垵濮嬪寲
+        document.addEventListener('DOMContentLoaded', function() {
+            // 缁戝畾鏍囩鍒囨崲浜嬩欢
+            bindTabEvents();
+            
+            // 缁戝畾鍒嗛〉浜嬩欢
+            bindPaginationEvents();
+            
+            // 鑾峰彇寰呭鏍告枃绔?            fetchPendingArticles();
+        });
+
+        // 缁戝畾鏍囩鍒囨崲浜嬩欢
+        function bindTabEvents() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tab = this.dataset.tab;
+                    switchTab(tab);
+                });
+            });
+        }
+
+        // 缁戝畾鍒嗛〉浜嬩欢
+        function bindPaginationEvents() {
+            // 鏂囩珷鍒嗛〉
+            document.getElementById('articlesPrevPageBtn').addEventListener('click', function() {
+                handlePageChange(currentPage.articles - 1, 'articles');
+            });
+            
+            document.getElementById('articlesNextPageBtn').addEventListener('click', function() {
+                handlePageChange(currentPage.articles + 1, 'articles');
+            });
+            
+            // 璇勮鍒嗛〉
+            document.getElementById('commentsPrevPageBtn').addEventListener('click', function() {
+                handlePageChange(currentPage.comments - 1, 'comments');
+            });
+            
+            document.getElementById('commentsNextPageBtn').addEventListener('click', function() {
+                handlePageChange(currentPage.comments + 1, 'comments');
+            });
+        }
+
+        // 鍒囨崲鏍囩
+        function switchTab(tab) {
+            if (activeTab === tab) return;
+            
+            activeTab = tab;
+            
+            // 鏇存柊鏍囩鎸夐挳鐘舵€?            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            
+            // 鏇存柊鏍囩鍐呭
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tab}Tab`).classList.add('active');
+            
+            // 濡傛灉鍒囨崲鍒拌瘎璁烘爣绛句笖璇勮鏁版嵁鏈姞杞斤紝鍒欏姞杞借瘎璁烘暟鎹?            if (tab === 'comments' && pendingComments.length === 0) {
+                fetchPendingComments();
+            }
+        }
+
+        // 鑾峰彇寰呭鏍告枃绔?        function fetchPendingArticles() {
+            loading.articles = true;
+            updateArticlesUI();
+            
+            // 妯℃嫙API璇锋眰寤惰繜
+            setTimeout(() => {
+                try {
+                    // 妯℃嫙API鍝嶅簲
+                    pendingArticles = mockPendingArticles;
+                    totalItems.articles = pendingArticles.length;
+                    totalPages.articles = Math.ceil(totalItems.articles / limit);
+                } catch (error) {
+                    console.error('Failed to fetch pending articles:', error);
+                } finally {
+                    loading.articles = false;
+                    updateArticlesUI();
+                }
+            }, 500);
+        }
+
+        // 鑾峰彇寰呭鏍歌瘎璁?        function fetchPendingComments() {
+            loading.comments = true;
+            updateCommentsUI();
+            
+            // 妯℃嫙API璇锋眰寤惰繜
+            setTimeout(() => {
+                try {
+                    // 妯℃嫙API鍝嶅簲
+                    pendingComments = mockPendingComments;
+                    totalItems.comments = pendingComments.length;
+                    totalPages.comments = Math.ceil(totalItems.comments / limit);
+                } catch (error) {
+                    console.error('Failed to fetch pending comments:', error);
+                } finally {
+                    loading.comments = false;
+                    updateCommentsUI();
+                }
+            }, 500);
+        }
+
+        // 鏇存柊鏂囩珷UI
+        function updateArticlesUI() {
+            const loadingElement = document.getElementById('articlesLoading');
+            const contentElement = document.getElementById('articlesContent');
+            const tableElement = document.getElementById('articlesTable');
+            const emptyStateElement = document.getElementById('articlesEmptyState');
+            
+            // 鏇存柊鏍囩璁℃暟
+            document.getElementById('articlesCount').textContent = totalItems.articles;
+            
+            if (loading.articles) {
+                loadingElement.style.display = 'block';
+                contentElement.style.display = 'none';
+            } else {
+                loadingElement.style.display = 'none';
+                contentElement.style.display = 'block';
+                
+                if (pendingArticles.length > 0) {
+                    tableElement.style.display = 'table';
+                    emptyStateElement.style.display = 'none';
+                    renderArticlesTable();
+                    updateArticlesPagination();
+                } else {
+                    tableElement.style.display = 'none';
+                    emptyStateElement.style.display = 'block';
+                }
+            }
+        }
+
+        // 鏇存柊璇勮UI
+        function updateCommentsUI() {
+            const loadingElement = document.getElementById('commentsLoading');
+            const contentElement = document.getElementById('commentsContent');
+            const tableElement = document.getElementById('commentsTable');
+            const emptyStateElement = document.getElementById('commentsEmptyState');
+            
+            // 鏇存柊鏍囩璁℃暟
+            document.getElementById('commentsCount').textContent = totalItems.comments;
+            
+            if (loading.comments) {
+                loadingElement.style.display = 'block';
+                contentElement.style.display = 'none';
+            } else {
+                loadingElement.style.display = 'none';
+                contentElement.style.display = 'block';
+                
+                if (pendingComments.length > 0) {
+                    tableElement.style.display = 'table';
+                    emptyStateElement.style.display = 'none';
+                    renderCommentsTable();
+                    updateCommentsPagination();
+                } else {
+                    tableElement.style.display = 'none';
+                    emptyStateElement.style.display = 'block';
+                }
+            }
+        }
+
+        // 娓叉煋鏂囩珷琛ㄦ牸
+        function renderArticlesTable() {
+            const tableBody = document.getElementById('articlesTableBody');
+            
+            // 娓呯┖琛ㄦ牸
+            tableBody.innerHTML = '';
+            
+            // 璁＄畻褰撳墠椤电殑鏂囩珷
+            const startIndex = (currentPage.articles - 1) * limit;
+            const endIndex = startIndex + limit;
+            const currentArticles = pendingArticles.slice(startIndex, endIndex);
+            
+            // 娓叉煋鏂囩珷琛?            currentArticles.forEach(article => {
+                const row = document.createElement('tr');
+                
+                const createdAt = new Date(article.created_at).toLocaleString();
+                
+                row.innerHTML = `
+                    <td>${article.id}</td>
+                    <td class="article-title">${article.title}</td>
+                    <td>${article.author.username}</td>
+                    <td>${createdAt}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-view" onclick="handleViewArticle(${article.id})">鏌ョ湅</button>
+                            <button class="btn btn-approve" onclick="handleApproveArticle(${article.id})">鎵瑰噯</button>
+                            <button class="btn btn-reject" onclick="handleRejectArticle(${article.id})">鎷掔粷</button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 娓叉煋璇勮琛ㄦ牸
+        function renderCommentsTable() {
+            const tableBody = document.getElementById('commentsTableBody');
+            
+            // 娓呯┖琛ㄦ牸
+            tableBody.innerHTML = '';
+            
+            // 璁＄畻褰撳墠椤电殑璇勮
+            const startIndex = (currentPage.comments - 1) * limit;
+            const endIndex = startIndex + limit;
+            const currentComments = pendingComments.slice(startIndex, endIndex);
+            
+            // 娓叉煋璇勮琛?            currentComments.forEach(comment => {
+                const row = document.createElement('tr');
+                
+                const createdAt = new Date(comment.created_at).toLocaleString();
+                
+                row.innerHTML = `
+                    <td>${comment.id}</td>
+                    <td class="comment-content">${comment.content}</td>
+                    <td>${comment.author.username}</td>
+                    <td>
+                        <button class="article-link" onclick="handleViewArticle(${comment.article_id})">
+                            鏌ョ湅鏂囩珷
+                        </button>
+                    </td>
+                    <td>${createdAt}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-approve" onclick="handleApproveComment(${comment.id})">鎵瑰噯</button>
+                            <button class="btn btn-reject" onclick="handleRejectComment(${comment.id})">鎷掔粷</button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 鏇存柊鏂囩珷鍒嗛〉
+        function updateArticlesPagination() {
+            const prevPageBtn = document.getElementById('articlesPrevPageBtn');
+            const nextPageBtn = document.getElementById('articlesNextPageBtn');
+            const pageInfo = document.getElementById('articlesPageInfo');
+            
+            pageInfo.textContent = `绗?${currentPage.articles} / ${totalPages.articles} 椤礰;
+            prevPageBtn.disabled = currentPage.articles === 1;
+            nextPageBtn.disabled = currentPage.articles === totalPages.articles;
+        }
+
+        // 鏇存柊璇勮鍒嗛〉
+        function updateCommentsPagination() {
+            const prevPageBtn = document.getElementById('commentsPrevPageBtn');
+            const nextPageBtn = document.getElementById('commentsNextPageBtn');
+            const pageInfo = document.getElementById('commentsPageInfo');
+            
+            pageInfo.textContent = `绗?${currentPage.comments} / ${totalPages.comments} 椤礰;
+            prevPageBtn.disabled = currentPage.comments === 1;
+            nextPageBtn.disabled = currentPage.comments === totalPages.comments;
+        }
+
+        // 澶勭悊椤电爜鍙樺寲
+        function handlePageChange(page, type) {
+            if (page < 1 || page > totalPages[type]) return;
+            currentPage[type] = page;
+            
+            if (type === 'articles') {
+                fetchPendingArticles();
+            } else {
+                fetchPendingComments();
+            }
+        }
+
+        // 澶勭悊鏌ョ湅鏂囩珷
+        function handleViewArticle(articleId) {
+            window.location.href = `article-detail.html?id=${articleId}`;
+        }
+
+        // 澶勭悊鎵瑰噯鏂囩珷
+        function handleApproveArticle(articleId) {
+            // 妯℃嫙API璇锋眰
+            setTimeout(() => {
+                // 浠庢ā鎷熸暟鎹腑绉婚櫎鏂囩珷
+                mockPendingArticles = mockPendingArticles.filter(article => article.id !== articleId);
+                // 閲嶆柊鑾峰彇寰呭鏍告枃绔?                fetchPendingArticles();
+            }, 300);
+        }
+
+        // 澶勭悊鎷掔粷鏂囩珷
+        function handleRejectArticle(articleId) {
+            // 妯℃嫙API璇锋眰
+            setTimeout(() => {
+                // 浠庢ā鎷熸暟鎹腑绉婚櫎鏂囩珷
+                mockPendingArticles = mockPendingArticles.filter(article => article.id !== articleId);
+                // 閲嶆柊鑾峰彇寰呭鏍告枃绔?                fetchPendingArticles();
+            }, 300);
+        }
+
+        // 澶勭悊鎵瑰噯璇勮
+        function handleApproveComment(commentId) {
+            // 妯℃嫙API璇锋眰
+            setTimeout(() => {
+                // 浠庢ā鎷熸暟鎹腑绉婚櫎璇勮
+                mockPendingComments = mockPendingComments.filter(comment => comment.id !== commentId);
+                // 閲嶆柊鑾峰彇寰呭鏍歌瘎璁?                fetchPendingComments();
+            }, 300);
+        }
+
+        // 澶勭悊鎷掔粷璇勮
+        function handleRejectComment(commentId) {
+            // 妯℃嫙API璇锋眰
+            setTimeout(() => {
+                // 浠庢ā鎷熸暟鎹腑绉婚櫎璇勮
+                mockPendingComments = mockPendingComments.filter(comment => comment.id !== commentId);
+                // 閲嶆柊鑾峰彇寰呭鏍歌瘎璁?                fetchPendingComments();
+            }, 300);
+        }
+    </script>
+</body>
+</html>

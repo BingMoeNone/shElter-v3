@@ -1,4 +1,4 @@
-# Implementation Plan: [FEATURE]
+﻿# Implementation Plan: [FEATURE]
 
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
@@ -46,12 +46,12 @@
 
 ```text
 specs/[###-feature]/
-├── plan.md              # This file (/speckit.plan command output)
-├── research.md          # Phase 0 output (/speckit.plan command)
-├── data-model.md        # Phase 1 output (/speckit.plan command)
-├── quickstart.md        # Phase 1 output (/speckit.plan command)
-├── contracts/           # Phase 1 output (/speckit.plan command)
-└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+鈹溾攢鈹€ plan.md              # This file (/speckit.plan command output)
+鈹溾攢鈹€ research.md          # Phase 0 output (/speckit.plan command)
+鈹溾攢鈹€ data-model.md        # Phase 1 output (/speckit.plan command)
+鈹溾攢鈹€ quickstart.md        # Phase 1 output (/speckit.plan command)
+鈹溾攢鈹€ contracts/           # Phase 1 output (/speckit.plan command)
+鈹斺攢鈹€ tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
 ```
 
 ### Source Code (repository root)
@@ -65,37 +65,37 @@ specs/[###-feature]/
 ```text
 # [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+鈹溾攢鈹€ models/
+鈹溾攢鈹€ services/
+鈹溾攢鈹€ cli/
+鈹斺攢鈹€ lib/
 
 tests/
-├── contract/
-├── integration/
-└── unit/
+鈹溾攢鈹€ contract/
+鈹溾攢鈹€ integration/
+鈹斺攢鈹€ unit/
 
 # [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
 backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
+鈹溾攢鈹€ src/
+鈹?  鈹溾攢鈹€ models/
+鈹?  鈹溾攢鈹€ services/
+鈹?  鈹斺攢鈹€ api/
+鈹斺攢鈹€ tests/
 
 frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
+鈹溾攢鈹€ src/
+鈹?  鈹溾攢鈹€ components/
+鈹?  鈹溾攢鈹€ pages/
+鈹?  鈹斺攢鈹€ services/
+鈹斺攢鈹€ tests/
 
 # [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
 api/
-└── [same as backend above]
+鈹斺攢鈹€ [same as backend above]
 
 ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+鈹斺攢鈹€ [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real

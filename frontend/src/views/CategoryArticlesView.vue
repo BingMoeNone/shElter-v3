@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { articlesApi } from '@/services/api'
@@ -41,8 +41,8 @@ async function fetchData() {
     articles.value = articlesResponse.data.articles || []
   } catch (err: any) {
     console.error('Failed to fetch data:', err)
-    error.value = err.response?.data?.message || '加载失败'
-    toast.error('无法加载分类文章')
+    error.value = err.response?.data?.message || '鍔犺浇澶辫触'
+    toast.error('鏃犳硶鍔犺浇鍒嗙被鏂囩珷')
   } finally {
     loading.value = false
   }
@@ -53,26 +53,26 @@ async function fetchData() {
   <div class="category-articles-page">
     <div v-if="loading" class="loading">
       <div class="loading-spinner"></div>
-      <p>加载中...</p>
+      <p>鍔犺浇涓?..</p>
     </div>
     
     <div v-else-if="error" class="error-state">
-      <span class="error-icon">⚠️</span>
+      <span class="error-icon">鈿狅笍</span>
       <p>{{ error }}</p>
-      <button @click="fetchData" class="retry-btn">重试</button>
+      <button @click="fetchData" class="retry-btn">閲嶈瘯</button>
     </div>
     
     <template v-else>
       <header class="page-header">
-        <h1>{{ category?.name || '分类' }}</h1>
+        <h1>{{ category?.name || '鍒嗙被' }}</h1>
         <p v-if="category?.description">{{ category.description }}</p>
-        <p v-else class="no-description">暂无描述</p>
+        <p v-else class="no-description">鏆傛棤鎻忚堪</p>
       </header>
       
       <div v-if="articles.length === 0" class="empty-state">
-        <span class="empty-icon">📝</span>
-        <p>该分类下暂无文章</p>
-        <RouterLink to="/articles/create" class="create-link">创建第一篇文章</RouterLink>
+        <span class="empty-icon">馃摑</span>
+        <p>璇ュ垎绫讳笅鏆傛棤鏂囩珷</p>
+        <RouterLink to="/articles/create" class="create-link">鍒涘缓绗竴绡囨枃绔?/RouterLink>
       </div>
       
       <div v-else class="articles-list">

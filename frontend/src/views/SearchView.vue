@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { searchApi } from '@/services/api'
@@ -40,8 +40,8 @@ async function performSearch() {
     router.push({ query: { q: searchQuery.value } })
   } catch (err: any) {
     console.error('Search failed:', err)
-    error.value = err.response?.data?.message || '搜索失败'
-    toast.error('搜索失败，请稍后重试')
+    error.value = err.response?.data?.message || '鎼滅储澶辫触'
+    toast.error('鎼滅储澶辫触锛岃绋嶅悗閲嶈瘯')
   } finally {
     loading.value = false
   }
@@ -59,43 +59,42 @@ function clearSearch() {
 
 <template>
   <div class="search-page">
-    <h1>搜索文章</h1>
+    <h1>鎼滅储鏂囩珷</h1>
     
     <div class="search-form">
       <input
         v-model="searchQuery"
         type="search"
-        placeholder="输入关键词搜索..."
+        placeholder="杈撳叆鍏抽敭璇嶆悳绱?.."
         @keyup.enter="performSearch"
       />
       <button @click="performSearch" :disabled="loading || !searchQuery.trim()">
-        {{ loading ? '搜索中...' : '搜索' }}
+        {{ loading ? '鎼滅储涓?..' : '鎼滅储' }}
       </button>
       <button v-if="hasSearched" @click="clearSearch" class="btn-clear">
-        清除
+        娓呴櫎
       </button>
     </div>
     
     <div v-if="loading" class="loading">
       <div class="loading-spinner"></div>
-      <p>正在搜索...</p>
+      <p>姝ｅ湪鎼滅储...</p>
     </div>
     
     <div v-else-if="error" class="error-state">
-      <span class="error-icon">⚠️</span>
+      <span class="error-icon">鈿狅笍</span>
       <p>{{ error }}</p>
-      <button @click="performSearch" class="retry-btn">重试</button>
+      <button @click="performSearch" class="retry-btn">閲嶈瘯</button>
     </div>
     
     <template v-else-if="hasSearched">
       <div v-if="articles.length > 0" class="results-info">
-        找到 {{ pagination?.totalItems || articles.length }} 条与 "{{ route.query.q }}" 相关的结果
-      </div>
+        鎵惧埌 {{ pagination?.totalItems || articles.length }} 鏉′笌 "{{ route.query.q }}" 鐩稿叧鐨勭粨鏋?      </div>
       
       <div v-else class="no-results">
-        <span class="empty-icon">🔍</span>
-        <p>未找到与 "{{ route.query.q }}" 相关的文章</p>
-        <p class="suggestion">尝试使用不同的关键词</p>
+        <span class="empty-icon">馃攳</span>
+        <p>鏈壘鍒颁笌 "{{ route.query.q }}" 鐩稿叧鐨勬枃绔?/p>
+        <p class="suggestion">灏濊瘯浣跨敤涓嶅悓鐨勫叧閿瘝</p>
       </div>
       
       <div v-if="articles.length > 0" class="results-list">
@@ -108,8 +107,8 @@ function clearSearch() {
     </template>
     
     <div v-else class="search-placeholder">
-      <span class="placeholder-icon">🔍</span>
-      <p>输入关键词开始搜索</p>
+      <span class="placeholder-icon">馃攳</span>
+      <p>杈撳叆鍏抽敭璇嶅紑濮嬫悳绱?/p>
     </div>
   </div>
 </template>

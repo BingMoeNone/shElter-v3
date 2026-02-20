@@ -1,4 +1,4 @@
-# Quickstart Guide: Wiki Platform
+﻿# Quickstart Guide: Wiki Platform
 
 ## Prerequisites
 
@@ -140,25 +140,25 @@ npm run format
 
 ```
 backend/
-├── src/
-│   ├── models/          # Pydantic models
-│   ├── schemas/         # API schemas
-│   ├── services/        # Business logic
-│   ├── api/             # API routes
-│   ├── database/        # DB configuration
-│   └── main.py          # Application entry point
-├── tests/               # Test files
-└── requirements.txt     # Python dependencies
+鈹溾攢鈹€ src/
+鈹?  鈹溾攢鈹€ models/          # Pydantic models
+鈹?  鈹溾攢鈹€ schemas/         # API schemas
+鈹?  鈹溾攢鈹€ services/        # Business logic
+鈹?  鈹溾攢鈹€ api/             # API routes
+鈹?  鈹溾攢鈹€ database/        # DB configuration
+鈹?  鈹斺攢鈹€ main.py          # Application entry point
+鈹溾攢鈹€ tests/               # Test files
+鈹斺攢鈹€ requirements.txt     # Python dependencies
 
 frontend/
-├── src/
-│   ├── components/      # Vue components
-│   ├── views/           # Page components
-│   ├── composables/     # Vue composition functions
-│   ├── services/        # API service wrappers
-│   └── stores/          # Pinia stores
-├── tests/               # Test files
-└── package.json         # Node.js dependencies
+鈹溾攢鈹€ src/
+鈹?  鈹溾攢鈹€ components/      # Vue components
+鈹?  鈹溾攢鈹€ views/           # Page components
+鈹?  鈹溾攢鈹€ composables/     # Vue composition functions
+鈹?  鈹溾攢鈹€ services/        # API service wrappers
+鈹?  鈹斺攢鈹€ stores/          # Pinia stores
+鈹溾攢鈹€ tests/               # Test files
+鈹斺攢鈹€ package.json         # Node.js dependencies
 ```
 
 ## Common Tasks

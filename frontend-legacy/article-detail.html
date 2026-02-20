@@ -1,0 +1,608 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki Platform - Article Detail</title>
+    <style>
+        /* Global Styles */
+        :root {
+            --color-primary: #00ff88;
+            --color-secondary: #00d4ff;
+            --color-accent: #ff6b6b;
+            --color-text: #ffffff;
+            --color-text-muted: #aaaaaa;
+            --color-background: #0a0a0a;
+            --color-surface: #1a1a1a;
+            --color-border: #333333;
+            --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-family-heading: 'Arial', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-primary);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-logo {
+            color: var(--color-primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--color-text);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--color-primary);
+            text-shadow: 0 0 5px var(--color-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid var(--color-primary);
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        /* Article Detail Styles */
+        .article-detail {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .article-header {
+            margin-bottom: 32px;
+        }
+
+        .article-title {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            color: var(--color-primary);
+            text-shadow: 0 0 10px var(--color-primary);
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .author-name {
+            color: var(--color-text);
+            text-decoration: none;
+        }
+
+        .author-name:hover {
+            color: var(--color-primary);
+        }
+
+        .article-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .tag:hover {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .article-content {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 32px;
+            line-height: 1.8;
+        }
+
+        .article-content h2 {
+            color: var(--color-secondary);
+            margin: 24px 0 16px;
+        }
+
+        .article-content h3 {
+            color: var(--color-secondary);
+            margin: 20px 0 12px;
+        }
+
+        .article-content p {
+            margin-bottom: 16px;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin: 16px 0 16px 24px;
+        }
+
+        .article-content li {
+            margin-bottom: 8px;
+        }
+
+        .article-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--color-primary);
+            color: var(--color-primary);
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin-top: 48px;
+        }
+
+        .comments-title {
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            color: var(--color-primary);
+        }
+
+        .comment-form {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--color-border);
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--color-text);
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: var(--font-family-base);
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .comment {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .comment-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .comment-author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comment-author-name {
+            font-weight: 500;
+            color: var(--color-text);
+            text-decoration: none;
+        }
+
+        .comment-author-name:hover {
+            color: var(--color-primary);
+        }
+
+        .comment-date {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .comment-content {
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--color-text-muted);
+            border: 1px dashed var(--color-text-muted);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Wiki Platform</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="articles.html" class="nav-link">Articles</a>
+                <a href="categories.html" class="nav-link">Categories</a>
+                <a href="metro.html" class="nav-link">Metro</a>
+                <a href="music.html" class="nav-link">Music</a>
+            </div>
+            <div class="nav-actions">
+                <a href="login.html" class="btn">Login</a>
+                <a href="register.html" class="btn">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article Detail Content -->
+    <div class="article-detail">
+        <div id="loading" class="loading">
+            Loading article...
+        </div>
+        
+        <div id="articleContent" style="display: none;">
+            <!-- Article header -->
+            <div class="article-header">
+                <h1 id="articleTitle" class="article-title"></h1>
+                <div class="article-meta">
+                    <div class="author-info">
+                        <div class="author-avatar" id="authorAvatar"></div>
+                        <span>By <a href="#" id="authorLink" class="author-name"></a></span>
+                    </div>
+                    <span id="articleDate"></span>
+                    <span id="articleReadTime"></span>
+                </div>
+                <div id="articleTags" class="article-tags"></div>
+            </div>
+            
+            <!-- Article actions -->
+            <div class="article-actions">
+                <a href="#" class="action-btn">
+                    <span>馃摑</span> Edit
+                </a>
+                <a href="#" class="action-btn">
+                    <span>馃挰</span> Comment
+                </a>
+                <a href="#" class="action-btn">
+                    <span>鉂わ笍</span> Like
+                </a>
+                <a href="#" class="action-btn">
+                    <span>馃敆</span> Share
+                </a>
+            </div>
+            
+            <!-- Article content -->
+            <div id="articleBody" class="article-content"></div>
+            
+            <!-- Comments section -->
+            <div class="comments-section">
+                <h2 class="comments-title">Comments</h2>
+                
+                <!-- Comment form -->
+                <form class="comment-form">
+                    <div class="form-group">
+                        <label for="commentContent">Leave a comment</label>
+                        <textarea id="commentContent" placeholder="Write your comment here..."></textarea>
+                    </div>
+                    <button type="submit" class="action-btn">Post Comment</button>
+                </form>
+                
+                <!-- Comments list -->
+                <div id="commentsList" class="comment-list">
+                    <!-- Comments will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loadingElement = document.getElementById('loading');
+        const articleContentElement = document.getElementById('articleContent');
+        const articleTitleElement = document.getElementById('articleTitle');
+        const authorAvatarElement = document.getElementById('authorAvatar');
+        const authorLinkElement = document.getElementById('authorLink');
+        const articleDateElement = document.getElementById('articleDate');
+        const articleReadTimeElement = document.getElementById('articleReadTime');
+        const articleTagsElement = document.getElementById('articleTags');
+        const articleBodyElement = document.getElementById('articleBody');
+        const commentsListElement = document.getElementById('commentsList');
+
+        // Get article ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('id') || '1';
+
+        // Mock article data
+        const mockArticles = {
+            "1": {
+                id: "1",
+                title: "Getting Started with Wiki Platform",
+                content: `
+                    <p>Welcome to our wiki platform! This guide will help you get started with creating and sharing knowledge.</p>
+                    
+                    <h2>What is a Wiki Platform?</h2>
+                    <p>A wiki platform is a collaborative space where users can create, edit, and share articles on various topics. It's a powerful tool for knowledge management and community collaboration.</p>
+                    
+                    <h2>Key Features</h2>
+                    <ul>
+                        <li>Easy article creation and editing</li>
+                        <li>Rich text formatting</li>
+                        <li>Version control for articles</li>
+                        <li>User contribution tracking</li>
+                        <li>Content moderation tools</li>
+                        <li>Search functionality</li>
+                    </ul>
+                    
+                    <h2>How to Get Started</h2>
+                    <ol>
+                        <li>Create an account or log in</li>
+                        <li>Explore existing articles</li>
+                        <li>Create your first article</li>
+                        <li>Share your knowledge with the community</li>
+                    </ol>
+                    
+                    <h2>Tips for Writing Great Articles</h2>
+                    <p>When creating articles, keep these tips in mind:</p>
+                    <ul>
+                        <li>Use clear, concise language</li>
+                        <li>Organize content with headings and subheadings</li>
+                        <li>Include relevant images and media</li>
+                        <li>Cite your sources</li>
+                        <li>Keep articles focused on a single topic</li>
+                    </ul>
+                    
+                    <p>We're excited to have you join our community! Start exploring and contributing today.</p>
+                `,
+                author: { username: "admin", id: "1" },
+                created_at: "2026-02-19T10:00:00Z",
+                categories: [{ name: "Guides", slug: "guides" }],
+                tags: [{ name: "getting-started", slug: "getting-started" }, { name: "wiki", slug: "wiki" }]
+            },
+            "2": {
+                id: "2",
+                title: "Understanding the Metro Map Feature",
+                content: `
+                    <p>Our platform features an interactive metro map that allows users to navigate through different stations and explore content based on their interests.</p>
+                    
+                    <h2>How It Works</h2>
+                    <p>The metro map is organized into lines and stations, where each station represents a different topic or category. Users can click on stations to view related articles and content.</p>
+                    
+                    <h2>Navigating the Map</h2>
+                    <ul>
+                        <li>Click on a station to view content</li>
+                        <li>Follow lines to explore related topics</li>
+                        <li>Use the search function to find specific stations</li>
+                    </ul>
+                `,
+                author: { username: "moderator", id: "2" },
+                created_at: "2026-02-18T15:30:00Z",
+                categories: [{ name: "Features", slug: "features" }],
+                tags: [{ name: "metro", slug: "metro" }, { name: "map", slug: "map" }]
+            }
+        };
+
+        // Mock comments data
+        const mockComments = [
+            {
+                id: "1",
+                author: { username: "user1", id: "3" },
+                content: "Great article! Very helpful for getting started.",
+                created_at: "2026-02-19T14:30:00Z"
+            },
+            {
+                id: "2",
+                author: { username: "user2", id: "4" },
+                content: "I've been looking for something like this. Thanks for sharing!",
+                created_at: "2026-02-19T16:45:00Z"
+            }
+        ];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchArticle();
+        });
+
+        // Fetch article data
+        function fetchArticle() {
+            loadingElement.style.display = 'block';
+            articleContentElement.style.display = 'none';
+
+            // Simulate API call
+            setTimeout(() => {
+                const article = mockArticles[articleId] || mockArticles["1"];
+                displayArticle(article);
+            }, 800);
+        }
+
+        // Display article
+        function displayArticle(article) {
+            // Set title
+            articleTitleElement.textContent = article.title;
+            
+            // Set author info
+            authorAvatarElement.textContent = article.author.username.charAt(0).toUpperCase();
+            authorLinkElement.textContent = article.author.username;
+            authorLinkElement.href = `user-profile.html?id=${article.author.id}`;
+            
+            // Set date and read time
+            const formattedDate = new Date(article.created_at).toLocaleDateString();
+            articleDateElement.textContent = formattedDate;
+            articleReadTimeElement.textContent = '5 min read';
+            
+            // Set tags
+            articleTagsElement.innerHTML = article.tags.map(tag => 
+                `<a href="tag-articles.html?slug=${tag.slug}" class="tag">${tag.name}</a>`
+            ).join('');
+            
+            // Set content
+            articleBodyElement.innerHTML = article.content;
+            
+            // Set comments
+            displayComments();
+            
+            // Show article content
+            loadingElement.style.display = 'none';
+            articleContentElement.style.display = 'block';
+        }
+
+        // Display comments
+        function displayComments() {
+            // Clear existing comments
+            commentsListElement.innerHTML = '';
+            
+            // Create comment elements
+            mockComments.forEach(comment => {
+                const commentElement = createCommentElement(comment);
+                commentsListElement.appendChild(commentElement);
+            });
+        }
+
+        // Create comment element
+        function createCommentElement(comment) {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment';
+            
+            const formattedDate = new Date(comment.created_at).toLocaleDateString();
+            
+            commentDiv.innerHTML = `
+                <div class="comment-header">
+                    <div class="comment-author">
+                        <div class="author-avatar" style="width: 32px; height: 32px; font-size: 0.9rem;">${comment.author.username.charAt(0).toUpperCase()}</div>
+                        <div class="comment-author-info">
+                            <a href="user-profile.html?id=${comment.author.id}" class="author-name">${comment.author.username}</a>
+                            <div class="comment-date">${formattedDate}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-content">${comment.content}</div>
+            `;
+            
+            return commentDiv;
+        }
+    </script>
+</body>
+</html>

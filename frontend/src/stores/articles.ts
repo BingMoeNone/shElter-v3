@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Article, Pagination } from '@/types'
 import { articlesApi } from '@/services/api'
@@ -22,7 +22,7 @@ export const useArticlesStore = defineStore('articles', () => {
     } catch (err: any) {
       error.value = 'Failed to fetch articles'
       console.error(err)
-      useToastStore().error(err.response?.data?.message || '获取文章列表失败')
+      useToastStore().error(err.response?.data?.message || '鑾峰彇鏂囩珷鍒楄〃澶辫触')
     } finally {
       loading.value = false
     }
@@ -38,7 +38,7 @@ export const useArticlesStore = defineStore('articles', () => {
     } catch (err: any) {
       error.value = 'Failed to fetch article'
       console.error(err)
-      useToastStore().error(err.response?.data?.message || '获取文章失败')
+      useToastStore().error(err.response?.data?.message || '鑾峰彇鏂囩珷澶辫触')
     } finally {
       loading.value = false
     }
@@ -52,11 +52,11 @@ export const useArticlesStore = defineStore('articles', () => {
       const response = await articlesApi.create(data)
       const article = response.data
       articles.value.unshift(article)
-      useToastStore().success('文章创建成功！')
+      useToastStore().success('鏂囩珷鍒涘缓鎴愬姛锛?)
       return article
     } catch (err: any) {
       error.value = 'Failed to create article'
-      useToastStore().error(err.response?.data?.message || '创建文章失败')
+      useToastStore().error(err.response?.data?.message || '鍒涘缓鏂囩珷澶辫触')
       throw err
     } finally {
       loading.value = false
@@ -80,11 +80,11 @@ export const useArticlesStore = defineStore('articles', () => {
         currentArticle.value = article
       }
 
-      useToastStore().success('文章更新成功！')
+      useToastStore().success('鏂囩珷鏇存柊鎴愬姛锛?)
       return article
     } catch (err: any) {
       error.value = 'Failed to update article'
-      useToastStore().error(err.response?.data?.message || '更新文章失败')
+      useToastStore().error(err.response?.data?.message || '鏇存柊鏂囩珷澶辫触')
       throw err
     } finally {
       loading.value = false
@@ -108,11 +108,11 @@ export const useArticlesStore = defineStore('articles', () => {
         currentArticle.value = article
       }
 
-      useToastStore().success('文章发布成功！')
+      useToastStore().success('鏂囩珷鍙戝竷鎴愬姛锛?)
       return article
     } catch (err: any) {
       error.value = 'Failed to publish article'
-      useToastStore().error(err.response?.data?.message || '发布文章失败')
+      useToastStore().error(err.response?.data?.message || '鍙戝竷鏂囩珷澶辫触')
       throw err
     } finally {
       loading.value = false
@@ -131,10 +131,10 @@ export const useArticlesStore = defineStore('articles', () => {
         currentArticle.value = null
       }
 
-      useToastStore().success('文章删除成功！')
+      useToastStore().success('鏂囩珷鍒犻櫎鎴愬姛锛?)
     } catch (err: any) {
       error.value = 'Failed to delete article'
-      useToastStore().error(err.response?.data?.message || '删除文章失败')
+      useToastStore().error(err.response?.data?.message || '鍒犻櫎鏂囩珷澶辫触')
       throw err
     } finally {
       loading.value = false

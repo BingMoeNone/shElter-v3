@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+﻿from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, desc
 from typing import Optional
@@ -70,7 +70,7 @@ async def get_user(user_id: str, db: Session = Depends(get_db), current_user: Op
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
-    # 计算贡献统计
+    # 璁＄畻璐＄尞缁熻
     total_articles = db.query(func.count(Article.id)).filter(Article.author_id == user.id).scalar() or 0
     total_comments = db.query(func.count(Comment.id)).filter(Comment.author_id == user.id).scalar() or 0
     total_revisions = db.query(func.count(Revision.id)).filter(Revision.author_id == user.id).scalar() or 0
@@ -78,7 +78,7 @@ async def get_user(user_id: str, db: Session = Depends(get_db), current_user: Op
         (Connection.follower_id == user.id) | (Connection.followed_id == user.id)
     ).scalar() or 0
     
-    # 最近30天的贡献
+    # 鏈€杩?0澶╃殑璐＄尞
     thirty_days_ago = datetime.utcnow() - timedelta(days=30)
     recent_articles = db.query(func.count(Article.id)).filter(
         Article.author_id == user.id,
@@ -90,7 +90,7 @@ async def get_user(user_id: str, db: Session = Depends(get_db), current_user: Op
         Comment.created_at >= thirty_days_ago
     ).scalar() or 0
     
-    # 构建统计数据
+    # 鏋勫缓缁熻鏁版嵁
     stats = UserContributionStats(
         total_articles=total_articles,
         total_comments=total_comments,
@@ -101,15 +101,14 @@ async def get_user(user_id: str, db: Session = Depends(get_db), current_user: Op
         recent_comments=recent_comments
     )
     
-    # 构建响应
+    # 鏋勫缓鍝嶅簲
     profile_data = {
         **user.__dict__,
         "stats": stats,
         "is_following": False
     }
     
-    # 检查当前用户是否关注了该用户
-    if current_user and str(current_user.id) != user_id:
+    # 妫€鏌ュ綋鍓嶇敤鎴锋槸鍚﹀叧娉ㄤ簡璇ョ敤鎴?    if current_user and str(current_user.id) != user_id:
         is_following = db.query(Connection).filter(
             Connection.follower_id == current_user.id,
             Connection.followed_id == user.id
@@ -121,12 +120,12 @@ async def get_user(user_id: str, db: Session = Depends(get_db), current_user: Op
 
 @router.get("/{user_id}/stats", response_model=UserContributionStats)
 async def get_user_stats(user_id: str, db: Session = Depends(get_db)):
-    """获取用户贡献统计"""
+    """鑾峰彇鐢ㄦ埛璐＄尞缁熻"""
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
-    # 计算贡献统计
+    # 璁＄畻璐＄尞缁熻
     total_articles = db.query(func.count(Article.id)).filter(Article.author_id == user.id).scalar() or 0
     total_comments = db.query(func.count(Comment.id)).filter(Comment.author_id == user.id).scalar() or 0
     total_revisions = db.query(func.count(Revision.id)).filter(Revision.author_id == user.id).scalar() or 0
@@ -134,7 +133,7 @@ async def get_user_stats(user_id: str, db: Session = Depends(get_db)):
         (Connection.follower_id == user.id) | (Connection.followed_id == user.id)
     ).scalar() or 0
     
-    # 最近30天的贡献
+    # 鏈€杩?0澶╃殑璐＄尞
     thirty_days_ago = datetime.utcnow() - timedelta(days=30)
     recent_articles = db.query(func.count(Article.id)).filter(
         Article.author_id == user.id,

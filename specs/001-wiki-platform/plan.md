@@ -1,4 +1,4 @@
-# Implementation Plan: Wiki Platform
+﻿# Implementation Plan: Wiki Platform
 
 **Branch**: `001-wiki-platform` | **Date**: 2026-02-17 | **Spec**: [link](./spec.md)
 **Input**: Feature specification from `/specs/001-wiki-platform/spec.md`
@@ -32,23 +32,8 @@ Implementation of a wiki platform with Vue 3 + TypeScript frontend, FastAPI back
 
 ### Authentication Flow
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Client    │────▶│   FastAPI   │────▶│  Database   │
-│  (Vue 3)    │◀────│  Backend    │◀────│(PostgreSQL) │
-└─────────────┘     └─────────────┘     └─────────────┘
-       │                   │                    │
-       │  1. Login         │                    │
-       │──────────────────▶│                    │
-       │                   │  2. Validate      │
-       │                   │──────────────────▶│
-       │                   │◀──────────────────│
-       │                   │                    │
-       │  3. JWT (RS256)   │                    │
-       │◀──────────────────│                    │
-       │                   │                    │
-       │  4. Access API    │                    │
-       │──────────────────▶│                    │
-```
+鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?    鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?    鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?鈹?  Client    鈹傗攢鈹€鈹€鈹€鈻垛攤   FastAPI   鈹傗攢鈹€鈹€鈹€鈻垛攤  Database   鈹?鈹? (Vue 3)    鈹傗梹鈹€鈹€鈹€鈹€鈹? Backend    鈹傗梹鈹€鈹€鈹€鈹€鈹?PostgreSQL) 鈹?鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?    鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?    鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?       鈹?                  鈹?                   鈹?       鈹? 1. Login         鈹?                   鈹?       鈹傗攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈻垛攤                    鈹?       鈹?                  鈹? 2. Validate      鈹?       鈹?                  鈹傗攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈻垛攤
+       鈹?                  鈹傗梹鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?       鈹?                  鈹?                   鈹?       鈹? 3. JWT (RS256)   鈹?                   鈹?       鈹傗梹鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?                   鈹?       鈹?                  鈹?                   鈹?       鈹? 4. Access API    鈹?                   鈹?       鈹傗攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈻垛攤                    鈹?```
 
 ### Rate Limiting Strategy
 | Endpoint | Limit | Purpose |
@@ -91,54 +76,52 @@ All responses include:
 
 ```
 specs/001-wiki-platform/
-├── plan.md              # This file
-├── research.md          # Phase 0 output
-├── data-model.md        # Phase 1 output
-├── quickstart.md        # Phase 1 output
-├── contracts/           # Phase 1 output
-├── tasks.md             # Phase 2 output
-├── STATUS.md            # Project status
-└── spec.md              # Feature specification
+鈹溾攢鈹€ plan.md              # This file
+鈹溾攢鈹€ research.md          # Phase 0 output
+鈹溾攢鈹€ data-model.md        # Phase 1 output
+鈹溾攢鈹€ quickstart.md        # Phase 1 output
+鈹溾攢鈹€ contracts/           # Phase 1 output
+鈹溾攢鈹€ tasks.md             # Phase 2 output
+鈹溾攢鈹€ STATUS.md            # Project status
+鈹斺攢鈹€ spec.md              # Feature specification
 ```
 
 ### Source Code (repository root)
 
 ```
 shElter-v3/
-├── backend/
-│   ├── src/
-│   │   ├── api/              # API route definitions
-│   │   ├── auth/             # JWT authentication (RS256)
-│   │   ├── core/             # Core modules
-│   │   │   ├── response.py   # Unified response format
-│   │   │   └── security.py   # Rate limiter
-│   │   ├── models/           # SQLAlchemy ORM models
-│   │   ├── schemas/          # Pydantic schemas
-│   │   ├── services/         # Business logic
-│   │   ├── utils/            # Utilities
-│   │   └── main.py           # Application entry
-│   ├── keys/                 # RSA keys (RS256)
-│   ├── alembic/              # Database migrations
-│   ├── tests/                # Tests
-│   ├── requirements.txt      # Python dependencies
-│   ├── generate_keys.py      # RSA key generator
-│   └── Dockerfile
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/       # Vue components
-│   │   ├── views/            # Page views
-│   │   ├── services/         # API services
-│   │   ├── stores/           # Pinia stores
-│   │   ├── router/           # Vue Router
-│   │   └── App.vue
-│   ├── package.json
-│   └── Dockerfile
-│
-├── specs/                    # Specification documents
-├── UPGRADE_GUIDE.md         # Security upgrade guide
-├── SECURITY_AUDIT_REPORT.md # Security audit
-└── docker-compose.yml       # Orchestration
+鈹溾攢鈹€ backend/
+鈹?  鈹溾攢鈹€ src/
+鈹?  鈹?  鈹溾攢鈹€ api/              # API route definitions
+鈹?  鈹?  鈹溾攢鈹€ auth/             # JWT authentication (RS256)
+鈹?  鈹?  鈹溾攢鈹€ core/             # Core modules
+鈹?  鈹?  鈹?  鈹溾攢鈹€ response.py   # Unified response format
+鈹?  鈹?  鈹?  鈹斺攢鈹€ security.py   # Rate limiter
+鈹?  鈹?  鈹溾攢鈹€ models/           # SQLAlchemy ORM models
+鈹?  鈹?  鈹溾攢鈹€ schemas/          # Pydantic schemas
+鈹?  鈹?  鈹溾攢鈹€ services/         # Business logic
+鈹?  鈹?  鈹溾攢鈹€ utils/            # Utilities
+鈹?  鈹?  鈹斺攢鈹€ main.py           # Application entry
+鈹?  鈹溾攢鈹€ keys/                 # RSA keys (RS256)
+鈹?  鈹溾攢鈹€ alembic/              # Database migrations
+鈹?  鈹溾攢鈹€ tests/                # Tests
+鈹?  鈹溾攢鈹€ requirements.txt      # Python dependencies
+鈹?  鈹溾攢鈹€ generate_keys.py      # RSA key generator
+鈹?  鈹斺攢鈹€ Dockerfile
+鈹?鈹溾攢鈹€ frontend/
+鈹?  鈹溾攢鈹€ src/
+鈹?  鈹?  鈹溾攢鈹€ components/       # Vue components
+鈹?  鈹?  鈹溾攢鈹€ views/            # Page views
+鈹?  鈹?  鈹溾攢鈹€ services/         # API services
+鈹?  鈹?  鈹溾攢鈹€ stores/           # Pinia stores
+鈹?  鈹?  鈹溾攢鈹€ router/           # Vue Router
+鈹?  鈹?  鈹斺攢鈹€ App.vue
+鈹?  鈹溾攢鈹€ package.json
+鈹?  鈹斺攢鈹€ Dockerfile
+鈹?鈹溾攢鈹€ specs/                    # Specification documents
+鈹溾攢鈹€ UPGRADE_GUIDE.md         # Security upgrade guide
+鈹溾攢鈹€ SECURITY_AUDIT_REPORT.md # Security audit
+鈹斺攢鈹€ docker-compose.yml       # Orchestration
 ```
 
 **Structure Decision**: Web application with separate frontend (Vue 3 + TS) and backend (FastAPI) projects to enable independent scaling and development. Frontend communicates with backend via REST API. Both include upgrade interfaces to support future technology migrations.
@@ -164,7 +147,7 @@ shElter-v3/
 ```python
 {
     "data": {...},
-    "message": "操作成功",
+    "message": "鎿嶄綔鎴愬姛",
     "status": 200,
     "timestamp": "2026-02-17T10:00:00Z",
     "error_code": None

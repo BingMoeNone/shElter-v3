@@ -1,4 +1,4 @@
-# Specification Quality Checklist: Wiki Platform
+﻿# Specification Quality Checklist: Wiki Platform
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-02-12

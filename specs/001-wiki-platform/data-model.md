@@ -1,4 +1,4 @@
-# Data Model: Wiki Platform
+﻿# Data Model: Wiki Platform
 
 ## Entity: User
 **Description**: Represents a registered member with profile information, authentication credentials, and social connections
@@ -165,13 +165,13 @@
 ## State Transitions
 
 ### Article Status Transitions
-- draft → published (on first publication)
-- published → draft (on unpublishing)
-- published → archived (on archiving)
-- draft → archived (on archiving draft)
+- draft 鈫?published (on first publication)
+- published 鈫?draft (on unpublishing)
+- published 鈫?archived (on archiving)
+- draft 鈫?archived (on archiving draft)
 
 ### Connection Status Transitions
-- pending → accepted (when connection request accepted)
-- pending → blocked (when connection request rejected)
-- accepted → blocked (when connection blocked)
-- blocked → pending (when blocked user sends new request)
+- pending 鈫?accepted (when connection request accepted)
+- pending 鈫?blocked (when connection request rejected)
+- accepted 鈫?blocked (when connection blocked)
+- blocked 鈫?pending (when blocked user sends new request)

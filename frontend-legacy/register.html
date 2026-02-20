@@ -1,0 +1,445 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki Platform - Register</title>
+    <style>
+        /* Global Styles */
+        :root {
+            --color-primary: #00ff88;
+            --color-secondary: #00d4ff;
+            --color-accent: #ff6b6b;
+            --color-text: #ffffff;
+            --color-text-muted: #aaaaaa;
+            --color-background: #0a0a0a;
+            --color-surface: #1a1a1a;
+            --color-border: #333333;
+            --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-family-heading: 'Arial', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-primary);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-logo {
+            color: var(--color-primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--color-text);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--color-primary);
+            text-shadow: 0 0 5px var(--color-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid var(--color-primary);
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        /* Register Page Styles */
+        .register-page {
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 450px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-primary);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.1);
+            padding: 32px;
+            border-radius: 8px;
+        }
+
+        .register-card h1 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: var(--color-primary);
+            text-shadow: 0 0 10px var(--color-primary);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--color-border);
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--color-text);
+            border-radius: 4px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+        }
+
+        .hint {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        .error-message {
+            color: #ff4444;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(255, 68, 68, 0.1);
+            border-radius: 4px;
+            border-left: 3px solid #ff4444;
+        }
+
+        .error-title {
+            margin: 0 0 8px 0;
+            font-weight: 500;
+        }
+
+        .error-suggestion {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+
+        .success-message {
+            color: var(--color-primary);
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(0, 255, 157, 0.1);
+            border-radius: 4px;
+            border-left: 3px solid var(--color-primary);
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin-top: 10px;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--color-primary);
+            color: var(--color-primary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-register:hover {
+            background: var(--color-primary);
+            color: #000;
+            box-shadow: 0 0 20px var(--color-primary);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--color-text-muted);
+        }
+
+        .login-link a {
+            color: var(--color-primary);
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-shadow: 0 0 5px var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Wiki Platform</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="articles.html" class="nav-link">Articles</a>
+                <a href="categories.html" class="nav-link">Categories</a>
+                <a href="metro.html" class="nav-link">Metro</a>
+                <a href="music.html" class="nav-link">Music</a>
+            </div>
+            <div class="nav-actions">
+                <a href="login.html" class="btn">Login</a>
+                <a href="register.html" class="btn">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Register Page Content -->
+    <div class="register-page">
+        <div class="register-card">
+            <h1>娉ㄥ唽</h1>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username">鐢ㄦ埛鍚?*</label>
+                    <input
+                        id="username"
+                        type="text"
+                        required
+                        pattern="[a-zA-Z0-9_]+"
+                        title="鐢ㄦ埛鍚嶅彧鑳藉寘鍚瓧姣嶃€佹暟瀛楀拰涓嬪垝绾?
+                        placeholder="璇疯緭鍏ョ敤鎴峰悕"
+                    />
+                    <p class="hint">鐢ㄦ埛鍚嶅彲浠ヤ笌鍏朵粬鐢ㄦ埛鐩稿悓锛屼絾闇€涓庨偖绠遍厤濂椾娇鐢?/p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">閭 *</label>
+                    <input
+                        id="email"
+                        type="email"
+                        required
+                        placeholder="璇疯緭鍏ラ偖绠卞湴鍧€"
+                    />
+                    <p class="hint">閭鏄偍鐨勫敮涓€韬唤鏍囪瘑锛屼笉鍙噸澶?/p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="displayName">鏄剧ず鍚嶇О</label>
+                    <input
+                        id="displayName"
+                        type="text"
+                        placeholder="鍙€夛紝鐢ㄤ簬鏄剧ず鎮ㄧ殑鏄电О"
+                    />
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">瀵嗙爜 *</label>
+                    <input
+                        id="password"
+                        type="password"
+                        required
+                        minlength="8"
+                        placeholder="鑷冲皯 8 涓瓧绗?
+                    />
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">纭瀵嗙爜 *</label>
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        required
+                        placeholder="璇峰啀娆¤緭鍏ュ瘑鐮?
+                    />
+                </div>
+                
+                <div id="successMessage" class="success-message" style="display: none;">
+                    <p id="successText"></p>
+                </div>
+
+                <div id="errorMessage" class="error-message" style="display: none;">
+                    <p id="errorTitle" class="error-title"></p>
+                    <p id="errorSuggestion" class="error-suggestion"></p>
+                </div>
+                
+                <button type="submit" id="registerButton" class="btn-register">
+                    娉ㄥ唽
+                </button>
+            </form>
+            
+            <p class="login-link">
+                宸叉湁璐︽埛锛?<a href="login.html">绔嬪嵆鐧诲綍</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const registerForm = document.getElementById('registerForm');
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const displayNameInput = document.getElementById('displayName');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const registerButton = document.getElementById('registerButton');
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorTitle = document.getElementById('errorTitle');
+        const errorSuggestion = document.getElementById('errorSuggestion');
+
+        // Mock register function
+        function mockRegister(userData) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // Simulate registration logic
+                    if (userData.username && userData.email && userData.password) {
+                        // Simulate successful registration
+                        resolve({ success: true });
+                    } else {
+                        // Simulate registration failure
+                        reject({ 
+                            response: { 
+                                data: { 
+                                    detail: { 
+                                        message: '娉ㄥ唽澶辫触锛岃妫€鏌ヨ緭鍏ヤ俊鎭?,
+                                        suggestion: '璇风‘淇濇墍鏈夊繀濉瓧娈甸兘宸插～鍐欐纭? 
+                                    } 
+                                } 
+                            } 
+                        });
+                    }
+                }, 1500);
+            });
+        }
+
+        // Handle register form submission
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = usernameInput.value.trim();
+            const email = emailInput.value.trim();
+            const displayName = displayNameInput.value.trim();
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            
+            // Reset messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Validate password confirmation
+            if (password !== confirmPassword) {
+                errorTitle.textContent = '涓ゆ杈撳叆鐨勫瘑鐮佷笉涓€鑷?;
+                errorSuggestion.textContent = '';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Validate password length
+            if (password.length < 8) {
+                errorTitle.textContent = '瀵嗙爜闀垮害鑷冲皯涓?8 涓瓧绗?;
+                errorSuggestion.textContent = '';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Update button state
+            registerButton.textContent = '娉ㄥ唽涓?..';
+            registerButton.disabled = true;
+            
+            try {
+                // Call mock register function
+                await mockRegister({
+                    username,
+                    email,
+                    password,
+                    displayName: displayName || undefined
+                });
+                
+                // Show success message
+                successText.textContent = '娉ㄥ唽鎴愬姛锛佹鍦ㄤ负鎮ㄨ嚜鍔ㄧ櫥褰?..';
+                successMessage.style.display = 'block';
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } catch (err) {
+                // Show error message
+                const response = err.response?.data;
+                if (response?.detail) {
+                    if (typeof response.detail === 'string') {
+                        errorTitle.textContent = response.detail;
+                        errorSuggestion.textContent = '';
+                    } else {
+                        errorTitle.textContent = response.detail.message || '娉ㄥ唽澶辫触';
+                        errorSuggestion.textContent = response.detail.suggestion || '';
+                    }
+                } else if (response?.message) {
+                    errorTitle.textContent = response.message;
+                    errorSuggestion.textContent = '';
+                } else {
+                    errorTitle.textContent = '娉ㄥ唽澶辫触锛岃绋嶅悗閲嶈瘯';
+                    errorSuggestion.textContent = '';
+                }
+                
+                errorMessage.style.display = 'block';
+            } finally {
+                // Reset button state
+                registerButton.textContent = '娉ㄥ唽';
+                registerButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

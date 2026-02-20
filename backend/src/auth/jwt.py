@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+﻿from datetime import datetime, timedelta
 from typing import Optional
 import os
 
@@ -16,7 +16,7 @@ security = HTTPBearer()
 
 
 def _read_key_file(file_path: str) -> str:
-    """读取密钥文件"""
+    """璇诲彇瀵嗛挜鏂囦欢"""
     try:
         current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         fixed_path = os.path.join(current_dir, file_path.replace('/', os.sep))
@@ -41,21 +41,21 @@ def _read_key_file(file_path: str) -> str:
 
 
 def _get_private_key() -> str:
-    """获取RSA私钥"""
+    """鑾峰彇RSA绉侀挜"""
     if settings.ALGORITHM.startswith("HS"):
         return settings.SECRET_KEY
     return _read_key_file(settings.PRIVATE_KEY_PATH)
 
 
 def _get_public_key() -> str:
-    """获取RSA公钥"""
+    """鑾峰彇RSA鍏挜"""
     if settings.ALGORITHM.startswith("HS"):
         return settings.SECRET_KEY
     return _read_key_file(settings.PUBLIC_KEY_PATH)
 
 
 def _get_signing_key() -> str:
-    """获取签名密钥"""
+    """鑾峰彇绛惧悕瀵嗛挜"""
     algorithm = settings.ALGORITHM.upper()
     if algorithm.startswith("HS"):
         if not settings.SECRET_KEY:
@@ -68,7 +68,7 @@ def _get_signing_key() -> str:
 
 
 def _get_verification_key() -> str:
-    """获取验证密钥"""
+    """鑾峰彇楠岃瘉瀵嗛挜"""
     algorithm = settings.ALGORITHM.upper()
     if algorithm.startswith("HS"):
         if not settings.SECRET_KEY:
@@ -81,14 +81,14 @@ def _get_verification_key() -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """验证密码"""
+    """楠岃瘉瀵嗙爜"""
     password_bytes = plain_password.encode('utf-8')
     hashed_bytes = hashed_password.encode('utf-8')
     return bcrypt.checkpw(password_bytes, hashed_bytes)
 
 
 def get_password_hash(password: str) -> str:
-    """生成密码哈希"""
+    """鐢熸垚瀵嗙爜鍝堝笇"""
     password_bytes = password.encode('utf-8')
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(password_bytes, salt)
@@ -96,7 +96,7 @@ def get_password_hash(password: str) -> str:
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """创建访问令牌"""
+    """鍒涘缓璁块棶浠ょ墝"""
     to_encode = data.copy()
     now = datetime.utcnow()
     
@@ -120,7 +120,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
 
 def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """创建刷新令牌"""
+    """鍒涘缓鍒锋柊浠ょ墝"""
     to_encode = data.copy()
     now = datetime.utcnow()
     
@@ -144,7 +144,7 @@ def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None) 
 
 
 def decode_token(token: str, token_type: str = "access") -> Optional[dict]:
-    """解码令牌"""
+    """瑙ｇ爜浠ょ墝"""
     try:
         payload = jwt.decode(
             token,
@@ -172,10 +172,10 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db),
 ) -> User:
-    """获取当前用户"""
+    """鑾峰彇褰撳墠鐢ㄦ埛"""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="无效的访问令牌",
+        detail="鏃犳晥鐨勮闂护鐗?,
         headers={"WWW-Authenticate": "Bearer"},
     )
     
@@ -196,26 +196,26 @@ async def get_current_user(
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
-            detail="用户已被禁用"
+            detail="鐢ㄦ埛宸茶绂佺敤"
         )
     
     return user
 
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
-    """获取当前活跃用户"""
+    """鑾峰彇褰撳墠娲昏穬鐢ㄦ埛"""
     if not current_user.is_active:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="用户已禁用")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="鐢ㄦ埛宸茬鐢?)
     return current_user
 
 
 def require_role(roles: list[str]):
-    """角色权限装饰器"""
+    """瑙掕壊鏉冮檺瑁呴グ鍣?""
     async def role_checker(current_user: User = Depends(get_current_user)) -> User:
         if current_user.role not in roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="权限不足"
+                detail="鏉冮檺涓嶈冻"
             )
         return current_user
     return role_checker

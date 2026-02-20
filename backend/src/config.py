@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+﻿from pydantic_settings import BaseSettings
 from typing import List
 import os
 
@@ -6,7 +6,7 @@ import os
 class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./wiki_platform.db"
     
-    # JWT Configuration - RS256 (升级版)
+    # JWT Configuration - RS256 (鍗囩骇鐗?
     SECRET_KEY: str = "your-secret-key-change-in-production"
     ALGORITHM: str = "RS256"
     PRIVATE_KEY_PATH: str = "keys/private_key.pem"

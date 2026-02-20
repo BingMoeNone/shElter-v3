@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { Article } from '@/types'
 import { computed } from 'vue'
 

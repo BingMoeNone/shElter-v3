@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { articlesApi, tagsApi } from '@/services/api'
@@ -40,8 +40,8 @@ async function fetchData() {
     articles.value = articlesResponse.data.articles || []
   } catch (err: any) {
     console.error('Failed to fetch data:', err)
-    error.value = err.response?.data?.message || '加载失败'
-    toast.error('无法加载标签文章')
+    error.value = err.response?.data?.message || '鍔犺浇澶辫触'
+    toast.error('鏃犳硶鍔犺浇鏍囩鏂囩珷')
   } finally {
     loading.value = false
   }
@@ -52,24 +52,24 @@ async function fetchData() {
   <div class="tag-articles-page">
     <div v-if="loading" class="loading">
       <div class="loading-spinner"></div>
-      <p>加载中...</p>
+      <p>鍔犺浇涓?..</p>
     </div>
     
     <div v-else-if="error" class="error-state">
-      <span class="error-icon">⚠️</span>
+      <span class="error-icon">鈿狅笍</span>
       <p>{{ error }}</p>
-      <button @click="fetchData" class="retry-btn">重试</button>
+      <button @click="fetchData" class="retry-btn">閲嶈瘯</button>
     </div>
     
     <template v-else>
       <header class="page-header">
-        <h1>#{{ tag?.name || '标签' }}</h1>
-        <p>{{ tag?.usageCount || articles.length }} 篇相关文章</p>
+        <h1>#{{ tag?.name || '鏍囩' }}</h1>
+        <p>{{ tag?.usageCount || articles.length }} 绡囩浉鍏虫枃绔?/p>
       </header>
       
       <div v-if="articles.length === 0" class="empty-state">
-        <span class="empty-icon">🏷️</span>
-        <p>该标签下暂无文章</p>
+        <span class="empty-icon">馃彿锔?/span>
+        <p>璇ユ爣绛句笅鏆傛棤鏂囩珷</p>
       </div>
       
       <div v-else class="articles-list">

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+﻿from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
@@ -65,7 +65,7 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
     return JSONResponse(
         status_code=429,
         content=response_wrapper.error(
-            message="请求过于频繁，请稍后再试",
+            message="璇锋眰杩囦簬棰戠箒锛岃绋嶅悗鍐嶈瘯",
             error_code="RATE_LIMIT_EXCEEDED",
             status_code=429,
         ),
@@ -146,5 +146,5 @@ async def health_check():
 async def root():
     return response_wrapper.success(
         data={"name": "Wiki Platform API", "version": "1.1.0", "docs": "/api/docs"},
-        message="欢迎使用 Wiki Platform API",
+        message="娆㈣繋浣跨敤 Wiki Platform API",
     )

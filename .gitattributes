@@ -1,7 +1,7 @@
-# 文本文件统一使用CRLF行结束符
+﻿# 鏂囨湰鏂囦欢缁熶竴浣跨敤CRLF琛岀粨鏉熺
 * text=auto eol=crlf
 
-# 二进制文件不转换行结束符
+# 浜岃繘鍒舵枃浠朵笉杞崲琛岀粨鏉熺
 *.png binary
 *.jpg binary
 *.jpeg binary
@@ -26,7 +26,7 @@
 *.obj binary
 *.class binary
 
-# 代码文件特定规则
+# 浠ｇ爜鏂囦欢鐗瑰畾瑙勫垯
 *.py text=auto eol=crlf
 *.vue text=auto eol=crlf
 *.ts text=auto eol=crlf
@@ -53,14 +53,13 @@
 *.cmd text=auto eol=crlf
 *.ps1 text=auto eol=crlf
 
-# Git配置文件
+# Git閰嶇疆鏂囦欢
 .gitignore text=auto eol=crlf
 .gitattributes text=auto eol=crlf
 
-# 数据库文件
-*.sql text=auto eol=crlf
+# 鏁版嵁搴撴枃浠?*.sql text=auto eol=crlf
 *.db binary
 *.sqlite binary
 
-# 日志文件
+# 鏃ュ織鏂囦欢
 *.log text=auto eol=crlf

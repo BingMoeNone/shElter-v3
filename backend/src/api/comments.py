@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+﻿from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from uuid import UUID
 
@@ -34,7 +34,7 @@ async def create_comment(
     )
     db.add(comment)
     
-    # 更新用户贡献计数
+    # 鏇存柊鐢ㄦ埛璐＄尞璁℃暟
     current_user.contribution_count += 1
     
     db.commit()

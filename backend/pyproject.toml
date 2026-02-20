@@ -1,4 +1,4 @@
-[project]
+﻿[project]
 name = "wiki-platform-backend"
 version = "0.1.0"
 description = "Wiki Platform Backend API"

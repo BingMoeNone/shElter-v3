@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+﻿import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { User } from '@/types'
 import { authApi, usersApi } from '@/services/api'
@@ -32,7 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(username: string, email: string, password: string): Promise<void> {
     try {
       const response = await authApi.login(username, email, password)
-      // 适配 v3.1.0 统一响应格式: { data: {...}, message, status }
+      // 閫傞厤 v3.1.0 缁熶竴鍝嶅簲鏍煎紡: { data: {...}, message, status }
       const responseData = response.data.data || response.data
 
       const accessToken = responseData.access_token || responseData.accessToken
@@ -45,9 +45,9 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('token', accessToken)
       localStorage.setItem('refreshToken', refreshTokenValue)
 
-      useToastStore().success(`欢迎回来，${user.value?.displayName || user.value?.username}！`)
+      useToastStore().success(`娆㈣繋鍥炴潵锛?{user.value?.displayName || user.value?.username}锛乣)
     } catch (error: any) {
-      useToastStore().error(error.response?.data?.message || '登录失败，请检查用户名和密码')
+      useToastStore().error(error.response?.data?.message || '鐧诲綍澶辫触锛岃妫€鏌ョ敤鎴峰悕鍜屽瘑鐮?)
       throw error
     }
   }
@@ -56,9 +56,9 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await usersApi.register(userData)
       await login(userData.username, userData.email, userData.password)
-      useToastStore().success('注册成功！')
+      useToastStore().success('娉ㄥ唽鎴愬姛锛?)
     } catch (error: any) {
-      useToastStore().error(error.response?.data?.message || '注册失败')
+      useToastStore().error(error.response?.data?.message || '娉ㄥ唽澶辫触')
       throw error
     }
   }
@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null
       localStorage.removeItem('token')
       localStorage.removeItem('refreshToken')
-      useToastStore().info('您已安全退出')
+      useToastStore().info('鎮ㄥ凡瀹夊叏閫€鍑?)
     }
   }
 

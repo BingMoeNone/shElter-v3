@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { User, UserProfile } from '@/types'
 import { useAuthStore } from '@/stores/auth'
 import { connectionsApi } from '@/services/api'
@@ -36,13 +36,13 @@ async function handleConnect(type: 'friend' | 'follow') {
     emit('connectionChanged')
     
     if (type === 'follow') {
-      toast.success(`已关注 ${props.user.displayName || props.user.username}`)
+      toast.success(`宸插叧娉?${props.user.displayName || props.user.username}`)
     } else {
-      toast.success(`已向 ${props.user.displayName || props.user.username} 发送好友请求`)
+      toast.success(`宸插悜 ${props.user.displayName || props.user.username} 鍙戦€佸ソ鍙嬭姹俙)
     }
   } catch (err: any) {
     console.error('Failed to create connection:', err)
-    toast.error(err.response?.data?.message || '操作失败，请重试')
+    toast.error(err.response?.data?.message || '鎿嶄綔澶辫触锛岃閲嶈瘯')
   } finally {
     loading.value = false
     actionType.value = null
@@ -70,7 +70,7 @@ async function handleConnect(type: 'friend' | 'follow') {
       
       <div class="stats">
         <span class="stat">
-          <strong>{{ user.contributionCount }}</strong> 贡献
+          <strong>{{ user.contributionCount }}</strong> 璐＄尞
         </span>
         <span v-if="'role' in user" class="stat role-badge" :class="user.role">
           {{ user.role }}
@@ -86,22 +86,21 @@ async function handleConnect(type: 'friend' | 'follow') {
         class="btn-follow"
       >
         <span v-if="loading && actionType === 'follow'" class="btn-spinner"></span>
-        <span v-else>关注</span>
+        <span v-else>鍏虫敞</span>
       </button>
       <button
         v-else
         disabled
         class="btn-following"
       >
-        已关注
-      </button>
+        宸插叧娉?      </button>
       <button
         @click="handleConnect('friend')"
         :disabled="loading"
         class="btn-friend"
       >
         <span v-if="loading && actionType === 'friend'" class="btn-spinner"></span>
-        <span v-else>添加好友</span>
+        <span v-else>娣诲姞濂藉弸</span>
       </button>
     </div>
   </div>

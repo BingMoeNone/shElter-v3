@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { usersApi } from '@/services/api'
@@ -34,8 +34,8 @@ async function fetchUser() {
       articles.value = []  // Will be populated when proper API is available
     }
   } catch (err: any) {
-    error.value = err.response?.data?.message || '加载用户资料失败'
-    toast.error('无法加载用户资料')
+    error.value = err.response?.data?.message || '鍔犺浇鐢ㄦ埛璧勬枡澶辫触'
+    toast.error('鏃犳硶鍔犺浇鐢ㄦ埛璧勬枡')
     console.error(err)
   } finally {
     loading.value = false
@@ -51,13 +51,13 @@ function handleConnectionChanged() {
   <div class="user-profile-page">
     <div v-if="loading" class="loading">
       <div class="loading-spinner"></div>
-      <p>加载用户资料中...</p>
+      <p>鍔犺浇鐢ㄦ埛璧勬枡涓?..</p>
     </div>
     
     <div v-else-if="error" class="error-state">
-      <span class="error-icon">⚠️</span>
+      <span class="error-icon">鈿狅笍</span>
       <p>{{ error }}</p>
-      <button @click="fetchUser" class="retry-btn">重试</button>
+      <button @click="fetchUser" class="retry-btn">閲嶈瘯</button>
     </div>
     
     <template v-else-if="user">
@@ -68,11 +68,11 @@ function handleConnectionChanged() {
       />
       
       <section class="user-articles">
-        <h2>{{ user.displayName || user.username }} 的文章</h2>
+        <h2>{{ user.displayName || user.username }} 鐨勬枃绔?/h2>
         
         <div v-if="articles.length === 0" class="empty-state">
-          <span class="empty-icon">📝</span>
-          <p>暂无文章</p>
+          <span class="empty-icon">馃摑</span>
+          <p>鏆傛棤鏂囩珷</p>
         </div>
         
         <div v-else class="articles-list">

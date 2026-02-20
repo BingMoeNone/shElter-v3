@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
+﻿from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
@@ -32,7 +32,7 @@ async def login(
     login_data: LoginRequest,
     db: Session = Depends(get_db),
 ):
-    """用户登录 - 带Rate Limiting"""
+    """鐢ㄦ埛鐧诲綍 - 甯ate Limiting"""
     user = db.query(User).filter(User.email == login_data.email).first()
 
     password_valid = False
@@ -43,14 +43,14 @@ async def login(
         logger.warning(f"Login failed for email: {login_data.email}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"message": "用户名或密码错误", "error_code": "INVALID_CREDENTIALS"},
+            detail={"message": "鐢ㄦ埛鍚嶆垨瀵嗙爜閿欒", "error_code": "INVALID_CREDENTIALS"},
         )
 
     if user.username != login_data.username:
         logger.warning(f"Username mismatch for email: {login_data.email}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"message": "用户名或密码错误", "error_code": "INVALID_CREDENTIALS"},
+            detail={"message": "鐢ㄦ埛鍚嶆垨瀵嗙爜閿欒", "error_code": "INVALID_CREDENTIALS"},
         )
 
     if not user.is_active:
@@ -78,7 +78,7 @@ async def login(
                 "is_active": user.is_active,
             },
         },
-        message="登录成功",
+        message="鐧诲綍鎴愬姛",
     )
 
 
@@ -87,14 +87,14 @@ async def login(
 async def register(
     request: Request, response: Response, user_data: dict, db: Session = Depends(get_db)
 ):
-    """用户注册 - 带Rate Limiting"""
+    """鐢ㄦ埛娉ㄥ唽 - 甯ate Limiting"""
     email = user_data.get("email")
     username = user_data.get("username")
     password = user_data.get("password")
 
     if not email or not username or not password:
         return response_wrapper.error(
-            message="缺少必要参数", error_code="MISSING_PARAMS", status_code=400
+            message="缂哄皯蹇呰鍙傛暟", error_code="MISSING_PARAMS", status_code=400
         )
 
     existing_user = (
@@ -106,11 +106,11 @@ async def register(
     if existing_user:
         if existing_user.email == email:
             return response_wrapper.error(
-                message="邮箱已被注册", error_code="EMAIL_EXISTS", status_code=400
+                message="閭宸茶娉ㄥ唽", error_code="EMAIL_EXISTS", status_code=400
             )
         else:
             return response_wrapper.error(
-                message="用户名已被使用", error_code="USERNAME_EXISTS", status_code=400
+                message="鐢ㄦ埛鍚嶅凡琚娇鐢?, error_code="USERNAME_EXISTS", status_code=400
             )
 
     from src.auth.jwt import get_password_hash
@@ -139,7 +139,7 @@ async def register(
             "access_token": access_token,
             "token_type": "bearer",
         },
-        message="注册成功",
+        message="娉ㄥ唽鎴愬姛",
     )
 
 
@@ -151,19 +151,19 @@ async def refresh_token(
     refresh_data: dict,
     db: Session = Depends(get_db),
 ):
-    """刷新访问令牌"""
+    """鍒锋柊璁块棶浠ょ墝"""
     refresh_token_value = refresh_data.get("refresh_token")
 
     if not refresh_token_value:
         return response_wrapper.error(
-            message="缺少刷新令牌", error_code="MISSING_TOKEN", status_code=400
+            message="缂哄皯鍒锋柊浠ょ墝", error_code="MISSING_TOKEN", status_code=400
         )
 
     payload = decode_token(refresh_token_value, token_type="refresh")
 
     if not payload:
         return response_wrapper.error(
-            message="无效的刷新令牌", error_code="INVALID_TOKEN", status_code=401
+            message="鏃犳晥鐨勫埛鏂颁护鐗?, error_code="INVALID_TOKEN", status_code=401
         )
 
     user_id = payload.get("sub")
@@ -171,23 +171,23 @@ async def refresh_token(
 
     if not user or not user.is_active:
         return response_wrapper.error(
-            message="用户不存在或已禁用", error_code="USER_NOT_FOUND", status_code=404
+            message="鐢ㄦ埛涓嶅瓨鍦ㄦ垨宸茬鐢?, error_code="USER_NOT_FOUND", status_code=404
         )
 
     access_token = create_access_token(data={"sub": str(user.id)})
 
     return response_wrapper.success(
         data={"access_token": access_token, "token_type": "bearer"},
-        message="令牌刷新成功",
+        message="浠ょ墝鍒锋柊鎴愬姛",
     )
 
 
 @router.get("/me")
 async def get_current_user_info(current_user: User = Depends(lambda: None)):
-    """获取当前用户信息"""
+    """鑾峰彇褰撳墠鐢ㄦ埛淇℃伅"""
     if not current_user:
         return response_wrapper.error(
-            message="未授权访问", error_code="UNAUTHORIZED", status_code=401
+            message="鏈巿鏉冭闂?, error_code="UNAUTHORIZED", status_code=401
         )
 
     return response_wrapper.success(
@@ -198,12 +198,12 @@ async def get_current_user_info(current_user: User = Depends(lambda: None)):
             "role": current_user.role,
             "is_active": current_user.is_active,
         },
-        message="获取成功",
+        message="鑾峰彇鎴愬姛",
     )
 
 
 @router.post("/logout")
 async def logout(response: Response):
-    """用户登出"""
+    """鐢ㄦ埛鐧诲嚭"""
     response.delete_cookie(key="access_token")
-    return response_wrapper.success(message="登出成功")
+    return response_wrapper.success(message="鐧诲嚭鎴愬姛")

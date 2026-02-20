@@ -1,4 +1,4 @@
-openapi: 3.0.3
+﻿openapi: 3.0.3
 info:
   title: Wiki Platform API
   description: API for the wiki platform with article management, user profiles, and social features

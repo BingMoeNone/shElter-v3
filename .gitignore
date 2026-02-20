@@ -65,6 +65,11 @@ dist/
 # OS files
 .DS_Store
 Thumbs.db
+nul
 
 # Alembic
 backend/alembic/versions/__pycache__/
+
+# Special files
+=0.1.9
+=41.0.0

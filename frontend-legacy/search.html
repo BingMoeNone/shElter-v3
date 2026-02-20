@@ -1,0 +1,605 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鎼滅储鏂囩珷</title>
+    <style>
+        :root {
+            --color-primary: #00ff9d;
+            --color-text: #fff;
+            --color-text-muted: #aaa;
+            --color-surface: #1a1a1a;
+            --color-border: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0a0a0a;
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--color-surface);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--color-text);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .search-page {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-page h1 {
+            margin-bottom: 24px;
+            color: var(--color-primary);
+            text-shadow: 0 0 10px var(--color-primary);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .search-form input {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--color-primary);
+            color: var(--color-text);
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .search-form input:focus {
+            box-shadow: 0 0 10px var(--color-primary);
+            outline: none;
+        }
+
+        .search-form button {
+            padding: 12px 24px;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--color-primary);
+            color: var(--color-primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-form button:hover:not(:disabled) {
+            background: var(--color-primary);
+            color: #000;
+            box-shadow: 0 0 15px var(--color-primary);
+        }
+
+        .search-form button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-clear {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-color: var(--color-text-muted) !important;
+            color: var(--color-text-muted) !important;
+        }
+
+        .btn-clear:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .results-info {
+            color: var(--color-text-muted);
+            margin-bottom: 20px;
+            padding: 12px;
+            background: rgba(0, 255, 157, 0.05);
+            border-radius: 4px;
+            border-left: 3px solid var(--color-primary);
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: var(--color-text-muted);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: #ff4444;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .retry-btn {
+            margin-top: 16px;
+            padding: 8px 24px;
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: #ff4444;
+            color: white;
+        }
+
+        .no-results,
+        .search-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: var(--color-text-muted);
+            text-align: center;
+            border: 1px dashed var(--color-border);
+            border-radius: 8px;
+        }
+
+        .empty-icon,
+        .placeholder-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .suggestion {
+            font-size: 0.9rem;
+            margin-top: 8px;
+            color: var(--color-text-muted);
+        }
+
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 鏂囩珷鍗＄墖鏍峰紡 */
+        .article-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 255, 157, 0.2);
+        }
+
+        .article-card-header {
+            margin-bottom: 16px;
+        }
+
+        .article-card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--color-primary);
+        }
+
+        .article-card-title a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .article-card-title a:hover {
+            text-decoration: underline;
+        }
+
+        .article-card-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+
+        .article-card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .article-card-excerpt {
+            color: var(--color-text);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .article-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .article-card-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .article-card-tag {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .article-card-tag:hover {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .article-card-read-more {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .article-card-read-more:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>鎼滅储鏂囩珷</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">棣栭〉</a></li>
+                <li><a href="articles.html">鏂囩珷</a></li>
+                <li><a href="profile.html">涓汉璧勬枡</a></li>
+                <li><a href="login.html">鐧诲綍</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="search-page">
+            <h1>鎼滅储鏂囩珷</h1>
+            
+            <div class="search-form">
+                <input
+                    type="search"
+                    id="searchQuery"
+                    placeholder="杈撳叆鍏抽敭璇嶆悳绱?.."
+                />
+                <button id="searchBtn">鎼滅储</button>
+                <button id="clearBtn" class="btn-clear" style="display: none;">
+                    娓呴櫎
+                </button>
+            </div>
+            
+            <div id="loading" class="loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>姝ｅ湪鎼滅储...</p>
+            </div>
+            
+            <div id="errorState" class="error-state" style="display: none;">
+                <span class="error-icon">鈿狅笍</span>
+                <p id="errorMessage">鎼滅储澶辫触</p>
+                <button id="retryBtn" class="retry-btn">閲嶈瘯</button>
+            </div>
+            
+            <div id="searchPlaceholder" class="search-placeholder">
+                <span class="placeholder-icon">馃攳</span>
+                <p>杈撳叆鍏抽敭璇嶅紑濮嬫悳绱?/p>
+            </div>
+            
+            <div id="searchResults" style="display: none;">
+                <div id="resultsInfo" class="results-info" style="display: none;"></div>
+                
+                <div id="noResults" class="no-results" style="display: none;">
+                    <span class="empty-icon">馃攳</span>
+                    <p id="noResultsText">鏈壘鍒颁笌 "" 鐩稿叧鐨勬枃绔?/p>
+                    <p class="suggestion">灏濊瘯浣跨敤涓嶅悓鐨勫叧閿瘝</p>
+                </div>
+                
+                <div id="resultsList" class="results-list">
+                    <!-- 鎼滅储缁撴灉灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 鐘舵€佺鐞?        let articles = [];
+        let loading = false;
+        let searchQuery = '';
+        let error = null;
+        let hasSearched = false;
+
+        // DOM鍏冪礌
+        const searchQueryInput = document.getElementById('searchQuery');
+        const searchBtn = document.getElementById('searchBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const loadingElement = document.getElementById('loading');
+        const errorStateElement = document.getElementById('errorState');
+        const errorMessageElement = document.getElementById('errorMessage');
+        const retryBtn = document.getElementById('retryBtn');
+        const searchPlaceholderElement = document.getElementById('searchPlaceholder');
+        const searchResultsElement = document.getElementById('searchResults');
+        const resultsInfoElement = document.getElementById('resultsInfo');
+        const noResultsElement = document.getElementById('noResults');
+        const noResultsTextElement = document.getElementById('noResultsText');
+        const resultsListElement = document.getElementById('resultsList');
+
+        // 椤甸潰鍔犺浇鏃跺垵濮嬪寲
+        document.addEventListener('DOMContentLoaded', function() {
+            // 缁戝畾浜嬩欢鐩戝惉鍣?            bindEventListeners();
+            
+            // 浠嶶RL鑾峰彇鎼滅储鍙傛暟
+            const urlParams = new URLSearchParams(window.location.search);
+            const q = urlParams.get('q');
+            if (q) {
+                searchQuery = q;
+                searchQueryInput.value = q;
+                performSearch();
+            }
+        });
+
+        // 缁戝畾浜嬩欢鐩戝惉鍣?        function bindEventListeners() {
+            // 鎼滅储杈撳叆浜嬩欢
+            searchQueryInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            // 鎼滅储鎸夐挳浜嬩欢
+            searchBtn.addEventListener('click', performSearch);
+
+            // 娓呴櫎鎸夐挳浜嬩欢
+            clearBtn.addEventListener('click', clearSearch);
+
+            // 閲嶈瘯鎸夐挳浜嬩欢
+            retryBtn.addEventListener('click', performSearch);
+        }
+
+        // 鎵ц鎼滅储
+        function performSearch() {
+            const query = searchQueryInput.value.trim();
+            if (!query) return;
+            
+            searchQuery = query;
+            loading = true;
+            error = null;
+            hasSearched = true;
+            updateUI();
+            
+            // 鏇存柊URL
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('q', query);
+            window.history.pushState({}, '', `?${urlParams.toString()}`);
+            
+            // 妯℃嫙API璇锋眰寤惰繜
+            setTimeout(() => {
+                try {
+                    // 妯℃嫙鎼滅储缁撴灉
+                    const mockResults = [
+                        {
+                            id: 1,
+                            title: "FastAPI鍚庣寮€鍙戞渶浣冲疄璺?,
+                            excerpt: "鏈枃浠嬬粛浜嗕娇鐢‵astAPI寮€鍙戝悗绔簲鐢ㄧ殑鏈€浣冲疄璺碉紝鍖呮嫭璺敱璁捐銆佹暟鎹簱闆嗘垚銆佽璇佹巿鏉冪瓑鏂归潰銆?,
+                            author: { username: "admin" },
+                            category: "tech",
+                            tags: ["fastapi", "python", "backend"],
+                            created_at: "2023-01-15T10:30:00Z",
+                            updated_at: "2023-01-15T14:45:00Z",
+                            view_count: 123,
+                            comment_count: 8
+                        },
+                        {
+                            id: 2,
+                            title: "Vue椤圭洰杩佺Щ鎸囧崡",
+                            excerpt: "鏈枃浠嬬粛浜嗗浣曞皢Vue 2椤圭洰杩佺Щ鍒癡ue 3锛屽寘鎷富瑕佸彉鏇寸偣銆佽縼绉荤瓥鐣ュ拰娉ㄦ剰浜嬮」銆?,
+                            author: { username: "testuser" },
+                            category: "tech",
+                            tags: ["vue", "frontend", "migration"],
+                            created_at: "2023-02-20T14:20:00Z",
+                            updated_at: "2023-02-20T16:30:00Z",
+                            view_count: 456,
+                            comment_count: 15
+                        }
+                    ];
+                    
+                    // 妯℃嫙鏍规嵁鍏抽敭璇嶈繃婊ょ粨鏋?                    articles = mockResults.filter(article => 
+                        article.title.toLowerCase().includes(query.toLowerCase()) ||
+                        article.excerpt.toLowerCase().includes(query.toLowerCase()) ||
+                        article.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+                    );
+                } catch (err) {
+                    console.error('Search failed:', err);
+                    error = '鎼滅储澶辫触锛岃绋嶅悗閲嶈瘯';
+                } finally {
+                    loading = false;
+                    updateUI();
+                }
+            }, 1000);
+        }
+
+        // 娓呴櫎鎼滅储
+        function clearSearch() {
+            searchQuery = '';
+            articles = [];
+            error = null;
+            hasSearched = false;
+            searchQueryInput.value = '';
+            
+            // 鏇存柊URL
+            window.history.pushState({}, '', window.location.pathname);
+            
+            updateUI();
+        }
+
+        // 鏇存柊UI
+        function updateUI() {
+            // 鏇存柊鎼滅储鎸夐挳鐘舵€?            const query = searchQueryInput.value.trim();
+            searchBtn.disabled = loading || !query;
+            
+            // 鏇存柊娓呴櫎鎸夐挳鏄剧ず
+            if (hasSearched) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+            
+            // 鏄剧ず/闅愯棌鍔犺浇鐘舵€?            if (loading) {
+                loadingElement.style.display = 'flex';
+                errorStateElement.style.display = 'none';
+                searchPlaceholderElement.style.display = 'none';
+                searchResultsElement.style.display = 'none';
+            } 
+            // 鏄剧ず/闅愯棌閿欒鐘舵€?            else if (error) {
+                loadingElement.style.display = 'none';
+                errorStateElement.style.display = 'flex';
+                errorMessageElement.textContent = error;
+                searchPlaceholderElement.style.display = 'none';
+                searchResultsElement.style.display = 'none';
+            } 
+            // 鏄剧ず/闅愯棌鎼滅储缁撴灉
+            else if (hasSearched) {
+                loadingElement.style.display = 'none';
+                errorStateElement.style.display = 'none';
+                searchPlaceholderElement.style.display = 'none';
+                searchResultsElement.style.display = 'block';
+                
+                // 鏄剧ず/闅愯棌缁撴灉淇℃伅
+                if (articles.length > 0) {
+                    resultsInfoElement.style.display = 'block';
+                    resultsInfoElement.textContent = `鎵惧埌 ${articles.length} 鏉′笌 "${searchQuery}" 鐩稿叧鐨勭粨鏋渀;
+                    noResultsElement.style.display = 'none';
+                    renderResults();
+                } else {
+                    resultsInfoElement.style.display = 'none';
+                    noResultsElement.style.display = 'flex';
+                    noResultsTextElement.textContent = `鏈壘鍒颁笌 "${searchQuery}" 鐩稿叧鐨勬枃绔燻;
+                    resultsListElement.innerHTML = '';
+                }
+            } 
+            // 鏄剧ず/闅愯棌鎼滅储鍗犱綅绗?            else {
+                loadingElement.style.display = 'none';
+                errorStateElement.style.display = 'none';
+                searchPlaceholderElement.style.display = 'flex';
+                searchResultsElement.style.display = 'none';
+            }
+        }
+
+        // 娓叉煋鎼滅储缁撴灉
+        function renderResults() {
+            resultsListElement.innerHTML = '';
+            
+            articles.forEach(article => {
+                const articleCard = document.createElement('div');
+                articleCard.className = 'article-card';
+                
+                // 鏍煎紡鍖栨棩鏈?                const createdAt = new Date(article.created_at).toLocaleDateString('zh-CN');
+                
+                // 鐢熸垚鏍囩HTML
+                const tagsHTML = article.tags.map(tag => 
+                    `<a href="tag-articles.html?tag=${tag}" class="article-card-tag">${tag}</a>`
+                ).join('');
+                
+                articleCard.innerHTML = `
+                    <div class="article-card-header">
+                        <h2 class="article-card-title">
+                            <a href="article-detail.html?id=${article.id}">${article.title}</a>
+                        </h2>
+                        <div class="article-card-meta">
+                            <span class="article-card-meta-item">
+                                <span>馃懁</span>
+                                <span>${article.author.username}</span>
+                            </span>
+                            <span class="article-card-meta-item">
+                                <span>馃搮</span>
+                                <span>${createdAt}</span>
+                            </span>
+                            <span class="article-card-meta-item">
+                                <span>馃憗锔?/span>
+                                <span>${article.view_count}</span>
+                            </span>
+                            <span class="article-card-meta-item">
+                                <span>馃挰</span>
+                                <span>${article.comment_count}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="article-card-excerpt">${article.excerpt}</div>
+                    <div class="article-card-footer">
+                        <div class="article-card-tags">${tagsHTML}</div>
+                        <a href="article-detail.html?id=${article.id}" class="article-card-read-more">闃呰鏇村 鈫?/a>
+                    </div>
+                `;
+                
+                resultsListElement.appendChild(articleCard);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import type { Article } from '@/types'
 import { useArticlesStore } from '@/stores/articles'
@@ -26,14 +26,14 @@ const saving = ref(false)
 const error = ref<string | null>(null)
 const quillEditor = ref<InstanceType<typeof Quill> | null>(null)
 
-// 处理图片上传
+// 澶勭悊鍥剧墖涓婁紶
 const handleImageUpload = async (file: File) => {
   try {
     const response = await mediaApi.uploadFile(file)
     return response.data.url
   } catch (err) {
     console.error('Image upload failed:', err)
-    throw new Error('图片上传失败')
+    throw new Error('鍥剧墖涓婁紶澶辫触')
   }
 }
 

@@ -1,4 +1,4 @@
-from src.schemas.user import (
+﻿from src.schemas.user import (
     UserRegistration, UserUpdate, UserResponse, 
     UserProfileResponse, LoginRequest, LoginResponse,
     UserContributionStats

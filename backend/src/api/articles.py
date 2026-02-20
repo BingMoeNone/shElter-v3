@@ -1,4 +1,4 @@
-import re
+﻿import re
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
@@ -65,7 +65,7 @@ async def create_article(
     db.commit()
     db.refresh(article)
     
-    # 更新用户贡献计数
+    # 鏇存柊鐢ㄦ埛璐＄尞璁℃暟
     current_user.contribution_count += 1
     
     revision = Revision(
@@ -234,7 +234,7 @@ async def update_article(
     )
     db.add(revision)
     
-    # 更新用户贡献计数
+    # 鏇存柊鐢ㄦ埛璐＄尞璁℃暟
     current_user.contribution_count += 1
     
     db.commit()

@@ -1,0 +1,341 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鍒嗙被</title>
+    <style>
+        /* 鍩虹鏍峰紡 */
+        :root {
+            --color-primary: #00ff9d;
+            --color-secondary: #00ccff;
+            --color-accent: #ff6b6b;
+            --color-text: #ffffff;
+            --color-text-muted: #b0b0b0;
+            --color-background: #0a0a0a;
+            --color-surface: #1a1a1a;
+            --color-border: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        /* 椤甸潰瀹瑰櫒 */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 鍒嗙被椤甸潰 */
+        .categories-page {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .categories-page h1 {
+            margin-bottom: 24px;
+            color: var(--color-primary);
+            text-shadow: 0 0 10px var(--color-primary);
+        }
+
+        /* 鍔犺浇鐘舵€?*/
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: var(--color-text-muted);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 閿欒鐘舵€?*/
+        .error-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: #ff4444;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .retry-btn {
+            margin-top: 16px;
+            padding: 8px 24px;
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .retry-btn:hover {
+            background: #ff4444;
+            color: white;
+        }
+
+        /* 绌虹姸鎬?*/
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px;
+            color: var(--color-text-muted);
+            text-align: center;
+            border: 1px dashed var(--color-border);
+            border-radius: 8px;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        /* 鍒嗙被缃戞牸 */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* 鍒嗙被鍗＄墖 */
+        .category-card {
+            text-decoration: none;
+            color: inherit;
+            background: var(--color-surface);
+            border: 1px solid var(--color-primary);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.1);
+            display: block;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 255, 157, 0.2);
+            border-color: var(--color-secondary);
+        }
+
+        .category-card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+            color: var(--color-primary);
+            text-shadow: 0 0 5px var(--color-primary);
+        }
+
+        .category-card p {
+            color: var(--color-text-muted);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .article-count {
+            font-size: 0.85rem;
+            color: var(--color-accent);
+            background: rgba(0, 255, 157, 0.1);
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="categories-page">
+            <h1>鍒嗙被</h1>
+            
+            <!-- 鍔犺浇鐘舵€?-->
+            <div id="loading" class="loading" style="display: block;">
+                <div class="loading-spinner"></div>
+                <p>鍔犺浇鍒嗙被涓?..</p>
+            </div>
+            
+            <!-- 閿欒鐘舵€?-->
+            <div id="error-state" class="error-state" style="display: none;">
+                <span class="error-icon">鈿狅笍</span>
+                <p id="error-message"></p>
+                <button id="retry-btn" class="retry-btn">閲嶈瘯</button>
+            </div>
+            
+            <!-- 绌虹姸鎬?-->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <span class="empty-icon">馃搨</span>
+                <p>鏆傛棤鍒嗙被</p>
+            </div>
+            
+            <!-- 鍒嗙被鍒楄〃 -->
+            <div id="categories-grid" class="categories-grid" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // 妯℃嫙鏁版嵁
+        const mockCategories = [
+            {
+                id: 1,
+                name: '鎶€鏈?,
+                description: '鎶€鏈浉鍏崇殑鏂囩珷',
+                slug: 'technology',
+                articleCount: 12
+            },
+            {
+                id: 2,
+                name: '鐢熸椿',
+                description: '鐢熸椿鐩稿叧鐨勬枃绔?,
+                slug: 'life',
+                articleCount: 8
+            },
+            {
+                id: 3,
+                name: '鑹烘湳',
+                description: '鑹烘湳鐩稿叧鐨勬枃绔?,
+                slug: 'art',
+                articleCount: 5
+            },
+            {
+                id: 4,
+                name: '绉戝',
+                description: '绉戝鐩稿叧鐨勬枃绔?,
+                slug: 'science',
+                articleCount: 15
+            },
+            {
+                id: 5,
+                name: '闊充箰',
+                description: '闊充箰鐩稿叧鐨勬枃绔?,
+                slug: 'music',
+                articleCount: 20
+            }
+        ];
+
+        // DOM 鍏冪礌
+        const loadingEl = document.getElementById('loading');
+        const errorStateEl = document.getElementById('error-state');
+        const errorMessageEl = document.getElementById('error-message');
+        const retryBtnEl = document.getElementById('retry-btn');
+        const emptyStateEl = document.getElementById('empty-state');
+        const categoriesGridEl = document.getElementById('categories-grid');
+
+        // 鍔犺浇鐘舵€?        let loading = true;
+        let error = null;
+        let categories = [];
+
+        // 妯℃嫙API璋冪敤
+        async function fetchCategories() {
+            loading = true;
+            error = null;
+            
+            // 闅愯棌鎵€鏈夊唴瀹?            loadingEl.style.display = 'block';
+            errorStateEl.style.display = 'none';
+            emptyStateEl.style.display = 'none';
+            categoriesGridEl.style.display = 'none';
+            
+            try {
+                // 妯℃嫙缃戠粶寤惰繜
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // 浣跨敤妯℃嫙鏁版嵁
+                categories = mockCategories;
+                
+                // 娓叉煋鍒嗙被
+                renderCategories();
+                
+                // 鏄剧ず鍒嗙被鍒楄〃鎴栫┖鐘舵€?                if (categories.length === 0) {
+                    loadingEl.style.display = 'none';
+                    emptyStateEl.style.display = 'block';
+                } else {
+                    loadingEl.style.display = 'none';
+                    categoriesGridEl.style.display = 'grid';
+                }
+            } catch (err) {
+                error = '鍔犺浇鍒嗙被澶辫触';
+                console.error(err);
+                
+                // 鏄剧ず閿欒鐘舵€?                loadingEl.style.display = 'none';
+                errorMessageEl.textContent = error;
+                errorStateEl.style.display = 'block';
+            } finally {
+                loading = false;
+            }
+        }
+
+        // 娓叉煋鍒嗙被
+        function renderCategories() {
+            if (categories.length === 0) return;
+            
+            let categoriesHtml = '';
+            categories.forEach(category => {
+                categoriesHtml += `
+                    <a href="category-articles.html?slug=${category.slug}" class="category-card">
+                        <h2>${category.name}</h2>
+                        <p>${category.description}</p>
+                        <span class="article-count">${category.articleCount} 绡囨枃绔?/span>
+                    </a>
+                `;
+            });
+            
+            categoriesGridEl.innerHTML = categoriesHtml;
+        }
+
+        // 鏄剧ず鎻愮ず淇℃伅
+        function showToast(message, type = 'success') {
+            // 绠€鍗曠殑toast瀹炵幇
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 24px;
+                background: ${type === 'success' ? 'rgba(0, 255, 157, 0.2)' : 'rgba(255, 68, 68, 0.2)'};
+                color: ${type === 'success' ? '#00ff9d' : '#ff4444'};
+                border: 1px solid ${type === 'success' ? '#00ff9d' : '#ff4444'};
+                border-radius: 4px;
+                z-index: 1000;
+                transition: all 0.3s;
+            `;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // 鍒濆鍖?        document.addEventListener('DOMContentLoaded', () => {
+            fetchCategories();
+            
+            // 娣诲姞閲嶈瘯鎸夐挳浜嬩欢鐩戝惉鍣?            retryBtnEl.addEventListener('click', fetchCategories);
+        });
+    </script>
+</body>
+</html>

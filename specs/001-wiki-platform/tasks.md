@@ -1,4 +1,4 @@
-# Tasks: Wiki Platform
+﻿# Tasks: Wiki Platform
 
 **Input**: Design documents from `/specs/001-wiki-platform/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
@@ -49,7 +49,7 @@
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete
+**鈿狅笍 CRITICAL**: No user story work can begin until this phase is complete
 
 - [ ] T009 Setup database schema and migrations framework in backend/alembic/
 - [ ] T010 [P] Implement authentication/authorization framework in backend/src/auth/
@@ -66,13 +66,13 @@
 
 ---
 
-## Phase 3: User Story 1 - Article Creation and Publishing (Priority: P1) 🎯 MVP
+## Phase 3: User Story 1 - Article Creation and Publishing (Priority: P1) 馃幆 MVP
 
 **Goal**: Enable registered users to create, edit, and publish articles on the wiki platform
 
 **Independent Test**: Can be fully tested by creating a new article, editing it, and publishing it to make it visible to other users, delivering the core value of content sharing.
 
-### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 1 (OPTIONAL - only if tests requested) 鈿狅笍
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
@@ -116,7 +116,7 @@
 
 **Independent Test**: Can be tested by creating user profiles, connecting with other users, and engaging in social interactions, delivering value through community building.
 
-### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 2 (OPTIONAL - only if tests requested) 鈿狅笍
 
 - [ ] T045 [P] [US2] Contract test for user profile endpoint in backend/tests/contract/test_users.py
 - [ ] T046 [P] [US2] Contract test for connection creation endpoint in backend/tests/contract/test_connections.py
@@ -153,7 +153,7 @@
 
 **Independent Test**: Can be tested by searching for articles, browsing categories, and navigating through content, delivering value through improved accessibility.
 
-### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 3 (OPTIONAL - only if tests requested) 鈿狅笍
 
 - [ ] T066 [P] [US3] Contract test for search endpoint in backend/tests/contract/test_search.py
 - [ ] T067 [P] [US3] Contract test for category browsing endpoint in backend/tests/contract/test_categories.py
@@ -205,7 +205,7 @@
 - **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
 - **User Stories (Phase 3+)**: All depend on Foundational phase completion
   - User stories can then proceed in parallel (if staffed)
-  - Or sequentially in priority order (P1 → P2 → P3)
+  - Or sequentially in priority order (P1 鈫?P2 鈫?P3)
 - **Polish (Final Phase)**: Depends on all desired user stories being complete
 
 ### User Story Dependencies

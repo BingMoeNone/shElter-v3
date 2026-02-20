@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useArticlesStore } from '@/stores/articles'
@@ -33,7 +33,7 @@ async function fetchComments() {
     }
   } catch (err: any) {
     console.error('Failed to fetch comments:', err)
-    toast.error('加载评论失败')
+    toast.error('鍔犺浇璇勮澶辫触')
   }
 }
 
@@ -63,17 +63,17 @@ function canEdit() {
 }
 
 async function handleDelete() {
-  if (!confirm('确定要删除这篇文章吗？此操作不可撤销。')) return
+  if (!confirm('纭畾瑕佸垹闄よ繖绡囨枃绔犲悧锛熸鎿嶄綔涓嶅彲鎾ら攢銆?)) return
   
   deleting.value = true
   
   try {
     await articlesStore.deleteArticle(articleId.value)
-    toast.success('文章已删除')
+    toast.success('鏂囩珷宸插垹闄?)
     router.push('/articles')
   } catch (err: any) {
     console.error('Failed to delete article:', err)
-    toast.error(err.response?.data?.message || '删除文章失败')
+    toast.error(err.response?.data?.message || '鍒犻櫎鏂囩珷澶辫触')
   } finally {
     deleting.value = false
   }
@@ -119,10 +119,10 @@ async function handleDelete() {
           
           <div v-if="canEdit()" class="article-actions">
             <RouterLink :to="`/articles/${article.id}/edit`" class="btn-edit">
-              编辑
+              缂栬緫
             </RouterLink>
             <button @click="handleDelete" class="btn-delete" :disabled="deleting">
-              {{ deleting ? '删除中...' : '删除' }}
+              {{ deleting ? '鍒犻櫎涓?..' : '鍒犻櫎' }}
             </button>
           </div>
         </header>

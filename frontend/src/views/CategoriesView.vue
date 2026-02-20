@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { categoriesApi } from '@/services/api'
 import type { Category } from '@/types'
@@ -22,8 +22,8 @@ async function fetchCategories() {
     categories.value = response.data.categories || response.data || []
   } catch (err: any) {
     console.error('Failed to fetch categories:', err)
-    error.value = err.response?.data?.message || '加载分类失败'
-    toast.error('无法加载分类列表')
+    error.value = err.response?.data?.message || '鍔犺浇鍒嗙被澶辫触'
+    toast.error('鏃犳硶鍔犺浇鍒嗙被鍒楄〃')
   } finally {
     loading.value = false
   }
@@ -32,22 +32,22 @@ async function fetchCategories() {
 
 <template>
   <div class="categories-page">
-    <h1>分类</h1>
+    <h1>鍒嗙被</h1>
     
     <div v-if="loading" class="loading">
       <div class="loading-spinner"></div>
-      <p>加载分类中...</p>
+      <p>鍔犺浇鍒嗙被涓?..</p>
     </div>
     
     <div v-else-if="error" class="error-state">
-      <span class="error-icon">⚠️</span>
+      <span class="error-icon">鈿狅笍</span>
       <p>{{ error }}</p>
-      <button @click="fetchCategories" class="retry-btn">重试</button>
+      <button @click="fetchCategories" class="retry-btn">閲嶈瘯</button>
     </div>
     
     <div v-else-if="categories.length === 0" class="empty-state">
-      <span class="empty-icon">📂</span>
-      <p>暂无分类</p>
+      <span class="empty-icon">馃搨</span>
+      <p>鏆傛棤鍒嗙被</p>
     </div>
     
     <div v-else class="categories-grid">
@@ -59,7 +59,7 @@ async function fetchCategories() {
       >
         <h2>{{ category.name }}</h2>
         <p v-if="category.description">{{ category.description }}</p>
-        <span class="article-count">{{ category.articleCount || 0 }} 篇文章</span>
+        <span class="article-count">{{ category.articleCount || 0 }} 绡囨枃绔?/span>
       </RouterLink>
     </div>
   </div>

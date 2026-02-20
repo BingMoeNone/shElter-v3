@@ -1,4 +1,4 @@
-from src.models.user import User
+﻿from src.models.user import User
 from src.models.article import Article
 from src.models.revision import Revision
 from src.models.category import Category

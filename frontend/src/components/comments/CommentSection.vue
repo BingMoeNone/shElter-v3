@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import type { Comment } from '@/types'
 import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
@@ -52,10 +52,10 @@ async function submitComment() {
     })
     emit('commentAdded', response.data)
     newComment.value = ''
-    toast.success('评论发表成功！')
+    toast.success('璇勮鍙戣〃鎴愬姛锛?)
   } catch (err: any) {
     console.error('Failed to post comment:', err)
-    toast.error(err.response?.data?.message || '评论发表失败，请重试')
+    toast.error(err.response?.data?.message || '璇勮鍙戣〃澶辫触锛岃閲嶈瘯')
   } finally {
     submitting.value = false
   }
@@ -75,27 +75,27 @@ async function submitReply(commentId: string) {
     emit('commentAdded', response.data)
     replyContent.value = ''
     replyingTo.value = null
-    toast.success('回复发表成功！')
+    toast.success('鍥炲鍙戣〃鎴愬姛锛?)
   } catch (err: any) {
     console.error('Failed to post reply:', err)
-    toast.error(err.response?.data?.message || '回复发表失败，请重试')
+    toast.error(err.response?.data?.message || '鍥炲鍙戣〃澶辫触锛岃閲嶈瘯')
   } finally {
     submitting.value = false
   }
 }
 
 async function deleteComment(commentId: string) {
-  if (!confirm('确定要删除这条评论吗？')) return
+  if (!confirm('纭畾瑕佸垹闄よ繖鏉¤瘎璁哄悧锛?)) return
   
   deletingId.value = commentId
   
   try {
     await commentsApi.delete(commentId)
     emit('commentDeleted', commentId)
-    toast.success('评论已删除')
+    toast.success('璇勮宸插垹闄?)
   } catch (err: any) {
     console.error('Failed to delete comment:', err)
-    toast.error(err.response?.data?.message || '删除评论失败')
+    toast.error(err.response?.data?.message || '鍒犻櫎璇勮澶辫触')
   } finally {
     deletingId.value = null
   }
@@ -156,7 +156,7 @@ function canDelete(comment: Comment): boolean {
             class="btn-delete"
             :disabled="deletingId === comment.id"
           >
-            {{ deletingId === comment.id ? '删除中...' : 'Delete' }}
+            {{ deletingId === comment.id ? '鍒犻櫎涓?..' : 'Delete' }}
           </button>
         </div>
         

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useArticlesStore } from '@/stores/articles'
 import ArticleCard from '@/components/articles/ArticleCard.vue'
@@ -56,8 +56,7 @@ function handleSearch() {
       </div>
       
       <RouterLink to="/articles" class="view-all">
-        View All Articles →
-      </RouterLink>
+        View All Articles 鈫?      </RouterLink>
     </section>
   </div>
 </template>

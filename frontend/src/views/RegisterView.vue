@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -20,13 +20,13 @@ async function handleRegister() {
   if (!username.value || !email.value || !password.value) return
   
   if (password.value !== confirmPassword.value) {
-    error.value = '两次输入的密码不一致'
+    error.value = '涓ゆ杈撳叆鐨勫瘑鐮佷笉涓€鑷?
     errorDetails.value = null
     return
   }
   
   if (password.value.length < 8) {
-    error.value = '密码长度至少为 8 个字符'
+    error.value = '瀵嗙爜闀垮害鑷冲皯涓?8 涓瓧绗?
     errorDetails.value = null
     return
   }
@@ -43,7 +43,7 @@ async function handleRegister() {
       password: password.value,
       displayName: displayName.value || undefined,
     })
-    success.value = '注册成功！正在为您自动登录...'
+    success.value = '娉ㄥ唽鎴愬姛锛佹鍦ㄤ负鎮ㄨ嚜鍔ㄧ櫥褰?..'
     
     setTimeout(() => {
       router.push('/')
@@ -54,13 +54,13 @@ async function handleRegister() {
       if (typeof response.detail === 'string') {
         error.value = response.detail
       } else {
-        error.value = response.detail.message || '注册失败'
+        error.value = response.detail.message || '娉ㄥ唽澶辫触'
         errorDetails.value = response.detail
       }
     } else if (response?.message) {
       error.value = response.message
     } else {
-      error.value = '注册失败，请稍后重试'
+      error.value = '娉ㄥ唽澶辫触锛岃绋嶅悗閲嶈瘯'
     }
     loading.value = false
   }
@@ -70,65 +70,65 @@ async function handleRegister() {
 <template>
   <div class="register-page">
     <div class="register-card card">
-      <h1>注册</h1>
+      <h1>娉ㄥ唽</h1>
       
       <form @submit.prevent="handleRegister">
         <div class="form-group">
-          <label for="username">用户名 *</label>
+          <label for="username">鐢ㄦ埛鍚?*</label>
           <input
             id="username"
             v-model="username"
             type="text"
             required
             pattern="[a-zA-Z0-9_]+"
-            title="用户名只能包含字母、数字和下划线"
-            placeholder="请输入用户名"
+            title="鐢ㄦ埛鍚嶅彧鑳藉寘鍚瓧姣嶃€佹暟瀛楀拰涓嬪垝绾?
+            placeholder="璇疯緭鍏ョ敤鎴峰悕"
           />
-          <p class="hint">用户名可以与其他用户相同，但需与邮箱配套使用</p>
+          <p class="hint">鐢ㄦ埛鍚嶅彲浠ヤ笌鍏朵粬鐢ㄦ埛鐩稿悓锛屼絾闇€涓庨偖绠遍厤濂椾娇鐢?/p>
         </div>
         
         <div class="form-group">
-          <label for="email">邮箱 *</label>
+          <label for="email">閭 *</label>
           <input
             id="email"
             v-model="email"
             type="email"
             required
-            placeholder="请输入邮箱地址"
+            placeholder="璇疯緭鍏ラ偖绠卞湴鍧€"
           />
-          <p class="hint">邮箱是您的唯一身份标识，不可重复</p>
+          <p class="hint">閭鏄偍鐨勫敮涓€韬唤鏍囪瘑锛屼笉鍙噸澶?/p>
         </div>
         
         <div class="form-group">
-          <label for="displayName">显示名称</label>
+          <label for="displayName">鏄剧ず鍚嶇О</label>
           <input
             id="displayName"
             v-model="displayName"
             type="text"
-            placeholder="可选，用于显示您的昵称"
+            placeholder="鍙€夛紝鐢ㄤ簬鏄剧ず鎮ㄧ殑鏄电О"
           />
         </div>
         
         <div class="form-group">
-          <label for="password">密码 *</label>
+          <label for="password">瀵嗙爜 *</label>
           <input
             id="password"
             v-model="password"
             type="password"
             required
             minlength="8"
-            placeholder="至少 8 个字符"
+            placeholder="鑷冲皯 8 涓瓧绗?
           />
         </div>
         
         <div class="form-group">
-          <label for="confirmPassword">确认密码 *</label>
+          <label for="confirmPassword">纭瀵嗙爜 *</label>
           <input
             id="confirmPassword"
             v-model="confirmPassword"
             type="password"
             required
-            placeholder="请再次输入密码"
+            placeholder="璇峰啀娆¤緭鍏ュ瘑鐮?
           />
         </div>
         
@@ -144,12 +144,12 @@ async function handleRegister() {
         </div>
         
         <button type="submit" :disabled="loading" class="btn-register">
-          {{ success ? '注册成功' : (loading ? '注册中...' : '注册') }}
+          {{ success ? '娉ㄥ唽鎴愬姛' : (loading ? '娉ㄥ唽涓?..' : '娉ㄥ唽') }}
         </button>
       </form>
       
       <p class="login-link">
-        已有账户？ <RouterLink to="/login">立即登录</RouterLink>
+        宸叉湁璐︽埛锛?<RouterLink to="/login">绔嬪嵆鐧诲綍</RouterLink>
       </p>
     </div>
   </div>

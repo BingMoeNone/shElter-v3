@@ -1,4 +1,4 @@
-"""init wiki platform tables
+﻿"""init wiki platform tables
 
 Revision ID: 001
 Create Date: 2026-02-12

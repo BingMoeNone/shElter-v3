@@ -1,4 +1,4 @@
-from alembic import context
+﻿from alembic import context
 from sqlalchemy import pool, engine_from_config
 from logging.config import fileConfig
 import os
