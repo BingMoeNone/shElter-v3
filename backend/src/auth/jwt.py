@@ -1,4 +1,4 @@
-﻿from datetime import datetime, timedelta
+from datetime import datetime, timedelta
 from typing import Optional
 import os
 
@@ -175,7 +175,7 @@ async def get_current_user(
     """鑾峰彇褰撳墠鐢ㄦ埛"""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="鏃犳晥鐨勮闂护鐗?,
+        detail="鏃犳晥鐨勮闂护鐗?",
         headers={"WWW-Authenticate": "Bearer"},
     )
     
@@ -205,12 +205,12 @@ async def get_current_user(
 async def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
     """鑾峰彇褰撳墠娲昏穬鐢ㄦ埛"""
     if not current_user.is_active:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="鐢ㄦ埛宸茬鐢?)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="鐢ㄦ埛宸茬鐢?")
     return current_user
 
 
 def require_role(roles: list[str]):
-    """瑙掕壊鏉冮檺瑁呴グ鍣?""
+    """瑙掕壊鏉冮檺瑁呴グ鍣?"""
     async def role_checker(current_user: User = Depends(get_current_user)) -> User:
         if current_user.role not in roles:
             raise HTTPException(

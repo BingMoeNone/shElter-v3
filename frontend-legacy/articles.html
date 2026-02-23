@@ -27,7 +27,7 @@
         }
 
         body {
-            font-family: var(--font-family-base);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
             background-color: var(--color-background);
             color: var(--color-text);
             line-height: 1.6;
@@ -285,10 +285,10 @@
 
     <!-- Articles Page Content -->
     <div class="articles-page">
-        <!-- 闈㈠寘灞戝鑸?-->
+        <!-- 面包屑导航 -->
         <div id="breadcrumb" class="breadcrumb"></div>
         
-        <!-- 鐧诲綍鐘舵€佹寚绀哄櫒 -->
+        <!-- 登录状态指示器 -->
         <div style="text-align: right; margin-bottom: 16px;">
             <div id="auth-indicator" class="auth-indicator"></div>
         </div>
@@ -395,7 +395,8 @@
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', () => {
-            // 鍒濆鍖栭〉闈紭鍖栧姛鑳?            initPage('articles', '鏂囩珷鍒楄〃');
+            // 初始化页面优化功能
+            initPage('articles', '文章列表');
             
             fetchArticles();
         });

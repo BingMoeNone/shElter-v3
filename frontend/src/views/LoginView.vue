@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -25,7 +25,7 @@ async function handleLogin() {
   
   try {
     await authStore.login(username.value, email.value, password.value)
-    success.value = '鐧诲綍鎴愬姛锛佹杩庡洖鏉ャ€?
+    success.value = '登录成功，欢迎回来！'
     
     // Short delay to show success message
     setTimeout(() => {
@@ -43,7 +43,7 @@ async function handleLogin() {
       if (typeof response.detail === 'string') {
         error.value = response.detail
       } else {
-        error.value = response.detail.message || '鐧诲綍澶辫触'
+        error.value = response.detail.message || '登录失败'
         errorDetails.value = response.detail
       }
     } else if (response?.message) {

@@ -1,350 +1,287 @@
-﻿import re
-from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+import re
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
 from sqlalchemy.orm import Session
-from typing import Optional, List
-from uuid import UUID
+from typing import List, Optional
 
 from src.database import get_db
-from src.models import Article, User, Category, Tag, Revision, article_categories, article_tags
+from src.models import Article, User, Comment, Tag
 from src.schemas import (
-    ArticleCreate,
-    ArticleUpdate,
-    ArticleResponse,
-    ArticleListResponse,
-    Pagination,
-    CategoryResponse,
-    TagResponse,
-    UserResponse,
+    ArticleCreate, ArticleUpdate, ArticleResponse, ArticleListResponse,
+    CommentCreate, CommentResponse, RevisionResponse
 )
-from src.auth.jwt import get_current_user
-from src.auth.permissions import can_edit_article, can_delete_article
+from src.auth.jwt import get_current_active_user
+from src.config import settings
+from src.utils import ArticleNotFoundError, generate_slug
+from src.core.response import response_wrapper
+from src.core.security import limiter
+from src.utils.logging import logger
 
 router = APIRouter()
 
 
-def generate_slug(title: str) -> str:
-    slug = re.sub(r"[^\w\s-]", "", title.lower())
-    slug = re.sub(r"[\s_-]+", "-", slug)
-    return slug.strip("-")
-
-
-@router.post("/", response_model=ArticleResponse, status_code=status.HTTP_201_CREATED)
-async def create_article(
-    article_data: ArticleCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+@router.get("/", response_model=ArticleListResponse)
+async def get_articles(
+    title: Optional[str] = Query(None, min_length=1, max_length=200),
+    category_id: Optional[int] = Query(None, ge=1),
+    tag_id: Optional[int] = Query(None, ge=1),
+    author_id: Optional[int] = Query(None, ge=1),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
+    sort_by: Optional[str] = Query("created_at", regex=r"^(created_at|updated_at|views|likes)$"),
+    sort_order: Optional[str] = Query("desc", regex=r"^(asc|desc)$"),
+    db: Session = Depends(get_db)
 ):
-    slug = generate_slug(article_data.title)
-    existing = db.query(Article).filter(Article.slug == slug).first()
-    if existing:
-        slug = f"{slug}-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
-    
-    article = Article(
-        title=article_data.title,
-        slug=slug,
-        content=article_data.content,
-        summary=article_data.summary,
-        status=article_data.status,
-        author_id=current_user.id,
-    )
-    
-    if article_data.category_ids:
-        categories = db.query(Category).filter(Category.id.in_(article_data.category_ids)).all()
-        article.categories = categories
-    
-    if article_data.tag_names:
-        for tag_name in article_data.tag_names:
-            tag = db.query(Tag).filter(Tag.name.ilike(tag_name)).first()
-            if not tag:
-                tag = Tag(name=tag_name, slug=generate_slug(tag_name))
-                db.add(tag)
-            article.tags.append(tag)
-    
-    db.add(article)
-    db.commit()
-    db.refresh(article)
-    
-    # 鏇存柊鐢ㄦ埛璐＄尞璁℃暟
-    current_user.contribution_count += 1
-    
-    revision = Revision(
-        article_id=article.id,
-        author_id=current_user.id,
-        title=article.title,
-        content=article.content,
-        revision_number=1,
-        change_summary="Initial version",
-    )
-    db.add(revision)
-    db.commit()
-    
-    return ArticleResponse(
-        id=article.id,
-        title=article.title,
-        slug=article.slug,
-        content=article.content,
-        summary=article.summary,
-        status=article.status,
-        author=UserResponse.model_validate(article.author),
-        published_at=article.published_at,
-        created_at=article.created_at,
-        updated_at=article.updated_at,
-        view_count=article.view_count,
-        is_featured=article.is_featured,
-        categories=[CategoryResponse.model_validate(c) for c in article.categories],
-        tags=[TagResponse.model_validate(t) for t in article.tags],
-    )
-
-
-@router.get("/", response_model=dict)
-async def list_articles(
-    page: int = 1,
-    limit: int = 20,
-    status: Optional[str] = None,
-    category: Optional[str] = None,
-    tag: Optional[str] = None,
-    search: Optional[str] = None,
-    db: Session = Depends(get_db),
-):
+    """获取文章列表"""
     query = db.query(Article)
     
-    if status:
-        query = query.filter(Article.status == status)
-    else:
-        query = query.filter(Article.status == "published")
+    # 应用过滤条件
+    if title:
+        query = query.filter(Article.title.ilike(f"%{title}%"))
+    if category_id:
+        query = query.filter(Article.category_id == category_id)
+    if tag_id:
+        query = query.filter(Article.tags.any(id=tag_id))
+    if author_id:
+        query = query.filter(Article.author_id == author_id)
     
-    if category:
-        query = query.join(Article.categories).filter(Category.slug == category)
+    # 应用排序
+    order_by = getattr(Article, sort_by)
+    if sort_order == "desc":
+        order_by = order_by.desc()
+    query = query.order_by(order_by)
     
-    if tag:
-        query = query.join(Article.tags).filter(Tag.slug == tag)
-    
-    if search:
-        query = query.filter(
-            Article.title.ilike(f"%{search}%") | Article.content.ilike(f"%{search}%")
-        )
-    
+    # 获取总数
     total = query.count()
-    articles = query.order_by(Article.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
     
-    return {
-        "articles": [
-            ArticleResponse(
-                id=a.id,
-                title=a.title,
-                slug=a.slug,
-                content=a.content,
-                summary=a.summary,
-                status=a.status,
-                author=UserResponse.model_validate(a.author),
-                published_at=a.published_at,
-                created_at=a.created_at,
-                updated_at=a.updated_at,
-                view_count=a.view_count,
-                is_featured=a.is_featured,
-                categories=[CategoryResponse.model_validate(c) for c in a.categories],
-                tags=[TagResponse.model_validate(t) for t in a.tags],
-            ) for a in articles
-        ],
-        "pagination": Pagination(
-            page=page,
-            limit=limit,
-            total_pages=(total + limit - 1) // limit,
-            total_items=total
-        ).model_dump()
-    }
+    # 分页
+    articles = query.offset(skip).limit(limit).all()
+    
+    return ArticleListResponse(
+        items=articles,
+        total=total,
+        skip=skip,
+        limit=limit
+    )
 
 
 @router.get("/{article_id}", response_model=ArticleResponse)
-async def get_article(article_id: str, db: Session = Depends(get_db)):
+async def get_article(
+    article_id: int,
+    current_user: Optional[User] = Depends(lambda: None),
+    db: Session = Depends(get_db)
+):
+    """获取文章详情"""
     article = db.query(Article).filter(Article.id == article_id).first()
     if not article:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Article not found")
+        raise ArticleNotFoundError(article_id)
     
-    article.view_count += 1
+    # 增加文章浏览量
+    article.views += 1
     db.commit()
     
-    return ArticleResponse(
-        id=article.id,
+    return article
+
+
+@router.post("/", response_model=ArticleResponse)
+async def create_article(
+    article: ArticleCreate,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """创建新文章"""
+    new_article = Article(
         title=article.title,
-        slug=article.slug,
         content=article.content,
-        summary=article.summary,
-        status=article.status,
-        author=UserResponse.model_validate(article.author),
-        published_at=article.published_at,
-        created_at=article.created_at,
-        updated_at=article.updated_at,
-        view_count=article.view_count,
-        is_featured=article.is_featured,
-        categories=[CategoryResponse.model_validate(c) for c in article.categories],
-        tags=[TagResponse.model_validate(t) for t in article.tags],
+        category_id=article.category_id,
+        author_id=current_user.id
     )
+    
+    # 添加标签
+    if article.tags:
+        for tag_id in article.tags:
+            tag = db.query(Tag).filter(Tag.id == tag_id).first()
+            if tag:
+                new_article.tags.append(tag)
+    
+    db.add(new_article)
+    db.commit()
+    db.refresh(new_article)
+    
+    return new_article
 
 
 @router.put("/{article_id}", response_model=ArticleResponse)
 async def update_article(
-    article_id: str,
-    article_data: ArticleUpdate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    article_id: int,
+    article_update: ArticleUpdate,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
+    """更新文章"""
     article = db.query(Article).filter(Article.id == article_id).first()
     if not article:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Article not found")
+        raise ArticleNotFoundError(article_id)
     
-    if not can_edit_article(current_user, article.author_id):
+    # 检查权限
+    if article.author_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to update this article"
+            detail="没有权限修改该文章"
         )
     
-    update_data = article_data.model_dump(exclude_unset=True)
+    # 更新文章内容
+    for field, value in article_update.dict(exclude_unset=True).items():
+        setattr(article, field, value)
     
-    if article_data.category_ids is not None:
-        categories = db.query(Category).filter(Category.id.in_(article_data.category_ids)).all()
-        article.categories = categories
-    
-    if article_data.tag_names is not None:
-        article.tags = []
-        for tag_name in article_data.tag_names:
-            tag = db.query(Tag).filter(Tag.name.ilike(tag_name)).first()
-            if not tag:
-                tag = Tag(name=tag_name, slug=generate_slug(tag_name))
-                db.add(tag)
-            article.tags.append(tag)
-    
-    for key, value in update_data.items():
-        if key not in ["category_ids", "tag_names"]:
-            setattr(article, key, value)
-    
-    latest_revision = db.query(Revision).filter(
-        Revision.article_id == article.id
-    ).order_by(Revision.revision_number.desc()).first()
-    
-    revision_number = (latest_revision.revision_number + 1) if latest_revision else 1
-    revision = Revision(
-        article_id=article.id,
-        author_id=current_user.id,
-        title=article.title,
-        content=article.content,
-        revision_number=revision_number,
-        change_summary=f"Updated article",
-    )
-    db.add(revision)
-    
-    # 鏇存柊鐢ㄦ埛璐＄尞璁℃暟
-    current_user.contribution_count += 1
+    # 更新标签
+    if article_update.tags is not None:
+        # 清空现有标签
+        article.tags.clear()
+        # 添加新标签
+        for tag_id in article_update.tags:
+            tag = db.query(Tag).filter(Tag.id == tag_id).first()
+            if tag:
+                article.tags.append(tag)
     
     db.commit()
     db.refresh(article)
     
-    return ArticleResponse(
-        id=article.id,
-        title=article.title,
-        slug=article.slug,
-        content=article.content,
-        summary=article.summary,
-        status=article.status,
-        author=UserResponse.model_validate(article.author),
-        published_at=article.published_at,
-        created_at=article.created_at,
-        updated_at=article.updated_at,
-        view_count=article.view_count,
-        is_featured=article.is_featured,
-        categories=[CategoryResponse.model_validate(c) for c in article.categories],
-        tags=[TagResponse.model_validate(t) for t in article.tags],
-    )
+    return article
 
 
-@router.delete("/{article_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{article_id}")
 async def delete_article(
-    article_id: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    article_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
+    """删除文章"""
     article = db.query(Article).filter(Article.id == article_id).first()
     if not article:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Article not found")
+        raise ArticleNotFoundError(article_id)
     
-    if not can_delete_article(current_user, article.author_id):
+    # 检查权限
+    if article.author_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to delete this article"
+            detail="没有权限删除该文章"
         )
     
-    article.status = "archived"
+    db.delete(article)
     db.commit()
+    
+    return response_wrapper.success(message=f"文章 {article_id} 已成功删除")
 
 
-@router.post("/{article_id}/publish", response_model=ArticleResponse)
-async def publish_article(
-    article_id: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+@router.post("/{article_id}/comments", response_model=CommentResponse)
+async def create_article_comment(
+    article_id: int,
+    comment: CommentCreate,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
+    """给文章添加评论"""
     article = db.query(Article).filter(Article.id == article_id).first()
     if not article:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Article not found")
+        raise ArticleNotFoundError(article_id)
     
-    if str(article.author_id) != str(current_user.id):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to publish this article"
-        )
+    new_comment = Comment(
+        content=comment.content,
+        article_id=article_id,
+        author_id=current_user.id
+    )
     
-    if len(article.content) < 10:
+    db.add(new_comment)
+    db.commit()
+    db.refresh(new_comment)
+    
+    return new_comment
+
+
+@router.get("/{article_id}/comments", response_model=List[CommentResponse])
+async def get_article_comments(
+    article_id: int,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=50),
+    db: Session = Depends(get_db)
+):
+    """获取文章评论"""
+    article = db.query(Article).filter(Article.id == article_id).first()
+    if not article:
+        raise ArticleNotFoundError(article_id)
+    
+    comments = db.query(Comment).filter(
+        Comment.article_id == article_id
+    ).order_by(Comment.created_at.desc()).offset(skip).limit(limit).all()
+    
+    return comments
+
+
+@router.get("/{article_id}/revisions", response_model=List[RevisionResponse])
+async def get_article_revisions(
+    article_id: int,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=50),
+    db: Session = Depends(get_db)
+):
+    """获取文章修订历史"""
+    article = db.query(Article).filter(Article.id == article_id).first()
+    if not article:
+        raise ArticleNotFoundError(article_id)
+    
+    revisions = db.query(Article.revisions).filter(
+        Article.id == article_id
+    ).order_by(Article.revisions.c.created_at.desc()).offset(skip).limit(limit).all()
+    
+    return revisions
+
+
+@router.post("/{article_id}/like")
+async def like_article(
+    article_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """点赞文章"""
+    article = db.query(Article).filter(Article.id == article_id).first()
+    if not article:
+        raise ArticleNotFoundError(article_id)
+    
+    # 检查是否已经点赞
+    if article.likes.filter(User.id == current_user.id).first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Article content must be at least 10 characters"
+            detail="已经点赞过该文章"
         )
     
-    article.status = "published"
-    article.published_at = datetime.utcnow()
+    # 添加点赞
+    article.likes.append(current_user)
     db.commit()
-    db.refresh(article)
     
-    return ArticleResponse(
-        id=article.id,
-        title=article.title,
-        slug=article.slug,
-        content=article.content,
-        summary=article.summary,
-        status=article.status,
-        author=UserResponse.model_validate(article.author),
-        published_at=article.published_at,
-        created_at=article.created_at,
-        updated_at=article.updated_at,
-        view_count=article.view_count,
-        is_featured=article.is_featured,
-        categories=[CategoryResponse.model_validate(c) for c in article.categories],
-        tags=[TagResponse.model_validate(t) for t in article.tags],
-    )
+    return response_wrapper.success(message=f"成功点赞文章 {article_id}")
 
 
-@router.get("/{article_id}/revisions", response_model=dict)
-async def get_article_revisions(article_id: str, db: Session = Depends(get_db)):
+@router.post("/{article_id}/unlike")
+async def unlike_article(
+    article_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """取消点赞文章"""
     article = db.query(Article).filter(Article.id == article_id).first()
     if not article:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Article not found")
+        raise ArticleNotFoundError(article_id)
     
-    revisions = db.query(Revision).filter(
-        Revision.article_id == article.id
-    ).order_by(Revision.revision_number.desc()).all()
+    # 检查是否已经点赞
+    like = article.likes.filter(User.id == current_user.id).first()
+    if not like:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="没有点赞过该文章"
+        )
     
-    from src.schemas import RevisionResponse
-    return {
-        "revisions": [
-            RevisionResponse(
-                id=r.id,
-                article_id=r.article_id,
-                author=UserResponse.model_validate(r.author),
-                title=r.title,
-                content=r.content,
-                change_summary=r.change_summary,
-                revision_number=r.revision_number,
-                created_at=r.created_at,
-            ) for r in revisions
-        ]
-    }
+    # 移除点赞
+    article.likes.remove(current_user)
+    db.commit()
+    
+    return response_wrapper.success(message=f"成功取消点赞文章 {article_id}")

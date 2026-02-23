@@ -1,4 +1,4 @@
-﻿import json
+import json
 from datetime import datetime
 from typing import Optional, Any
 
@@ -10,17 +10,17 @@ from src.models import AuditLog
 
 class AuditService:
     ACTIONS = {
-        "USER_CREATE": "鍒涘缓鐢ㄦ埛",
-        "USER_DELETE": "鍒犻櫎鐢ㄦ埛",
-        "USER_UPDATE": "鏇存柊鐢ㄦ埛",
-        "USER_PASSWORD_RESET": "閲嶇疆瀵嗙爜",
-        "USER_PASSWORD_CHANGE": "淇敼瀵嗙爜",
-        "USER_USERNAME_CHANGE": "淇敼鐢ㄦ埛鍚?,
-        "USER_EMAIL_CHANGE": "淇敼閭",
-        "USER_ROLE_CHANGE": "淇敼瑙掕壊",
-        "USER_VIEW": "鏌ョ湅鐢ㄦ埛",
-        "USER_LIST": "鍒楀嚭鐢ㄦ埛",
-        "ADMIN_LOGIN": "绠＄悊鍛樼櫥褰?,
+        "USER_CREATE": "创建用户",
+        "USER_DELETE": "删除用户",
+        "USER_UPDATE": "更新用户",
+        "USER_PASSWORD_RESET": "重置密码",
+        "USER_PASSWORD_CHANGE": "修改密码",
+        "USER_USERNAME_CHANGE": "修改用户名",
+        "USER_EMAIL_CHANGE": "修改邮箱",
+        "USER_ROLE_CHANGE": "修改角色",
+        "USER_VIEW": "查看用户",
+        "USER_LIST": "列出用户",
+        "ADMIN_LOGIN": "管理员登录",
     }
 
     @staticmethod

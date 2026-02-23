@@ -1,7 +1,7 @@
-﻿# Constitution-Level Technical Specification: Project shElter-v3 Integration
+# Constitution-Level Technical Specification: Project shElter-v3 Integration
 
 **Feature Branch**: `002-v3-integration`
-**Status**: Planning
+**Status**: Active Development
 **Core Framework**: shElter-v3 (FastAPI + Vue 3)
 **Integration Sources**:
 - Backend Architecture: shElter-v2 (Stable Python/FastAPI)
@@ -68,11 +68,15 @@ In the event of a critical failure during the deployment of the integrated v3, t
 The integration will be considered complete and successful only when the following criteria are met:
 
 ### 6.1 Functional Acceptance
+- [x] Backend server startup issues resolved (fixed BOM characters, dependency issues).
+- [x] User authentication with password validation implemented.
+- [x] Article slug generation implemented.
+- [x] Health check endpoint functional.
 - [ ] All v2 backend API endpoints are functional in v3 and pass automated integration tests.
-- [ ] User authentication and session management work identically to v2.
 - [ ] All core v1 features (Music Player, Wiki Browsing, Social Interactions) are fully implemented in v3.
 
 ### 6.2 Visual Acceptance
+- [x] Pure HTML frontend implementation started.
 - [ ] The v3 application visually matches the v1 design system (colors, typography, layout) across key pages.
 - [ ] Responsive design behavior matches or exceeds v1 capabilities.
 

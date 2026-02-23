@@ -1,4 +1,4 @@
-﻿from datetime import datetime
+from datetime import datetime
 from typing import Any, Optional
 from pydantic import BaseModel
 from fastapi import Request, status
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class ApiResponse(BaseModel):
     data: Any = None
-    message: str = "鎿嶄綔鎴愬姛"
+    message: str = "操作成功"
     status: int = 200
     timestamp: str = None
     error_code: Optional[str] = None
@@ -19,7 +19,7 @@ class ApiResponse(BaseModel):
         json_schema_extra = {
             "example": {
                 "data": {"id": 1, "name": "example"},
-                "message": "鎿嶄綔鎴愬姛",
+                "message": "操作成功",
                 "status": 200,
                 "timestamp": "2026-02-17T10:00:00",
                 "error_code": None
@@ -28,11 +28,11 @@ class ApiResponse(BaseModel):
 
 
 class ResponseWrapper:
-    """缁熶竴鍝嶅簲鍖呰鍣?""
+    """统一响应包装器"""
 
     @staticmethod
-    def success(data: Any = None, message: str = "鎿嶄綔鎴愬姛", status_code: int = 200) -> dict:
-        """鎴愬姛鍝嶅簲"""
+    def success(data: Any = None, message: str = "操作成功", status_code: int = 200) -> dict:
+        """成功响应"""
         return {
             "data": data,
             "message": message,
@@ -43,7 +43,7 @@ class ResponseWrapper:
 
     @staticmethod
     def error(message: str, error_code: str = None, status_code: int = 400) -> dict:
-        """閿欒鍝嶅簲"""
+        """错误响应"""
         return {
             "data": None,
             "message": message,
@@ -54,7 +54,7 @@ class ResponseWrapper:
 
     @staticmethod
     async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-        """鍏ㄥ眬寮傚父澶勭悊鍣?""
+        """全局异常处理器"""
         logger.error(
             f"Unhandled exception: {str(exc)}",
             path=request.url.path,
@@ -65,7 +65,7 @@ class ResponseWrapper:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content={
                 "data": None,
-                "message": "鏈嶅姟鍣ㄥ唴閮ㄩ敊璇?,
+                "message": "服务器内部错误",
                 "status": 500,
                 "timestamp": datetime.utcnow().isoformat() + "Z",
                 "error_code": "INTERNAL_ERROR"
@@ -74,12 +74,12 @@ class ResponseWrapper:
 
     @staticmethod
     async def validation_exception_handler(request: Request, exc) -> JSONResponse:
-        """楠岃瘉寮傚父澶勭悊鍣?""
+        """验证异常处理器"""
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={
                 "data": None,
-                "message": "鏁版嵁楠岃瘉澶辫触",
+                "message": "数据验证失败",
                 "status": 422,
                 "timestamp": datetime.utcnow().isoformat() + "Z",
                 "error_code": "VALIDATION_ERROR",
@@ -89,7 +89,7 @@ class ResponseWrapper:
 
     @staticmethod
     async def http_exception_handler(request: Request, exc) -> JSONResponse:
-        """HTTP寮傚父澶勭悊鍣?""
+        """HTTP异常处理器"""
         return JSONResponse(
             status_code=exc.status_code,
             content={

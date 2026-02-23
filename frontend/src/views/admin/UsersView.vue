@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { adminApi } from '@/services/api'
 
@@ -39,7 +39,7 @@ const handlePageChange = (page: number) => {
 }
 
 const handleDeleteUser = async (userId: string) => {
-  if (confirm('纭畾瑕佸垹闄よ繖涓敤鎴峰悧锛?)) {
+  if (confirm('纭畾瑕佸垹闄よ繖涓敤鎴峰悧锛?')) {
     try {
       await adminApi.deleteUser(userId)
       fetchUsers()

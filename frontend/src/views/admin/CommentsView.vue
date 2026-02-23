@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { adminApi } from '@/services/api'
@@ -51,7 +51,7 @@ const handleViewArticle = (articleId: string) => {
 }
 
 const handleDeleteComment = async (commentId: string) => {
-  if (confirm('纭畾瑕佸垹闄よ繖涓瘎璁哄悧锛?)) {
+  if (confirm('纭畾瑕佸垹闄よ繖涓瘎璁哄悧锛?')) {
     try {
       await adminApi.deleteComment(commentId)
       fetchComments()

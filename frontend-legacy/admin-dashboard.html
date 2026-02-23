@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>绠＄悊鍛樹华琛ㄧ洏</title>
+    <title>管理面板</title>
     <style>
         :root {
             --color-primary: #00ff9d;
@@ -19,12 +19,7 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0a0a0a;
-            color: var(--color-text);
-            line-height: 1.6;
-        }
+        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
 
         .container {
             max-width: 1200px;
@@ -161,22 +156,22 @@
 </head>
 <body>
     <header>
-        <h1>绠＄悊鍛樺悗鍙?/h1>
+        <h1>管理后台?/h1>
         <nav>
             <ul>
-                <li><a href="admin-dashboard.html" class="active">浠〃鐩?/a></li>
-                <li><a href="admin-articles.html">鏂囩珷绠＄悊</a></li>
-                <li><a href="admin-users.html">鐢ㄦ埛绠＄悊</a></li>
-                <li><a href="admin-comments.html">璇勮绠＄悊</a></li>
-                <li><a href="admin-moderation.html">鍐呭瀹℃牳</a></li>
-                <li><a href="index.html">杩斿洖棣栭〉</a></li>
+                <li><a href="admin-dashboard.html" class="active">仪表盘?/a></li>
+                <li><a href="admin-articles.html">文章管理</a></li>
+                <li><a href="admin-users.html">用户管理</a></li>
+                <li><a href="admin-comments.html">评论管理</a></li>
+                <li><a href="admin-moderation.html">内容审核</a></li>
+                <li><a href="index.html">返回首页</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="container">
         <div class="admin-dashboard">
-            <h1 class="dashboard-title">绠＄悊鍛樹华琛ㄧ洏</h1>
+            <h1 class="dashboard-title">管理面板</h1>
             
             <div class="dashboard-grid">
                 <div class="stat-card">
@@ -184,7 +179,7 @@
                     <div class="stat-content">
                         <div class="stat-value" id="totalUsers">0</div>
                         <div class="stat-label">鎬荤敤鎴锋暟</div>
-                        <button class="stat-action" onclick="window.location.href='admin-users.html'">鏌ョ湅鐢ㄦ埛</button>
+                        <button class="stat-action" onclick="window.location.href='admin-users.html'">查看用户</button>
                     </div>
                 </div>
                 
@@ -193,7 +188,7 @@
                     <div class="stat-content">
                         <div class="stat-value" id="totalArticles">0</div>
                         <div class="stat-label">鎬绘枃绔犳暟</div>
-                        <button class="stat-action" onclick="window.location.href='admin-articles.html'">鏌ョ湅鏂囩珷</button>
+                        <button class="stat-action" onclick="window.location.href='admin-articles.html'">查看文章</button>
                     </div>
                 </div>
                 
@@ -202,7 +197,7 @@
                     <div class="stat-content">
                         <div class="stat-value" id="totalComments">0</div>
                         <div class="stat-label">鎬昏瘎璁烘暟</div>
-                        <button class="stat-action" onclick="window.location.href='admin-comments.html'">鏌ョ湅璇勮</button>
+                        <button class="stat-action" onclick="window.location.href='admin-comments.html'">查看评论</button>
                     </div>
                 </div>
                 
@@ -211,7 +206,7 @@
                     <div class="stat-content">
                         <div class="stat-value" id="pendingArticles">0</div>
                         <div class="stat-label">寰呭鏍告枃绔?/div>
-                        <button class="stat-action" onclick="window.location.href='admin-moderation.html'">瀹℃牳鏂囩珷</button>
+                        <button class="stat-action" onclick="window.location.href='admin-moderation.html'">审核文章</button>
                     </div>
                 </div>
                 
@@ -220,7 +215,7 @@
                     <div class="stat-content">
                         <div class="stat-value" id="pendingComments">0</div>
                         <div class="stat-label">寰呭鏍歌瘎璁?/div>
-                        <button class="stat-action" onclick="window.location.href='admin-moderation.html'">瀹℃牳璇勮</button>
+                        <button class="stat-action" onclick="window.location.href='admin-moderation.html'">审核评论</button>
                     </div>
                 </div>
             </div>

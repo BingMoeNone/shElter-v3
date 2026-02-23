@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -20,13 +20,13 @@ async function handleRegister() {
   if (!username.value || !email.value || !password.value) return
   
   if (password.value !== confirmPassword.value) {
-    error.value = '涓ゆ杈撳叆鐨勫瘑鐮佷笉涓€鑷?
+    error.value = '两次输入的密码不一致'
     errorDetails.value = null
     return
   }
   
   if (password.value.length < 8) {
-    error.value = '瀵嗙爜闀垮害鑷冲皯涓?8 涓瓧绗?
+    error.value = '密码长度至少为 8 个字符'
     errorDetails.value = null
     return
   }
@@ -43,7 +43,7 @@ async function handleRegister() {
       password: password.value,
       displayName: displayName.value || undefined,
     })
-    success.value = '娉ㄥ唽鎴愬姛锛佹鍦ㄤ负鎮ㄨ嚜鍔ㄧ櫥褰?..'
+    success.value = '注册成功，正在为您自动登录...'
     
     setTimeout(() => {
       router.push('/')

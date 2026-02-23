@@ -1,7 +1,20 @@
-﻿from typing import Generic, List, TypeVar
+from typing import Generic, List, TypeVar
+from enum import StrEnum
 from pydantic import BaseModel
 
 T = TypeVar("T")
+
+
+class ModerationStatus(StrEnum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    FLAGGED = "flagged"
+
+
+class ModerationAction(BaseModel):
+    status: ModerationStatus
+    reason: str | None = None
 
 
 class Pagination(BaseModel):

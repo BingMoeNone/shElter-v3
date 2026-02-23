@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鏂囩珷绠＄悊</title>
+    <title>文章管理</title>
     <style>
         :root {
             --color-primary: #00ff9d;
@@ -19,12 +19,7 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0a0a0a;
-            color: var(--color-text);
-            line-height: 1.6;
-        }
+        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
 
         header {
             background: var(--color-surface);
@@ -282,29 +277,29 @@
 </head>
 <body>
     <header>
-        <h1>绠＄悊鍛樺悗鍙?/h1>
+        <h1>管理后台?/h1>
         <nav>
             <ul>
-                <li><a href="admin-dashboard.html">浠〃鐩?/a></li>
-                <li><a href="admin-articles.html" class="active">鏂囩珷绠＄悊</a></li>
-                <li><a href="admin-users.html">鐢ㄦ埛绠＄悊</a></li>
-                <li><a href="admin-comments.html">璇勮绠＄悊</a></li>
-                <li><a href="admin-moderation.html">鍐呭瀹℃牳</a></li>
-                <li><a href="index.html">杩斿洖棣栭〉</a></li>
+                <li><a href="admin-dashboard.html">仪表盘?/a></li>
+                <li><a href="admin-articles.html" class="active">文章管理</a></li>
+                <li><a href="admin-users.html">用户管理</a></li>
+                <li><a href="admin-comments.html">评论管理</a></li>
+                <li><a href="admin-moderation.html">内容审核</a></li>
+                <li><a href="index.html">返回首页</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="container">
         <div class="admin-articles">
-            <h1 class="page-title">鏂囩珷绠＄悊</h1>
+            <h1 class="page-title">文章管理</h1>
             
             <div class="articles-header">
                 <div class="search-bar">
                     <input
                         type="text"
                         id="searchQuery"
-                        placeholder="鎼滅储鏂囩珷鏍囬鎴栧唴瀹?.."
+                        placeholder="搜索文章标题或内容...."
                     />
                 </div>
                 <div class="filter-bar">
@@ -360,7 +355,7 @@
     </div>
 
     <script>
-        // 妯℃嫙鏂囩珷鏁版嵁
+        // 模拟文章数据
         const mockArticles = [
             {
                 id: 1,
@@ -417,7 +412,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 缁戝畾浜嬩欢鐩戝惉鍣?            bindEventListeners();
             
-            // 鑾峰彇鏂囩珷鏁版嵁
+            // 获取文章数据
             fetchArticles();
         });
 
@@ -427,7 +422,7 @@
             const prevPageBtn = document.getElementById('prevPageBtn');
             const nextPageBtn = document.getElementById('nextPageBtn');
 
-            // 鎼滅储杈撳叆浜嬩欢
+            // 搜索输入事件
             searchInput.addEventListener('input', function() {
                 searchQuery = this.value;
                 currentPage = 1;
@@ -450,7 +445,7 @@
             });
         }
 
-        // 鑾峰彇鏂囩珷鏁版嵁
+        // 获取文章数据
         function fetchArticles() {
             loading = true;
             updateUI();
@@ -501,19 +496,19 @@
             }
         }
 
-        // 娓叉煋鏂囩珷琛ㄦ牸
+        // 渲染文章表格
         function renderArticlesTable() {
             const tableBody = document.getElementById('articlesTableBody');
             
             // 娓呯┖琛ㄦ牸
             tableBody.innerHTML = '';
             
-            // 璁＄畻褰撳墠椤电殑鏂囩珷
+            // 计算当前页的文章
             const startIndex = (currentPage - 1) * limit;
             const endIndex = startIndex + limit;
             const currentArticles = articles.slice(startIndex, endIndex);
             
-            // 娓叉煋鏂囩珷琛?            currentArticles.forEach(article => {
+            // 渲染文章表?            currentArticles.forEach(article => {
                 const row = document.createElement('tr');
                 
                 const publishedAt = article.published_at ? 
@@ -560,7 +555,7 @@
             fetchArticles();
         }
 
-        // 澶勭悊鏌ョ湅鏂囩珷
+        // 澶勭悊查看文章
         function handleViewArticle(articleId) {
             window.location.href = `article-detail.html?id=${articleId}`;
         }

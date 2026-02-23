@@ -1,12 +1,16 @@
-﻿from datetime import datetime
+from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel, EmailStr, Field
 
 
 class UserRegistration(BaseModel):
-    username: str = Field(..., min_length=3, max_length=30, pattern=r"^[a-zA-Z0-9_]+$")
+    username: str = Field(..., min_length=3, max_length=30, pattern=r"^[a-zA-Z0-9_]+")
     email: EmailStr
-    password: str = Field(..., min_length=8)
+    password: str = Field(
+        ...,
+        min_length=8,
+        description="Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
+    )
     display_name: Optional[str] = Field(None, max_length=50)
 
 
@@ -17,57 +21,62 @@ class UserUpdate(BaseModel):
 
 
 class UserResponse(BaseModel):
-    id: str
+    id: int
     username: str
     email: str
-    display_name: Optional[str]
-    bio: Optional[str]
-    avatar_url: Optional[str]
-    level: int
-    is_active: bool
-    role: str
+    display_name: Optional[str] = None
+    bio: Optional[str] = None
+    avatar_url: Optional[str] = None
     created_at: datetime
     updated_at: datetime
-    contribution_count: int
+    is_active: bool
+    is_admin: bool
 
     class Config:
         from_attributes = True
+
+
+class UserProfileResponse(UserResponse):
+    followers_count: int = 0
+    following_count: int = 0
+    articles_count: int = 0
+    comments_count: int = 0
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
 
 
 class UserContributionStats(BaseModel):
     total_articles: int
     total_comments: int
     total_revisions: int
-    total_connections: int
-    contribution_count: int
-    recent_articles: int = Field(..., description="Number of articles created in the last 30 days")
-    recent_comments: int = Field(..., description="Number of comments created in the last 30 days")
+    articles_by_category: dict[str, int]
+    recent_activity: List[dict]
 
 
-class UserProfileResponse(BaseModel):
-    id: str
-    username: str
-    display_name: Optional[str]
-    bio: Optional[str]
-    avatar_url: Optional[str]
-    level: int
-    created_at: datetime
-    contribution_count: int
-    is_following: bool = False
-    stats: Optional[UserContributionStats] = None
-
-    class Config:
-        from_attributes = True
+class AdminUserResponse(UserResponse):
+    last_login_at: Optional[datetime] = None
 
 
-class LoginRequest(BaseModel):
-    username: str = Field(..., min_length=3, max_length=30)
-    email: EmailStr
-    password: str = Field(..., min_length=8)
+class AdminUserUpdate(BaseModel):
+    is_active: Optional[bool] = None
+    is_admin: Optional[bool] = None
+    display_name: Optional[str] = Field(None, max_length=50)
+    bio: Optional[str] = Field(None, max_length=500)
 
 
-class LoginResponse(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str = "bearer"
-    user: UserResponse
+class AdminPasswordReset(BaseModel):
+    user_id: int
+    new_password: str = Field(
+        ...,
+        min_length=8,
+        description="Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"
+    )

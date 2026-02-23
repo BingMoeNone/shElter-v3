@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import type { Article } from '@/types'
 import { useArticlesStore } from '@/stores/articles'
@@ -150,7 +150,7 @@ async function handleSubmit(publish: boolean = false) {
       <label for="content">Content</label>
       <QuillEditor
         id="content"
-        v-model:content="content"
+        v-model="content"
         placeholder="Write your article content here..."
         :options="editorOptions"
         class="rich-text-editor"

@@ -1,19 +1,22 @@
-﻿// 閫氱敤宸ュ叿鍑芥暟
+// 通用工具函数
 
-// 鐧诲綍鐘舵€佺鐞?class AuthManager {
+// 登录状态管理
+class AuthManager {
     constructor() {
         this.tokenKey = 'auth_token';
         this.userKey = 'user_info';
         this.expiryKey = 'token_expiry';
     }
 
-    // 淇濆瓨鐧诲綍鐘舵€?    saveAuth(token, user, expiry) {
+    // 保存登录状态
+    saveAuth(token, user, expiry) {
         localStorage.setItem(this.tokenKey, token);
         localStorage.setItem(this.userKey, JSON.stringify(user));
         localStorage.setItem(this.expiryKey, expiry);
     }
 
-    // 鑾峰彇鐧诲綍鐘舵€?    getAuth() {
+    // 获取登录状态
+    getAuth() {
         const token = localStorage.getItem(this.tokenKey);
         const user = localStorage.getItem(this.userKey);
         const expiry = localStorage.getItem(this.expiryKey);
@@ -25,70 +28,262 @@
         };
     }
 
-    // 妫€鏌ョ櫥褰曠姸鎬?    isAuthenticated() {
+    // 检查认证状态
+    isAuthenticated() {
         const { token, expiry } = this.getAuth();
         if (!token || !expiry) return false;
         
-        // 妫€鏌oken鏄惁杩囨湡
+        // 检查token是否过期
         return Date.now() < expiry;
     }
 
-    // 娉ㄩ攢鐧诲綍
+    // 注销登录
     logout() {
         localStorage.removeItem(this.tokenKey);
         localStorage.removeItem(this.userKey);
         localStorage.removeItem(this.expiryKey);
     }
 
-    // 鏇存柊token杩囨湡鏃堕棿
+    // 更新token过期时间
     updateExpiry() {
-        const expiry = Date.now() + (30 * 60 * 1000); // 30鍒嗛挓
+        const expiry = Date.now() + (30 * 60 * 1000); // 30分钟
         localStorage.setItem(this.expiryKey, expiry);
     }
 }
 
-// 椤甸潰鐘舵€佺鐞?class PageStateManager {
+// 页面状态管理
+class PageStateManager {
     constructor() {
         this.stateKey = 'page_state';
+        this.listeners = new Map();
+        this.defaultExpiryTime = 30 * 60 * 1000; // 默认30分钟过期
     }
 
-    // 淇濆瓨椤甸潰鐘舵€?    saveState(page, state) {
+    // 保存页面状态
+    saveState(page, state, options = {}) {
         const allStates = this.getAllStates();
+        const now = Date.now();
+        
         allStates[page] = {
             state,
-            timestamp: Date.now()
+            timestamp: now,
+            accessCount: (allStates[page]?.accessCount || 0) + 1,
+            lastAccessTime: now,
+            expiryTime: options.expiryTime || this.defaultExpiryTime
         };
+        
+        localStorage.setItem(this.stateKey, JSON.stringify(allStates));
+        
+        // 触发状态变更事件
+        this.notifyListeners(page, allStates[page]);
+    }
+
+    // 批量保存状态
+    saveStates(statesMap) {
+        const allStates = this.getAllStates();
+        const now = Date.now();
+        
+        for (const [page, state] of Object.entries(statesMap)) {
+            allStates[page] = {
+                state,
+                timestamp: now,
+                accessCount: (allStates[page]?.accessCount || 0) + 1,
+                lastAccessTime: now,
+                expiryTime: this.defaultExpiryTime
+            };
+            
+            // 触发状态变更事件
+            this.notifyListeners(page, allStates[page]);
+        }
+        
         localStorage.setItem(this.stateKey, JSON.stringify(allStates));
     }
 
-    // 鑾峰彇椤甸潰鐘舵€?    getState(page) {
+    // 获取页面状态
+    getState(page, options = {}) {
         const allStates = this.getAllStates();
-        return allStates[page] || null;
+        const pageState = allStates[page];
+        
+        if (!pageState) {
+            return null;
+        }
+        
+        const now = Date.now();
+        const expiryTime = options.expiryTime || pageState.expiryTime || this.defaultExpiryTime;
+        
+        // 检查状态是否过期
+        if (now - pageState.timestamp > expiryTime) {
+            // 自动清理过期状态
+            this.clearState(page);
+            return null;
+        }
+        
+        // 更新最后访问时间和访问次数
+        pageState.lastAccessTime = now;
+        pageState.accessCount = (pageState.accessCount || 0) + 1;
+        localStorage.setItem(this.stateKey, JSON.stringify(allStates));
+        
+        return pageState.state;
     }
 
-    // 鑾峰彇鎵€鏈夌姸鎬?    getAllStates() {
+    // 批量获取状态
+    getStates(pages, options = {}) {
+        const result = {};
+        const allStates = this.getAllStates();
+        
+        for (const page of pages) {
+            const pageState = allStates[page];
+            if (pageState) {
+                const now = Date.now();
+                const expiryTime = options.expiryTime || pageState.expiryTime || this.defaultExpiryTime;
+                
+                if (now - pageState.timestamp <= expiryTime) {
+                    result[page] = pageState.state;
+                    
+                    // 更新最后访问时间和访问次数
+                    pageState.lastAccessTime = now;
+                    pageState.accessCount = (pageState.accessCount || 0) + 1;
+                } else {
+                    // 自动清理过期状态
+                    this.clearState(page);
+                }
+            }
+        }
+        
+        localStorage.setItem(this.stateKey, JSON.stringify(allStates));
+        return result;
+    }
+
+    // 获取所有状态（包含元数据）
+    getAllStates() {
         const states = localStorage.getItem(this.stateKey);
         return states ? JSON.parse(states) : {};
     }
 
-    // 娓呴櫎椤甸潰鐘舵€?    clearState(page) {
+    // 获取活跃状态（未过期的）
+    getActiveStates(options = {}) {
+        const allStates = this.getAllStates();
+        const activeStates = {};
+        const now = Date.now();
+        
+        for (const [page, pageState] of Object.entries(allStates)) {
+            const expiryTime = options.expiryTime || pageState.expiryTime || this.defaultExpiryTime;
+            if (now - pageState.timestamp <= expiryTime) {
+                activeStates[page] = pageState;
+            }
+        }
+        
+        return activeStates;
+    }
+
+    // 清除页面状态
+    clearState(page) {
         const allStates = this.getAllStates();
         delete allStates[page];
         localStorage.setItem(this.stateKey, JSON.stringify(allStates));
+        
+        // 触发状态变更事件（清除状态）
+        this.notifyListeners(page, null);
     }
 
-    // 娓呴櫎鎵€鏈夌姸鎬?    clearAllStates() {
+    // 清除多个状态
+    clearStates(pages) {
+        const allStates = this.getAllStates();
+        
+        for (const page of pages) {
+            delete allStates[page];
+            // 触发状态变更事件（清除状态）
+            this.notifyListeners(page, null);
+        }
+        
+        localStorage.setItem(this.stateKey, JSON.stringify(allStates));
+    }
+
+    // 清除过期状态
+    clearExpiredStates(options = {}) {
+        const allStates = this.getAllStates();
+        const now = Date.now();
+        const statesToClear = [];
+        
+        for (const [page, pageState] of Object.entries(allStates)) {
+            const expiryTime = options.expiryTime || pageState.expiryTime || this.defaultExpiryTime;
+            if (now - pageState.timestamp > expiryTime) {
+                statesToClear.push(page);
+            }
+        }
+        
+        this.clearStates(statesToClear);
+        return statesToClear.length;
+    }
+
+    // 清除所有状态
+    clearAllStates() {
+        const allStates = this.getAllStates();
+        
+        // 触发所有状态变更事件（清除状态）
+        for (const page of Object.keys(allStates)) {
+            this.notifyListeners(page, null);
+        }
+        
         localStorage.removeItem(this.stateKey);
+    }
+
+    // 添加状态变更监听器
+    onStateChange(page, callback) {
+        if (!this.listeners.has(page)) {
+            this.listeners.set(page, []);
+        }
+        this.listeners.get(page).push(callback);
+    }
+
+    // 移除状态变更监听器
+    offStateChange(page, callback) {
+        if (this.listeners.has(page)) {
+            const callbacks = this.listeners.get(page).filter(cb => cb !== callback);
+            if (callbacks.length > 0) {
+                this.listeners.set(page, callbacks);
+            } else {
+                this.listeners.delete(page);
+            }
+        }
+    }
+
+    // 通知状态变更
+    notifyListeners(page, newState) {
+        if (this.listeners.has(page)) {
+            const callbacks = this.listeners.get(page);
+            for (const callback of callbacks) {
+                callback(newState);
+            }
+        }
+    }
+
+    // 获取状态统计信息
+    getStateStats(page) {
+        const allStates = this.getAllStates();
+        const pageState = allStates[page];
+        
+        if (!pageState) {
+            return null;
+        }
+        
+        return {
+            page,
+            accessCount: pageState.accessCount || 0,
+            createdAt: pageState.timestamp,
+            lastAccessTime: pageState.lastAccessTime || pageState.timestamp,
+            age: Date.now() - pageState.timestamp
+        };
     }
 }
 
-// 琛ㄥ崟鏁版嵁绠＄悊
+// 表单数据管理
 class FormManager {
     constructor() {
         this.formKey = 'form_data';
     }
 
-    // 淇濆瓨琛ㄥ崟鏁版嵁
+    // 保存表单数据
     saveFormData(formId, data) {
         const allFormData = this.getAllFormData();
         allFormData[formId] = {
@@ -98,29 +293,31 @@ class FormManager {
         localStorage.setItem(this.formKey, JSON.stringify(allFormData));
     }
 
-    // 鑾峰彇琛ㄥ崟鏁版嵁
+    // 获取表单数据
     getFormData(formId) {
         const allFormData = this.getAllFormData();
         return allFormData[formId] || null;
     }
 
-    // 鑾峰彇鎵€鏈夎〃鍗曟暟鎹?    getAllFormData() {
+    // 获取所有表单数据
+    getAllFormData() {
         const formData = localStorage.getItem(this.formKey);
         return formData ? JSON.parse(formData) : {};
     }
 
-    // 娓呴櫎琛ㄥ崟鏁版嵁
+    // 清除表单数据
     clearFormData(formId) {
         const allFormData = this.getAllFormData();
         delete allFormData[formId];
         localStorage.setItem(this.formKey, JSON.stringify(allFormData));
     }
 
-    // 娓呴櫎鎵€鏈夎〃鍗曟暟鎹?    clearAllFormData() {
+    // 清除所有表单数据
+    clearAllFormData() {
         localStorage.removeItem(this.formKey);
     }
 
-    // 浠庤〃鍗曞厓绱犱腑鎻愬彇鏁版嵁
+    // 从表单元素中提取数据
     extractFormData(formElement) {
         const data = {};
         const elements = formElement.elements;
@@ -141,7 +338,8 @@ class FormManager {
         return data;
     }
 
-    // 灏嗘暟鎹～鍏呭埌琛ㄥ崟涓?    populateForm(formElement, data) {
+    // 将数据填充到表单中
+    populateForm(formElement, data) {
         for (const [key, value] of Object.entries(data)) {
             const element = formElement.elements[key];
             if (element) {
@@ -160,22 +358,193 @@ class FormManager {
     }
 }
 
-// 瀵艰埅绠＄悊鍣?class NavigationManager {
+// 路由管理器
+class RouterManager {
+    constructor() {
+        this.routes = {};
+        this.beforeEachHooks = [];
+        this.afterEachHooks = [];
+    }
+
+    // 注册路由
+    registerRoute(name, path, options = {}) {
+        this.routes[name] = {
+            path,
+            ...options
+        };
+    }
+
+    // 注册多个路由
+    registerRoutes(routes) {
+        for (const [name, config] of Object.entries(routes)) {
+            this.registerRoute(name, config.path, config);
+        }
+    }
+
+    // 获取路由配置
+    getRoute(name) {
+        return this.routes[name];
+    }
+
+    // 获取当前路由
+    getCurrentRoute() {
+        const path = window.location.pathname;
+        for (const [name, route] of Object.entries(this.routes)) {
+            if (route.path === path) {
+                return { name, ...route };
+            }
+        }
+        return null;
+    }
+
+    // 路由跳转
+    push(name, params = {}) {
+        const route = this.getRoute(name);
+        if (!route) {
+            console.error(`Route ${name} not found`);
+            return;
+        }
+
+        // 构建URL
+        let url = route.path;
+        if (params) {
+            const queryString = new URLSearchParams(params).toString();
+            if (queryString) {
+                url += `?${queryString}`;
+            }
+        }
+
+        // 执行前置守卫
+        const canNavigate = this.executeBeforeEachHooks(name, params);
+        if (!canNavigate) {
+            return;
+        }
+
+        // 跳转到新页面
+        window.location.href = url;
+    }
+
+    // 替换当前页面
+    replace(name, params = {}) {
+        const route = this.getRoute(name);
+        if (!route) {
+            console.error(`Route ${name} not found`);
+            return;
+        }
+
+        // 构建URL
+        let url = route.path;
+        if (params) {
+            const queryString = new URLSearchParams(params).toString();
+            if (queryString) {
+                url += `?${queryString}`;
+            }
+        }
+
+        // 执行前置守卫
+        const canNavigate = this.executeBeforeEachHooks(name, params);
+        if (!canNavigate) {
+            return;
+        }
+
+        // 替换当前页面
+        window.location.replace(url);
+    }
+
+    // 返回上一页
+    goBack() {
+        window.history.back();
+    }
+
+    // 前进一页
+    goForward() {
+        window.history.forward();
+    }
+
+    // 跳转到指定历史记录
+    go(delta) {
+        window.history.go(delta);
+    }
+
+    // 添加前置守卫
+    beforeEach(hook) {
+        this.beforeEachHooks.push(hook);
+    }
+
+    // 添加后置守卫
+    afterEach(hook) {
+        this.afterEachHooks.push(hook);
+    }
+
+    // 执行前置守卫
+    executeBeforeEachHooks(routeName, params) {
+        for (const hook of this.beforeEachHooks) {
+            if (hook(routeName, params) === false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 执行后置守卫
+    executeAfterEachHooks(routeName, params) {
+        for (const hook of this.afterEachHooks) {
+            hook(routeName, params);
+        }
+    }
+
+    // 解析URL参数
+    parseQueryParams() {
+        const params = {};
+        const urlParams = new URLSearchParams(window.location.search);
+        for (const [key, value] of urlParams) {
+            params[key] = value;
+        }
+        return params;
+    }
+
+    // 获取指定URL参数
+    getQueryParam(key) {
+        return new URLSearchParams(window.location.search).get(key);
+    }
+
+    // 构建URL
+    buildUrl(name, params = {}) {
+        const route = this.getRoute(name);
+        if (!route) {
+            console.error(`Route ${name} not found`);
+            return '';
+        }
+
+        let url = route.path;
+        if (params) {
+            const queryString = new URLSearchParams(params).toString();
+            if (queryString) {
+                url += `?${queryString}`;
+            }
+        }
+        return url;
+    }
+}
+
+// 导航管理器
+class NavigationManager {
     constructor() {
         this.breadcrumbKey = 'breadcrumb';
         this.maxBreadcrumbItems = 5;
     }
 
-    // 娣诲姞闈㈠寘灞戦」
+    // 添加面包屑项
     addBreadcrumbItem(label, url) {
         const breadcrumb = this.getBreadcrumb();
         
-        // 绉婚櫎閲嶅椤?        const filteredBreadcrumb = breadcrumb.filter(item => item.url !== url);
+        // 移除重复项
+        const filteredBreadcrumb = breadcrumb.filter(item => item.url !== url);
         
-        // 娣诲姞鏂伴」
+        // 添加新项
         filteredBreadcrumb.push({ label, url });
         
-        // 闄愬埗鏁伴噺
+        // 限制数量
         if (filteredBreadcrumb.length > this.maxBreadcrumbItems) {
             filteredBreadcrumb.shift();
         }
@@ -183,26 +552,29 @@ class FormManager {
         localStorage.setItem(this.breadcrumbKey, JSON.stringify(filteredBreadcrumb));
     }
 
-    // 鑾峰彇闈㈠寘灞?    getBreadcrumb() {
+    // 获取面包屑
+    getBreadcrumb() {
         const breadcrumb = localStorage.getItem(this.breadcrumbKey);
         return breadcrumb ? JSON.parse(breadcrumb) : [];
     }
 
-    // 娓呴櫎闈㈠寘灞?    clearBreadcrumb() {
+    // 清除面包屑
+    clearBreadcrumb() {
         localStorage.removeItem(this.breadcrumbKey);
     }
 
-    // 娓叉煋闈㈠寘灞?    renderBreadcrumb(containerId) {
+    // 渲染面包屑
+    renderBreadcrumb(containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
         
         const breadcrumb = this.getBreadcrumb();
         if (breadcrumb.length === 0) {
-            container.innerHTML = '<span class="breadcrumb-item">棣栭〉</span>';
+            container.innerHTML = '<span class="breadcrumb-item">首页</span>';
             return;
         }
         
-        let html = '<a href="index.html" class="breadcrumb-item">棣栭〉</a>';
+        let html = '<a href="index.html" class="breadcrumb-item">首页</a>';
         breadcrumb.forEach((item, index) => {
             if (index === breadcrumb.length - 1) {
                 html += `<span class="breadcrumb-separator">/</span>`;
@@ -217,13 +589,14 @@ class FormManager {
     }
 }
 
-// 鍔犺浇鐘舵€佺鐞嗗櫒
+// 加载状态管理器
 class LoadingManager {
     constructor() {
         this.loadingElements = new Map();
     }
 
-    // 鏄剧ず鍔犺浇鐘舵€?    showLoading(elementId) {
+    // 显示加载状态
+    showLoading(elementId) {
         const element = document.getElementById(elementId);
         if (element) {
             element.style.display = 'block';
@@ -231,7 +604,8 @@ class LoadingManager {
         }
     }
 
-    // 闅愯棌鍔犺浇鐘舵€?    hideLoading(elementId) {
+    // 隐藏加载状态
+    hideLoading(elementId) {
         const element = document.getElementById(elementId);
         if (element) {
             element.style.display = 'none';
@@ -239,7 +613,8 @@ class LoadingManager {
         }
     }
 
-    // 闅愯棌鎵€鏈夊姞杞界姸鎬?    hideAllLoading() {
+    // 隐藏所有加载状态
+    hideAllLoading() {
         this.loadingElements.forEach((element, id) => {
             element.style.display = 'none';
         });
@@ -247,13 +622,14 @@ class LoadingManager {
     }
 }
 
-// 閫氱煡绠＄悊鍣?class NotificationManager {
+// 通知管理器
+class NotificationManager {
     constructor() {
         this.containerId = 'notification-container';
         this.createContainer();
     }
 
-    // 鍒涘缓閫氱煡瀹瑰櫒
+    // 创建通知容器
     createContainer() {
         let container = document.getElementById(this.containerId);
         if (!container) {
@@ -272,7 +648,7 @@ class LoadingManager {
         }
     }
 
-    // 鏄剧ず閫氱煡
+    // 显示通知
     show(message, type = 'success', duration = 3000) {
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
@@ -293,7 +669,7 @@ class LoadingManager {
         const container = document.getElementById(this.containerId);
         container.appendChild(notification);
         
-        // 鑷姩鍏抽棴
+        // 自动关闭
         setTimeout(() => {
             notification.style.animation = 'slideOutRight 0.3s ease-out';
             setTimeout(() => {
@@ -302,36 +678,164 @@ class LoadingManager {
         }, duration);
     }
 
-    // 鏄剧ず鎴愬姛閫氱煡
+    // 显示成功通知
     success(message, duration = 3000) {
         this.show(message, 'success', duration);
     }
 
-    // 鏄剧ず閿欒閫氱煡
+    // 显示错误通知
     error(message, duration = 5000) {
         this.show(message, 'error', duration);
     }
 
-    // 鏄剧ず璀﹀憡閫氱煡
+    // 显示警告通知
     warning(message, duration = 4000) {
         this.show(message, 'warning', duration);
     }
 
-    // 鏄剧ず淇℃伅閫氱煡
+    // 显示信息通知
     info(message, duration = 3000) {
         this.show(message, 'info', duration);
     }
 }
 
-// 鍒濆鍖栨墍鏈夌鐞嗗櫒
+// 初始化所有管理器
 const authManager = new AuthManager();
 const pageStateManager = new PageStateManager();
 const formManager = new FormManager();
 const navigationManager = new NavigationManager();
 const loadingManager = new LoadingManager();
 const notificationManager = new NotificationManager();
+const routerManager = new RouterManager();
 
-// 椤甸潰杩囨浮鍔ㄧ敾
+// 配置路由守卫
+routerManager.beforeEach((routeName, params) => {
+    const route = routerManager.getRoute(routeName);
+    if (!route) {
+        return true;
+    }
+
+    // 检查是否需要认证
+    if (route.requiresAuth) {
+        if (!authManager.isAuthenticated()) {
+            notificationManager.warning('请先登录');
+            routerManager.push('login', { redirect: window.location.pathname });
+            return false;
+        }
+    }
+
+    // 检查是否需要管理员权限
+    if (route.requiresAdmin) {
+        const user = authManager.getAuth().user;
+        if (!user || !user.is_admin) {
+            notificationManager.error('需要管理员权限');
+            routerManager.push('home');
+            return false;
+        }
+    }
+
+    return true;
+});
+
+// 注册默认路由
+routerManager.registerRoutes({
+    home: {
+        path: '/index.html',
+        label: '首页'
+    },
+    articles: {
+        path: '/articles.html',
+        label: '文章列表'
+    },
+    articleDetail: {
+        path: '/article-detail.html',
+        label: '文章详情'
+    },
+    categories: {
+        path: '/categories.html',
+        label: '分类'
+    },
+    categoryArticles: {
+        path: '/category-articles.html',
+        label: '分类文章'
+    },
+    createArticle: {
+        path: '/create-article.html',
+        label: '创建文章',
+        requiresAuth: true
+    },
+    editArticle: {
+        path: '/edit-article.html',
+        label: '编辑文章',
+        requiresAuth: true
+    },
+    login: {
+        path: '/login.html',
+        label: '登录'
+    },
+    register: {
+        path: '/register.html',
+        label: '注册'
+    },
+    metro: {
+        path: '/metro.html',
+        label: '地铁'
+    },
+    music: {
+        path: '/music.html',
+        label: '音乐'
+    },
+    profile: {
+        path: '/profile.html',
+        label: '个人资料',
+        requiresAuth: true
+    },
+    search: {
+        path: '/search.html',
+        label: '搜索'
+    },
+    tagArticles: {
+        path: '/tag-articles.html',
+        label: '标签文章'
+    },
+    userProfile: {
+        path: '/user-profile.html',
+        label: '用户资料'
+    },
+    // 管理员路由
+    adminDashboard: {
+        path: '/admin-dashboard.html',
+        label: '管理面板',
+        requiresAuth: true,
+        requiresAdmin: true
+    },
+    adminArticles: {
+        path: '/admin-articles.html',
+        label: '管理文章',
+        requiresAuth: true,
+        requiresAdmin: true
+    },
+    adminComments: {
+        path: '/admin-comments.html',
+        label: '管理评论',
+        requiresAuth: true,
+        requiresAdmin: true
+    },
+    adminModeration: {
+        path: '/admin-moderation.html',
+        label: '内容审核',
+        requiresAuth: true,
+        requiresAdmin: true
+    },
+    adminUsers: {
+        path: '/admin-users.html',
+        label: '管理用户',
+        requiresAuth: true,
+        requiresAdmin: true
+    }
+});
+
+// 页面过渡动画
 function addPageTransition() {
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.3s ease-in-out';
@@ -340,9 +844,11 @@ function addPageTransition() {
         document.body.style.opacity = '1';
     });
     
-    // 涓烘墍鏈夐摼鎺ユ坊鍔犺繃娓℃晥鏋?    document.querySelectorAll('a').forEach(link => {
+    // 为所有链接添加过渡效果
+    document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', (e) => {
-            // 鍙鐞嗗悓婧愰摼鎺?            if (link.hostname === window.location.hostname) {
+            // 只处理同域链接
+            if (link.hostname === window.location.hostname) {
                 e.preventDefault();
                 const href = link.getAttribute('href');
                 
@@ -355,11 +861,11 @@ function addPageTransition() {
     });
 }
 
-// 娣诲姞CSS鍔ㄧ敾
+// 添加CSS动画
 function addAnimations() {
     const style = document.createElement('style');
     style.textContent = `
-        /* 椤甸潰杩囨浮鍔ㄧ敾 */
+        /* 页面过渡动画 */
         @keyframes slideInRight {
             from {
                 transform: translateX(100%);
@@ -400,14 +906,14 @@ function addAnimations() {
             }
         }
         
-        /* 鍔犺浇鍔ㄧ敾 */
+        /* 加载动画 */
         @keyframes spin {
             to {
                 transform: rotate(360deg);
             }
         }
         
-        /* 鎸夐挳鎮仠鍔ㄧ敾 */
+        /* 按钮呼吸动画 */
         @keyframes pulse {
             0% {
                 box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.4);
@@ -420,7 +926,7 @@ function addAnimations() {
             }
         }
         
-        /* 闈㈠寘灞戞牱寮?*/
+        /* 面包屑样式 */
         .breadcrumb {
             margin-bottom: 20px;
             padding: 10px 0;
@@ -447,7 +953,7 @@ function addAnimations() {
             color: var(--color-text-muted);
         }
         
-        /* 鐧诲綍鐘舵€佹寚绀哄櫒 */
+        /* 登录状态指示器 */
         .auth-indicator {
             display: flex;
             align-items: center;
@@ -462,7 +968,7 @@ function addAnimations() {
             animation: pulse 2s infinite;
         }
         
-        /* 鍝嶅簲寮忚璁?*/
+        /* 响应式设置 */
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -481,7 +987,7 @@ function addAnimations() {
             }
         }
         
-        /* 鍔犺浇鐘舵€佷紭鍖?*/
+        /* 加载状态样式 */
         .loading {
             display: flex;
             flex-direction: column;
@@ -501,7 +1007,7 @@ function addAnimations() {
             margin-bottom: 16px;
         }
         
-        /* 鎸夐挳浜や簰鍙嶉 */
+        /* 按钮交互动效 */
         button, .btn {
             transition: all 0.3s ease;
             position: relative;
@@ -517,7 +1023,7 @@ function addAnimations() {
             transform: translateY(0);
         }
         
-        /* 琛ㄥ崟鍏冪礌浜や簰 */
+        /* 表单元素交互 */
         input, textarea, select {
             transition: all 0.3s ease;
         }
@@ -528,7 +1034,7 @@ function addAnimations() {
             border-color: var(--color-primary);
         }
         
-        /* 閫氱煡鏍峰紡 */
+        /* 通知样式 */
         .notification {
             padding: 12px 20px;
             border-radius: 4px;
@@ -561,25 +1067,30 @@ function addAnimations() {
     document.head.appendChild(style);
 }
 
-// 鍒濆鍖栭〉闈?function initPage(pageName, pageLabel) {
-    // 娣诲姞椤甸潰杩囨浮鍔ㄧ敾
+// 初始化页面
+function initPage(pageName, pageLabel) {
+    // 添加页面过渡动画
     addPageTransition();
     
-    // 娣诲姞CSS鍔ㄧ敾
+    // 添加CSS动画
     addAnimations();
     
-    // 娣诲姞闈㈠寘灞?    navigationManager.addBreadcrumbItem(pageLabel, window.location.pathname);
+    // 添加面包屑
+    navigationManager.addBreadcrumbItem(pageLabel, window.location.pathname);
     
-    // 娓叉煋闈㈠寘灞?    const breadcrumbContainer = document.getElementById('breadcrumb');
+    // 渲染面包屑
+    const breadcrumbContainer = document.getElementById('breadcrumb');
     if (breadcrumbContainer) {
         navigationManager.renderBreadcrumb('breadcrumb');
     }
     
-    // 妫€鏌ョ櫥褰曠姸鎬?    if (authManager.isAuthenticated()) {
-        // 鏇存柊token杩囨湡鏃堕棿
+    // 检查认证状态
+    if (authManager.isAuthenticated()) {
+        // 更新token过期时间
         authManager.updateExpiry();
         
-        // 鏄剧ず鐧诲綍鐘舵€?        const authIndicator = document.getElementById('auth-indicator');
+        // 显示登录状态
+        const authIndicator = document.getElementById('auth-indicator');
         if (authIndicator) {
             const user = authManager.getAuth().user;
             authIndicator.innerHTML = `
@@ -588,10 +1099,12 @@ function addAnimations() {
             `;
         }
     } else {
-        // 娓呴櫎杩囨湡鐨勭櫥褰曠姸鎬?        authManager.logout();
+        // 清除过期的登录状态
+        authManager.logout();
     }
     
-    // 淇濆瓨椤甸潰鐘舵€?    window.addEventListener('beforeunload', () => {
+    // 保存页面状态
+    window.addEventListener('beforeunload', () => {
         const state = {
             scrollY: window.scrollY,
             timestamp: Date.now()
@@ -599,21 +1112,24 @@ function addAnimations() {
         pageStateManager.saveState(pageName, state);
     });
     
-    // 鎭㈠椤甸潰鐘舵€?    window.addEventListener('load', () => {
+    // 恢复页面状态
+    window.addEventListener('load', () => {
         const savedState = pageStateManager.getState(pageName);
         if (savedState) {
-            // 鍙仮澶嶆渶杩?鍒嗛挓鐨勭姸鎬?            if (Date.now() - savedState.timestamp < 5 * 60 * 1000) {
+            // 只恢复最近5分钟的状态
+            if (Date.now() - savedState.timestamp < 5 * 60 * 1000) {
                 window.scrollTo(0, savedState.state.scrollY);
             }
         }
     });
 }
 
-// 瀵煎嚭鍏ㄥ眬鍙橀噺
+// 导出全局变量
 window.authManager = authManager;
 window.pageStateManager = pageStateManager;
 window.formManager = formManager;
 window.navigationManager = navigationManager;
 window.loadingManager = loadingManager;
 window.notificationManager = notificationManager;
+window.routerManager = routerManager;
 window.initPage = initPage;

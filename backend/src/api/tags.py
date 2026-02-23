@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import Optional
 
@@ -6,7 +6,7 @@ from src.database import get_db
 from src.models import Tag
 from src.schemas import TagResponse, TagCreate, TagUpdate, Pagination
 from src.auth.jwt import get_current_user
-from src.api.articles import generate_slug
+from src.utils import generate_slug
 
 router = APIRouter()
 

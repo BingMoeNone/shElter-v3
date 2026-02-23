@@ -1,0 +1,19 @@
+{
+  "scan_time": "2026-02-21T09:40:22.352372",
+  "dependencies": {
+    "vulnerabilities": [],
+    "count": 0
+  },
+  "code_security": {
+    "issues": [],
+    "count": 0
+  },
+  "code_quality": {
+    "format_correct": false,
+    "style_correct": false,
+    "import_order_correct": false
+  },
+  "summary": {
+    "status": "FAIL"
+  }
+}

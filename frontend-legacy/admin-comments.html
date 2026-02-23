@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>璇勮绠＄悊</title>
+    <title>评论管理</title>
     <style>
         :root {
             --color-primary: #00ff9d;
@@ -19,12 +19,7 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0a0a0a;
-            color: var(--color-text);
-            line-height: 1.6;
-        }
+        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
 
         header {
             background: var(--color-surface);
@@ -267,22 +262,22 @@
 </head>
 <body>
     <header>
-        <h1>绠＄悊鍛樺悗鍙?/h1>
+        <h1>管理后台?/h1>
         <nav>
             <ul>
-                <li><a href="admin-dashboard.html">浠〃鐩?/a></li>
-                <li><a href="admin-articles.html">鏂囩珷绠＄悊</a></li>
-                <li><a href="admin-users.html">鐢ㄦ埛绠＄悊</a></li>
-                <li><a href="admin-comments.html" class="active">璇勮绠＄悊</a></li>
-                <li><a href="admin-moderation.html">鍐呭瀹℃牳</a></li>
-                <li><a href="index.html">杩斿洖棣栭〉</a></li>
+                <li><a href="admin-dashboard.html">仪表盘?/a></li>
+                <li><a href="admin-articles.html">文章管理</a></li>
+                <li><a href="admin-users.html">用户管理</a></li>
+                <li><a href="admin-comments.html" class="active">评论管理</a></li>
+                <li><a href="admin-moderation.html">内容审核</a></li>
+                <li><a href="index.html">返回首页</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="container">
         <div class="admin-comments">
-            <h1 class="page-title">璇勮绠＄悊</h1>
+            <h1 class="page-title">评论管理</h1>
             
             <div class="comments-header">
                 <div class="search-bar">
@@ -411,7 +406,7 @@
             const prevPageBtn = document.getElementById('prevPageBtn');
             const nextPageBtn = document.getElementById('nextPageBtn');
 
-            // 鎼滅储杈撳叆浜嬩欢
+            // 搜索输入事件
             searchInput.addEventListener('input', function() {
                 searchQuery = this.value;
                 currentPage = 1;
@@ -488,19 +483,19 @@
             }
         }
 
-        // 娓叉煋璇勮琛ㄦ牸
+        // 渲染评论表格
         function renderCommentsTable() {
             const tableBody = document.getElementById('commentsTableBody');
             
             // 娓呯┖琛ㄦ牸
             tableBody.innerHTML = '';
             
-            // 璁＄畻褰撳墠椤电殑璇勮
+            // 计算当前页的评论
             const startIndex = (currentPage - 1) * limit;
             const endIndex = startIndex + limit;
             const currentComments = comments.slice(startIndex, endIndex);
             
-            // 娓叉煋璇勮琛?            currentComments.forEach(comment => {
+            // 渲染评论表?            currentComments.forEach(comment => {
                 const row = document.createElement('tr');
                 
                 const createdAt = new Date(comment.created_at).toLocaleString();
@@ -513,7 +508,7 @@
                     <td>${comment.author.username}</td>
                     <td>
                         <button class="article-link" onclick="handleViewArticle(${comment.article_id})">
-                            鏌ョ湅鏂囩珷
+                            查看文章
                         </button>
                     </td>
                     <td>
@@ -551,7 +546,7 @@
             fetchComments();
         }
 
-        // 澶勭悊鏌ョ湅鏂囩珷
+        // 澶勭悊查看文章
         function handleViewArticle(articleId) {
             window.location.href = `article-detail.html?id=${articleId}`;
         }

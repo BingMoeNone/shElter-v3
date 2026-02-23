@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鍐呭瀹℃牳</title>
+    <title>内容审核</title>
     <style>
         :root {
             --color-primary: #00ff9d;
@@ -19,12 +19,7 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0a0a0a;
-            color: var(--color-text);
-            line-height: 1.6;
-        }
+        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
 
         header {
             background: var(--color-surface);
@@ -291,22 +286,22 @@
 </head>
 <body>
     <header>
-        <h1>绠＄悊鍛樺悗鍙?/h1>
+        <h1>管理后台?/h1>
         <nav>
             <ul>
-                <li><a href="admin-dashboard.html">浠〃鐩?/a></li>
-                <li><a href="admin-articles.html">鏂囩珷绠＄悊</a></li>
-                <li><a href="admin-users.html">鐢ㄦ埛绠＄悊</a></li>
-                <li><a href="admin-comments.html">璇勮绠＄悊</a></li>
-                <li><a href="admin-moderation.html" class="active">鍐呭瀹℃牳</a></li>
-                <li><a href="index.html">杩斿洖棣栭〉</a></li>
+                <li><a href="admin-dashboard.html">仪表盘?/a></li>
+                <li><a href="admin-articles.html">文章管理</a></li>
+                <li><a href="admin-users.html">用户管理</a></li>
+                <li><a href="admin-comments.html">评论管理</a></li>
+                <li><a href="admin-moderation.html" class="active">内容审核</a></li>
+                <li><a href="index.html">返回首页</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="container">
         <div class="admin-moderation">
-            <h1 class="page-title">鍐呭瀹℃牳</h1>
+            <h1 class="page-title">内容审核</h1>
             
             <div class="moderation-tabs">
                 <button 
@@ -345,7 +340,7 @@
                         </table>
                         
                         <div id="articlesEmptyState" class="empty-state">
-                            娌℃湁寰呭鏍哥殑鏂囩珷
+                            没有待审核的文章
                         </div>
                     </div>
                     
@@ -393,7 +388,7 @@
                         </table>
                         
                         <div id="commentsEmptyState" class="empty-state">
-                            娌℃湁寰呭鏍哥殑璇勮
+                            没有待审核的评论
                         </div>
                     </div>
                     
@@ -507,7 +502,7 @@
 
         // 缁戝畾鍒嗛〉浜嬩欢
         function bindPaginationEvents() {
-            // 鏂囩珷鍒嗛〉
+            // 文章分页
             document.getElementById('articlesPrevPageBtn').addEventListener('click', function() {
                 handlePageChange(currentPage.articles - 1, 'articles');
             });
@@ -516,7 +511,7 @@
                 handlePageChange(currentPage.articles + 1, 'articles');
             });
             
-            // 璇勮鍒嗛〉
+            // 评论分页
             document.getElementById('commentsPrevPageBtn').addEventListener('click', function() {
                 handlePageChange(currentPage.comments - 1, 'comments');
             });
@@ -588,7 +583,7 @@
             }, 500);
         }
 
-        // 鏇存柊鏂囩珷UI
+        // 更新文章UI
         function updateArticlesUI() {
             const loadingElement = document.getElementById('articlesLoading');
             const contentElement = document.getElementById('articlesContent');
@@ -617,7 +612,7 @@
             }
         }
 
-        // 鏇存柊璇勮UI
+        // 更新评论UI
         function updateCommentsUI() {
             const loadingElement = document.getElementById('commentsLoading');
             const contentElement = document.getElementById('commentsContent');
@@ -646,19 +641,19 @@
             }
         }
 
-        // 娓叉煋鏂囩珷琛ㄦ牸
+        // 渲染文章表格
         function renderArticlesTable() {
             const tableBody = document.getElementById('articlesTableBody');
             
             // 娓呯┖琛ㄦ牸
             tableBody.innerHTML = '';
             
-            // 璁＄畻褰撳墠椤电殑鏂囩珷
+            // 计算当前页的文章
             const startIndex = (currentPage.articles - 1) * limit;
             const endIndex = startIndex + limit;
             const currentArticles = pendingArticles.slice(startIndex, endIndex);
             
-            // 娓叉煋鏂囩珷琛?            currentArticles.forEach(article => {
+            // 渲染文章表?            currentArticles.forEach(article => {
                 const row = document.createElement('tr');
                 
                 const createdAt = new Date(article.created_at).toLocaleString();
@@ -681,19 +676,19 @@
             });
         }
 
-        // 娓叉煋璇勮琛ㄦ牸
+        // 渲染评论表格
         function renderCommentsTable() {
             const tableBody = document.getElementById('commentsTableBody');
             
             // 娓呯┖琛ㄦ牸
             tableBody.innerHTML = '';
             
-            // 璁＄畻褰撳墠椤电殑璇勮
+            // 计算当前页的评论
             const startIndex = (currentPage.comments - 1) * limit;
             const endIndex = startIndex + limit;
             const currentComments = pendingComments.slice(startIndex, endIndex);
             
-            // 娓叉煋璇勮琛?            currentComments.forEach(comment => {
+            // 渲染评论表?            currentComments.forEach(comment => {
                 const row = document.createElement('tr');
                 
                 const createdAt = new Date(comment.created_at).toLocaleString();
@@ -704,7 +699,7 @@
                     <td>${comment.author.username}</td>
                     <td>
                         <button class="article-link" onclick="handleViewArticle(${comment.article_id})">
-                            鏌ョ湅鏂囩珷
+                            查看文章
                         </button>
                     </td>
                     <td>${createdAt}</td>
@@ -720,7 +715,7 @@
             });
         }
 
-        // 鏇存柊鏂囩珷鍒嗛〉
+        // 鏇存柊文章分页
         function updateArticlesPagination() {
             const prevPageBtn = document.getElementById('articlesPrevPageBtn');
             const nextPageBtn = document.getElementById('articlesNextPageBtn');
@@ -731,7 +726,7 @@
             nextPageBtn.disabled = currentPage.articles === totalPages.articles;
         }
 
-        // 鏇存柊璇勮鍒嗛〉
+        // 鏇存柊评论分页
         function updateCommentsPagination() {
             const prevPageBtn = document.getElementById('commentsPrevPageBtn');
             const nextPageBtn = document.getElementById('commentsNextPageBtn');
@@ -754,46 +749,46 @@
             }
         }
 
-        // 澶勭悊鏌ョ湅鏂囩珷
+        // 澶勭悊查看文章
         function handleViewArticle(articleId) {
             window.location.href = `article-detail.html?id=${articleId}`;
         }
 
-        // 澶勭悊鎵瑰噯鏂囩珷
+        // 处理批准文章
         function handleApproveArticle(articleId) {
             // 妯℃嫙API璇锋眰
             setTimeout(() => {
-                // 浠庢ā鎷熸暟鎹腑绉婚櫎鏂囩珷
+                // 从模拟数据中删除文章
                 mockPendingArticles = mockPendingArticles.filter(article => article.id !== articleId);
                 // 閲嶆柊鑾峰彇寰呭鏍告枃绔?                fetchPendingArticles();
             }, 300);
         }
 
-        // 澶勭悊鎷掔粷鏂囩珷
+        // 处理拒绝文章
         function handleRejectArticle(articleId) {
             // 妯℃嫙API璇锋眰
             setTimeout(() => {
-                // 浠庢ā鎷熸暟鎹腑绉婚櫎鏂囩珷
+                // 从模拟数据中删除文章
                 mockPendingArticles = mockPendingArticles.filter(article => article.id !== articleId);
                 // 閲嶆柊鑾峰彇寰呭鏍告枃绔?                fetchPendingArticles();
             }, 300);
         }
 
-        // 澶勭悊鎵瑰噯璇勮
+        // 处理批准评论
         function handleApproveComment(commentId) {
             // 妯℃嫙API璇锋眰
             setTimeout(() => {
-                // 浠庢ā鎷熸暟鎹腑绉婚櫎璇勮
+                // 从模拟数据中删除评论
                 mockPendingComments = mockPendingComments.filter(comment => comment.id !== commentId);
                 // 閲嶆柊鑾峰彇寰呭鏍歌瘎璁?                fetchPendingComments();
             }, 300);
         }
 
-        // 澶勭悊鎷掔粷璇勮
+        // 处理拒绝评论
         function handleRejectComment(commentId) {
             // 妯℃嫙API璇锋眰
             setTimeout(() => {
-                // 浠庢ā鎷熸暟鎹腑绉婚櫎璇勮
+                // 从模拟数据中删除评论
                 mockPendingComments = mockPendingComments.filter(comment => comment.id !== commentId);
                 // 閲嶆柊鑾峰彇寰呭鏍歌瘎璁?                fetchPendingComments();
             }, 300);

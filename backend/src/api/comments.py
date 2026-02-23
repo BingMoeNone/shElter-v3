@@ -1,105 +1,133 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from uuid import UUID
+from typing import List
 
 from src.database import get_db
-from src.models import Comment, User, Article
-from src.schemas import CommentCreate, CommentUpdate, CommentResponse, UserResponse
-from src.auth.jwt import get_current_user
-from src.auth.permissions import can_edit_comment, can_delete_comment
+from src.models import Comment, Article
+from src.schemas import CommentCreate, CommentResponse, CommentUpdate
+from src.auth.jwt import get_current_active_user
+from src.utils.errors import ArticleNotFoundError
+from src.core.response import response_wrapper
 
 router = APIRouter()
 
 
-@router.post("/", response_model=CommentResponse, status_code=status.HTTP_201_CREATED)
-async def create_comment(
-    comment_data: CommentCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+@router.get("/", response_model=List[CommentResponse])
+async def get_comments(
+    article_id: int,
+    skip: int = 0,
+    limit: int = 50,
+    db: Session = Depends(get_db)
 ):
-    article = db.query(Article).filter(Article.id == comment_data.article_id).first()
+    """获取文章评论"""
+    # 检查文章是否存在
+    article = db.query(Article).filter(Article.id == article_id).first()
     if not article:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Article not found")
+        raise ArticleNotFoundError(article_id)
     
-    if comment_data.parent_id:
-        parent = db.query(Comment).filter(Comment.id == comment_data.parent_id).first()
-        if not parent:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Parent comment not found")
+    comments = db.query(Comment).filter(
+        Comment.article_id == article_id
+    ).order_by(Comment.created_at.desc()).offset(skip).limit(limit).all()
     
-    comment = Comment(
-        content=comment_data.content,
-        author_id=current_user.id,
-        article_id=comment_data.article_id,
-        parent_id=comment_data.parent_id,
-    )
-    db.add(comment)
+    return comments
+
+
+@router.post("/", response_model=CommentResponse)
+async def create_comment(
+    article_id: int,
+    comment: CommentCreate,
+    current_user = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """创建评论"""
+    # 检查文章是否存在
+    article = db.query(Article).filter(Article.id == article_id).first()
+    if not article:
+        raise ArticleNotFoundError(article_id)
     
-    # 鏇存柊鐢ㄦ埛璐＄尞璁℃暟
-    current_user.contribution_count += 1
-    
-    db.commit()
-    db.refresh(comment)
-    
-    return CommentResponse(
-        id=comment.id,
+    new_comment = Comment(
         content=comment.content,
-        author=UserResponse.model_validate(comment.author),
-        article_id=comment.article_id,
-        parent_id=comment.parent_id,
-        created_at=comment.created_at,
-        updated_at=comment.updated_at,
-        is_approved=comment.is_approved,
+        article_id=article_id,
+        author_id=current_user.id
     )
+    
+    db.add(new_comment)
+    db.commit()
+    db.refresh(new_comment)
+    
+    return new_comment
+
+
+@router.get("/{comment_id}", response_model=CommentResponse)
+async def get_comment(
+    comment_id: int,
+    db: Session = Depends(get_db)
+):
+    """获取单个评论"""
+    comment = db.query(Comment).filter(Comment.id == comment_id).first()
+    if not comment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="评论不存在"
+        )
+    
+    return comment
 
 
 @router.put("/{comment_id}", response_model=CommentResponse)
 async def update_comment(
-    comment_id: str,
-    comment_data: CommentUpdate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    comment_id: int,
+    comment_update: CommentUpdate,
+    current_user = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
+    """更新评论"""
     comment = db.query(Comment).filter(Comment.id == comment_id).first()
     if not comment:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
-    
-    if not can_edit_comment(current_user, comment.author_id):
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to update this comment"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="评论不存在"
         )
     
-    comment.content = comment_data.content
+    # 检查权限
+    if comment.author_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="没有权限修改该评论"
+        )
+    
+    # 更新评论内容
+    for field, value in comment_update.dict(exclude_unset=True).items():
+        setattr(comment, field, value)
+    
     db.commit()
     db.refresh(comment)
     
-    return CommentResponse(
-        id=comment.id,
-        content=comment.content,
-        author=UserResponse.model_validate(comment.author),
-        article_id=comment.article_id,
-        parent_id=comment.parent_id,
-        created_at=comment.created_at,
-        updated_at=comment.updated_at,
-        is_approved=comment.is_approved,
-    )
+    return comment
 
 
-@router.delete("/{comment_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{comment_id}")
 async def delete_comment(
-    comment_id: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    comment_id: int,
+    current_user = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ):
+    """删除评论"""
     comment = db.query(Comment).filter(Comment.id == comment_id).first()
     if not comment:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="评论不存在"
+        )
     
-    if not can_delete_comment(current_user, comment.author_id):
+    # 检查权限
+    if comment.author_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to delete this comment"
+            detail="没有权限删除该评论"
         )
     
     db.delete(comment)
     db.commit()
+    
+    return response_wrapper.success(message=f"评论 {comment_id} 已成功删除")

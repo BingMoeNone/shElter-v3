@@ -1,4 +1,4 @@
-﻿from src.utils.logging import logger, setup_logging
+from src.utils.logging import logger, setup_logging
 from src.utils.errors import (
     APIError,
     ErrorCode,
@@ -7,11 +7,14 @@ from src.utils.errors import (
     UsernameEmailMismatchError,
     UserNotFoundError,
     AccountDeactivatedError,
+    ArticleNotFoundError,
 )
+from src.utils.helpers import generate_slug
 
 __all__ = [
     "logger",
     "setup_logging",
+    "generate_slug",
     "APIError",
     "ErrorCode",
     "EmailAlreadyRegisteredError",
@@ -19,4 +22,5 @@ __all__ = [
     "UsernameEmailMismatchError",
     "UserNotFoundError",
     "AccountDeactivatedError",
+    "ArticleNotFoundError",
 ]

@@ -1,6 +1,7 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from sqlalchemy.orm import Session
 from datetime import timedelta
+import re
 
 from src.database import get_db
 from src.models import User
@@ -20,6 +21,9 @@ from src.utils.errors import (
 from src.core.response import response_wrapper
 from src.core.security import limiter
 from src.utils.logging import logger
+
+# Password complexity regex
+PASSWORD_REGEX = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
 
 router = APIRouter()
 
@@ -94,7 +98,15 @@ async def register(
 
     if not email or not username or not password:
         return response_wrapper.error(
-            message="缂哄皯蹇呰鍙傛暟", error_code="MISSING_PARAMS", status_code=400
+            message="缺少必要参数", error_code="MISSING_PARAMS", status_code=400
+        )
+    
+    # Validate password complexity
+    if not re.match(PASSWORD_REGEX, password):
+        return response_wrapper.error(
+            message="密码必须包含至少一个大写字母、一个小写字母、一个数字和一个特殊字符", 
+            error_code="INVALID_PASSWORD", 
+            status_code=400
         )
 
     existing_user = (
@@ -110,7 +122,7 @@ async def register(
             )
         else:
             return response_wrapper.error(
-                message="鐢ㄦ埛鍚嶅凡琚娇鐢?, error_code="USERNAME_EXISTS", status_code=400
+                message="鐢ㄦ埛鍚嶅凡琚娇鐢?", error_code="USERNAME_EXISTS", status_code=400
             )
 
     from src.auth.jwt import get_password_hash
@@ -163,7 +175,7 @@ async def refresh_token(
 
     if not payload:
         return response_wrapper.error(
-            message="鏃犳晥鐨勫埛鏂颁护鐗?, error_code="INVALID_TOKEN", status_code=401
+            message="鏃犳晥鐨勫埛鏂颁护鐗?", error_code="INVALID_TOKEN", status_code=401
         )
 
     user_id = payload.get("sub")
@@ -171,7 +183,7 @@ async def refresh_token(
 
     if not user or not user.is_active:
         return response_wrapper.error(
-            message="鐢ㄦ埛涓嶅瓨鍦ㄦ垨宸茬鐢?, error_code="USER_NOT_FOUND", status_code=404
+            message="鐢ㄦ埛涓嶅瓨鍦ㄦ垨宸茬鐢?", error_code="USER_NOT_FOUND", status_code=404
         )
 
     access_token = create_access_token(data={"sub": str(user.id)})
@@ -187,7 +199,7 @@ async def get_current_user_info(current_user: User = Depends(lambda: None)):
     """鑾峰彇褰撳墠鐢ㄦ埛淇℃伅"""
     if not current_user:
         return response_wrapper.error(
-            message="鏈巿鏉冭闂?, error_code="UNAUTHORIZED", status_code=401
+            message="鏈巿鏉冭闂?", error_code="UNAUTHORIZED", status_code=401
         )
 
     return response_wrapper.success(

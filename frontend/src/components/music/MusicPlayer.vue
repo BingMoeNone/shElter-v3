@@ -80,10 +80,17 @@ async function loadTracks() {
   }
 }
 
+// Add type declaration for import.meta.env
+declare const importMetaEnv: {
+  VITE_API_BASE_URL?: string
+}
+
+const env = (import.meta as any).env || {}
+
 function getAudioUrl(url: string | undefined): string {
   if (!url) return ''
   if (url.startsWith('http')) return url
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+  const baseUrl = env.VITE_API_BASE_URL || 'http://localhost:8000'
   const rootUrl = baseUrl.replace('/api/v1', '')
   return `${rootUrl}${url}`
 }
@@ -101,7 +108,7 @@ async function togglePlay() {
       isPlaying.value = true
     } catch (err) {
       console.error('Play failed:', err)
-      error.value = '鎾斁澶辫触锛岃妫€鏌ラ煶棰戞枃浠?
+      error.value = '鎾斁澶辫触锛岃妫€鏌ラ煶棰戞枃浠?';
     }
   }
 }
@@ -341,8 +348,7 @@ function retryLoad() {
         <button @click="togglePlayMode" class="control-btn mode-btn" :title="`鎾斁妯″紡: ${playMode}`">
           {{ playModeIcon }}
         </button>
-        <button @click="prevTrack" class="control-btn" :disabled="!canPlay" title="涓婁竴棣?>
-          鈴?        </button>
+        <button @click="prevTrack" class="control-btn" :disabled="!canPlay" title="涓婁竴棣?>鈴?        </button>
         <button 
           @click="togglePlay" 
           class="control-btn play-btn" 
@@ -353,8 +359,7 @@ function retryLoad() {
           <span v-if="isLoading" class="btn-spinner"></span>
           <span v-else>{{ isPlaying ? '鈴? : '鈻? }}</span>
         </button>
-        <button @click="nextTrack" class="control-btn" :disabled="!canPlay" title="涓嬩竴棣?>
-          鈴?        </button>
+        <button @click="nextTrack" class="control-btn" :disabled="!canPlay" title="涓嬩竴棣?>鈴?        </button>
       </div>
       
       <!-- Progress -->
@@ -470,7 +475,7 @@ function retryLoad() {
 </template>
 
 <style scoped>
-/* ==================== Container ==================== */
+/* ==================== Container ====================
 .music-player-container {
   display: flex;
   gap: 2rem;
@@ -489,7 +494,7 @@ function retryLoad() {
   }
 }
 
-/* ==================== Error Notification ==================== */
+/* ==================== Error Notification ====================
 .error-notification {
   position: fixed;
   top: 20px;
@@ -541,7 +546,7 @@ function retryLoad() {
   transform: translateX(-50%) translateY(-20px);
 }
 
-/* ==================== Player Card ==================== */
+/* ==================== Player Card ====================
 .player-card {
   flex: 1;
   background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
@@ -557,7 +562,7 @@ function retryLoad() {
   max-width: 500px;
 }
 
-/* ==================== Visualizer ==================== */
+/* ==================== Visualizer ====================
 .visualizer {
   display: flex;
   align-items: flex-end;
@@ -597,7 +602,7 @@ function retryLoad() {
   }
 }
 
-/* ==================== Track Info ==================== */
+/* ==================== Track Info ====================
 .track-info {
   text-align: center;
   margin-bottom: 2rem;
@@ -643,7 +648,7 @@ function retryLoad() {
   to { transform: rotate(360deg); }
 }
 
-/* ==================== Controls ==================== */
+/* ==================== Controls ====================
 .controls {
   display: flex;
   gap: 1rem;
@@ -706,7 +711,7 @@ function retryLoad() {
   animation: spin 1s linear infinite;
 }
 
-/* ==================== Progress & Volume Sliders ==================== */
+/* ==================== Progress & Volume Sliders ====================
 .progress-container, .volume-container {
   width: 100%;
   display: flex;
@@ -803,7 +808,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   transform: scale(1.1);
 }
 
-/* ==================== Keyboard Hints ==================== */
+/* ==================== Keyboard Hints ====================
 .keyboard-hints {
   display: flex;
   gap: 1rem;
@@ -820,7 +825,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   border: 1px solid #333;
 }
 
-/* ==================== Playlist ==================== */
+/* ==================== Playlist ====================
 .playlist {
   flex: 1;
   background: linear-gradient(145deg, #151515, #0a0a0a);
@@ -967,7 +972,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   font-variant-numeric: tabular-nums;
 }
 
-/* ==================== Scrollbar ==================== */
+/* ==================== Scrollbar ====================
 ::-webkit-scrollbar {
   width: 6px;
 }

@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from typing import Optional
 
@@ -13,7 +13,7 @@ from src.utils.errors import APIError, ErrorCode
 router = APIRouter()
 
 
-# 浣跨敤鏂扮殑鏉冮檺绯荤粺
+# 使用新的权限系统
 def require_admin():
     return require_role(["admin"])
 
@@ -69,7 +69,7 @@ async def admin_get_user(
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="鐢ㄦ埛涓嶅瓨鍦?)
+        raise HTTPException(status_code=404, detail="用户不存在")
     
     audit_service.log(
         db=db,
@@ -95,7 +95,7 @@ async def admin_update_user(
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="鐢ㄦ埛涓嶅瓨鍦?)
+        raise HTTPException(status_code=404, detail="用户不存在")
     
     old_data = {
         "username": user.username,
@@ -124,7 +124,7 @@ async def admin_update_user(
         elif key == "email" and value != user.email:
             existing = db.query(User).filter(User.email == value).first()
             if existing:
-                raise HTTPException(status_code=409, detail="閭宸茶浣跨敤")
+                raise HTTPException(status_code=409, detail="邮箱已被使用")
             changes["email"] = {"old": user.email, "new": value}
             audit_service.log(
                 db=db,
@@ -181,7 +181,7 @@ async def admin_reset_password(
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="鐢ㄦ埛涓嶅瓨鍦?)
+        raise HTTPException(status_code=404, detail="用户不存在")
     
     user.password_hash = get_password_hash(password_data.new_password)
     db.commit()
@@ -197,7 +197,7 @@ async def admin_reset_password(
         request=request,
     )
     
-    return {"message": "瀵嗙爜宸查噸缃?}
+    return {"message": "密码已重置"}
 
 
 @router.delete("/users/{user_id}")
@@ -209,10 +209,10 @@ async def admin_delete_user(
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="鐢ㄦ埛涓嶅瓨鍦?)
+        raise HTTPException(status_code=404, detail="用户不存在")
     
     if str(user.id) == str(admin.id):
-        raise HTTPException(status_code=400, detail="涓嶈兘鍒犻櫎鑷繁鐨勮处鎴?)
+        raise HTTPException(status_code=400, detail="不能删除自己的账户")
     
     user_info = {"username": user.username, "email": user.email}
     
@@ -230,7 +230,7 @@ async def admin_delete_user(
         request=request,
     )
     
-    return {"message": "鐢ㄦ埛宸插垹闄?}
+    return {"message": "用户已删除"}
 
 
 @router.get("/logs", response_model=dict)

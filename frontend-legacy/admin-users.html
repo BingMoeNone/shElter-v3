@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鐢ㄦ埛绠＄悊</title>
+    <title>用户管理</title>
     <style>
         :root {
             --color-primary: #00ff9d;
@@ -19,12 +19,7 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0a0a0a;
-            color: var(--color-text);
-            line-height: 1.6;
-        }
+        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
 
         header {
             background: var(--color-surface);
@@ -271,29 +266,29 @@
 </head>
 <body>
     <header>
-        <h1>绠＄悊鍛樺悗鍙?/h1>
+        <h1>管理后台?/h1>
         <nav>
             <ul>
-                <li><a href="admin-dashboard.html">浠〃鐩?/a></li>
-                <li><a href="admin-articles.html">鏂囩珷绠＄悊</a></li>
-                <li><a href="admin-users.html" class="active">鐢ㄦ埛绠＄悊</a></li>
-                <li><a href="admin-comments.html">璇勮绠＄悊</a></li>
-                <li><a href="admin-moderation.html">鍐呭瀹℃牳</a></li>
-                <li><a href="index.html">杩斿洖棣栭〉</a></li>
+                <li><a href="admin-dashboard.html">仪表盘?/a></li>
+                <li><a href="admin-articles.html">文章管理</a></li>
+                <li><a href="admin-users.html" class="active">用户管理</a></li>
+                <li><a href="admin-comments.html">评论管理</a></li>
+                <li><a href="admin-moderation.html">内容审核</a></li>
+                <li><a href="index.html">返回首页</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="container">
         <div class="admin-users">
-            <h1 class="page-title">鐢ㄦ埛绠＄悊</h1>
+            <h1 class="page-title">用户管理</h1>
             
             <div class="users-header">
                 <div class="search-bar">
                     <input
                         type="text"
                         id="searchQuery"
-                        placeholder="鎼滅储鐢ㄦ埛鍚嶃€侀偖绠辨垨鏄剧ず鍚?.."
+                        placeholder="搜索用户名、邮箱或显示名..."
                     />
                 </div>
             </div>
@@ -305,17 +300,17 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>鐢ㄦ埛鍚?/th>
+                            <th>用户名?/th>
                             <th>閭</th>
                             <th>鏄剧ず鍚?/th>
                             <th>瑙掕壊</th>
                             <th>鐘舵€?/th>
-                            <th>娉ㄥ唽鏃堕棿</th>
+                            <th>注册时间</th>
                             <th>鎿嶄綔</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <!-- 鐢ㄦ埛鏁版嵁灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                        <!-- 用户名鏁版嵁灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
                     </tbody>
                 </table>
                 
@@ -342,13 +337,13 @@
     </div>
 
     <script>
-        // 妯℃嫙鐢ㄦ埛鏁版嵁
+        // 妯℃嫙用户名鏁版嵁
         const mockUsers = [
             {
                 id: 1,
                 username: "admin",
                 email: "admin@example.com",
-                display_name: "绠＄悊鍛?,
+                display_name: "管理员?,
                 role: "admin",
                 is_active: true,
                 created_at: "2023-01-01T00:00:00Z"
@@ -366,7 +361,7 @@
                 id: 3,
                 username: "testuser",
                 email: "test@example.com",
-                display_name: "娴嬭瘯鐢ㄦ埛",
+                display_name: "娴嬭瘯用户名",
                 role: "user",
                 is_active: true,
                 created_at: "2023-01-03T15:45:00Z"
@@ -403,7 +398,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 缁戝畾浜嬩欢鐩戝惉鍣?            bindEventListeners();
             
-            // 鑾峰彇鐢ㄦ埛鏁版嵁
+            // 鑾峰彇用户名鏁版嵁
             fetchUsers();
         });
 
@@ -412,7 +407,7 @@
             const prevPageBtn = document.getElementById('prevPageBtn');
             const nextPageBtn = document.getElementById('nextPageBtn');
 
-            // 鎼滅储杈撳叆浜嬩欢
+            // 搜索输入事件
             searchInput.addEventListener('input', function() {
                 searchQuery = this.value;
                 currentPage = 1;
@@ -429,7 +424,7 @@
             });
         }
 
-        // 鑾峰彇鐢ㄦ埛鏁版嵁
+        // 鑾峰彇用户名鏁版嵁
         function fetchUsers() {
             loading = true;
             updateUI();
@@ -477,19 +472,19 @@
             }
         }
 
-        // 娓叉煋鐢ㄦ埛琛ㄦ牸
+        // 娓叉煋用户名琛ㄦ牸
         function renderUsersTable() {
             const tableBody = document.getElementById('usersTableBody');
             
             // 娓呯┖琛ㄦ牸
             tableBody.innerHTML = '';
             
-            // 璁＄畻褰撳墠椤电殑鐢ㄦ埛
+            // 璁＄畻褰撳墠椤电殑用户名
             const startIndex = (currentPage - 1) * limit;
             const endIndex = startIndex + limit;
             const currentUsers = users.slice(startIndex, endIndex);
             
-            // 娓叉煋鐢ㄦ埛琛?            currentUsers.forEach(user => {
+            // 娓叉煋用户名琛?            currentUsers.forEach(user => {
                 const row = document.createElement('tr');
                 
                 const createdAt = new Date(user.created_at).toLocaleString();
@@ -544,24 +539,24 @@
             fetchUsers();
         }
 
-        // 澶勭悊鏌ョ湅鐢ㄦ埛
+        // 澶勭悊鏌ョ湅用户名
         function handleViewUser(userId) {
-            // 杩欓噷鍙互璺宠浆鍒扮敤鎴疯鎯呴〉闈?            console.log('鏌ョ湅鐢ㄦ埛:', userId);
+            // 杩欓噷鍙互璺宠浆鍒扮敤鎴疯鎯呴〉闈?            console.log('鏌ョ湅用户名:', userId);
         }
 
-        // 澶勭悊缂栬緫鐢ㄦ埛
+        // 澶勭悊缂栬緫用户名
         function handleEditUser(userId) {
-            // 杩欓噷鍙互璺宠浆鍒扮敤鎴风紪杈戦〉闈?            console.log('缂栬緫鐢ㄦ埛:', userId);
+            // 杩欓噷鍙互璺宠浆鍒扮敤鎴风紪杈戦〉闈?            console.log('缂栬緫用户名:', userId);
         }
 
-        // 澶勭悊鍒犻櫎鐢ㄦ埛
+        // 澶勭悊鍒犻櫎用户名
         function handleDeleteUser(userId) {
             if (confirm('纭畾瑕佸垹闄よ繖涓敤鎴峰悧锛?)) {
                 // 妯℃嫙API璇锋眰
                 setTimeout(() => {
-                    // 浠庢ā鎷熸暟鎹腑鍒犻櫎鐢ㄦ埛
+                    // 浠庢ā鎷熸暟鎹腑鍒犻櫎用户名
                     mockUsers = mockUsers.filter(user => user.id !== userId);
-                    // 閲嶆柊鑾峰彇鐢ㄦ埛鏁版嵁
+                    // 閲嶆柊鑾峰彇用户名鏁版嵁
                     fetchUsers();
                 }, 300);
             }

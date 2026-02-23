@@ -1,7 +1,7 @@
-﻿[project]
+[project]
 name = "wiki-platform-backend"
-version = "0.1.0"
-description = "Wiki Platform Backend API"
+version = "1.1.0"
+description = "Wiki Platform Backend API with article management, user profiles, and social features"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -16,6 +16,8 @@ dependencies = [
     "python-multipart==0.0.6",
     "email-validator==2.1.0",
     "httpx==0.26.0",
+    "slowapi==0.1.9",
+    "idna==3.3.0",
 ]
 
 [project.optional-dependencies]
@@ -26,6 +28,11 @@ dev = [
     "black==24.1.1",
     "flake8==7.0.0",
     "isort==5.13.2",
+    "safety>=3.2.11",
+    "bandit>=1.9.3",
+    "mypy==1.8.0",
+    "types-python-jose>=3.3.4",
+    "types-requests>=2.31.0",
 ]
 postgres = [
     "psycopg2-binary==2.9.9",

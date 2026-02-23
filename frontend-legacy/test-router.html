@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路由测试页面</title>
+    <script src="utils.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        .btn {
+            padding: 8px 16px;
+            margin: 5px;
+            border: 1px solid #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #00ff88;
+            color: #000;
+        }
+        .log {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #00ff88;
+        }
+        .current-route {
+            background: rgba(0, 255, 136, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>路由管理器测试</h1>
+    
+    <div class="current-route">
+        <h3>当前路由信息：</h3>
+        <div id="currentRouteInfo"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>路由跳转测试</h3>
+        <button class="btn" onclick="testPush()">跳转到首页</button>
+        <button class="btn" onclick="testPushWithParams()">跳转到搜索页（带参数）</button>
+        <button class="btn" onclick="testReplace()">替换到文章列表</button>
+        <button class="btn" onclick="testGoBack()">返回上一页</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>路由配置测试</h3>
+        <button class="btn" onclick="listAllRoutes()">列出所有路由</button>
+        <button class="btn" onclick="testRouteExists()">检查路由是否存在</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>路由守卫测试</h3>
+        <button class="btn" onclick="testProtectedRoute()">测试需要认证的路由</button>
+        <button class="btn" onclick="testAdminRoute()">测试需要管理员权限的路由</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>URL参数测试</h3>
+        <button class="btn" onclick="parseParams()">解析当前URL参数</button>
+        <button class="btn" onclick="buildUrl()">构建URL</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>日志</h3>
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        // 添加日志
+        function addLog(message) {
+            const log = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // 更新当前路由信息
+        function updateCurrentRoute() {
+            const route = routerManager.getCurrentRoute();
+            const info = document.getElementById('currentRouteInfo');
+            if (route) {
+                info.innerHTML = `
+                    <p>路由名称：${route.name}</p>
+                    <p>路由路径：${route.path}</p>
+                    <p>路由标签：${route.label}</p>
+                    <p>需要认证：${route.requiresAuth || false}</p>
+                    <p>需要管理员：${route.requiresAdmin || false}</p>
+                `;
+            } else {
+                info.innerHTML = '<p>当前未匹配到任何路由</p>';
+            }
+        }
+
+        // 测试路由跳转
+        function testPush() {
+            addLog('测试跳转到首页...');
+            routerManager.push('home');
+        }
+
+        // 测试带参数的路由跳转
+        function testPushWithParams() {
+            addLog('测试跳转到搜索页（带参数）...');
+            routerManager.push('search', { q: '测试搜索', page: 1 });
+        }
+
+        // 测试路由替换
+        function testReplace() {
+            addLog('测试替换到文章列表...');
+            routerManager.replace('articles');
+        }
+
+        // 测试返回上一页
+        function testGoBack() {
+            addLog('测试返回上一页...');
+            routerManager.goBack();
+        }
+
+        // 测试列出所有路由
+        function listAllRoutes() {
+            addLog('列出所有路由：');
+            const routes = Object.keys(routerManager.routes);
+            routes.forEach(routeName => {
+                const route = routerManager.getRoute(routeName);
+                addLog(`  ${routeName}: ${route.path} (${route.label})`);
+            });
+        }
+
+        // 测试路由是否存在
+        function testRouteExists() {
+            const routeName = 'home';
+            const exists = routerManager.getRoute(routeName) !== undefined;
+            addLog(`路由 ${routeName} 存在：${exists}`);
+        }
+
+        // 测试需要认证的路由
+        function testProtectedRoute() {
+            addLog('测试需要认证的路由...');
+            routerManager.push('profile');
+        }
+
+        // 测试需要管理员权限的路由
+        function testAdminRoute() {
+            addLog('测试需要管理员权限的路由...');
+            routerManager.push('adminDashboard');
+        }
+
+        // 测试解析URL参数
+        function parseParams() {
+            const params = routerManager.parseQueryParams();
+            addLog('解析当前URL参数：');
+            for (const [key, value] of Object.entries(params)) {
+                addLog(`  ${key}: ${value}`);
+            }
+        }
+
+        // 测试构建URL
+        function buildUrl() {
+            const url = routerManager.buildUrl('articleDetail', { id: 123, title: '测试文章' });
+            addLog(`构建URL：${url}`);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            addLog('路由管理器测试页面已加载');
+            updateCurrentRoute();
+            initPage('test-router', '路由测试');
+        });
+    </script>
+</body>
+</html>
