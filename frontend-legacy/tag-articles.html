@@ -1,16 +1,26 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鏍囩鏂囩珷</title>
+    <title>标签文章</title>
     <style>
+        /* Wiki Platform V3 统一样式 */
         :root {
-            --color-primary: #00ff9d;
-            --color-text: #fff;
-            --color-text-muted: #aaa;
+            --color-primary: #0D8ABC;
+            --color-primary-dark: #096a8f;
+            --color-primary-light: #3498db;
+            --color-secondary: #9b59b6;
+            --color-accent: #ff6b6b;
+            --color-success: #27ae60;
+            --color-danger: #e74c3c;
+            --color-warning: #f39c12;
+            --color-text: #ffffff;
+            --color-text-muted: #a0a0a0;
+            --color-background: #121212;
             --color-surface: #1a1a1a;
-            --color-border: #333;
+            --color-surface-hover: #2a2a2a;
+            --color-border: #333333;
         }
 
         * {
@@ -19,7 +29,12 @@
             box-sizing: border-box;
         }
 
-        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
 
         header {
             background: var(--color-surface);
@@ -149,7 +164,7 @@
             gap: 20px;
         }
 
-        /* 鏂囩珷鍗＄墖鏍峰紡 */
+        /* 文章卡片样式 */
         .article-card {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
@@ -244,13 +259,13 @@
 </head>
 <body>
     <header>
-        <h1>鏍囩鏂囩珷</h1>
+        <h1>标签文章</h1>
         <nav>
             <ul>
-                <li><a href="index.html">棣栭〉</a></li>
-                <li><a href="articles.html">鏂囩珷</a></li>
-                <li><a href="profile.html">涓汉璧勬枡</a></li>
-                <li><a href="login.html">鐧诲綍</a></li>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="articles.html">文章</a></li>
+                <li><a href="profile.html">个人资料</a></li>
+                <li><a href="login.html">登录</a></li>
             </ul>
         </nav>
     </header>
@@ -259,35 +274,35 @@
         <div class="tag-articles-page">
             <div id="loading" class="loading">
                 <div class="loading-spinner"></div>
-                <p>鍔犺浇涓?..</p>
+                <p>加载中...</p>
             </div>
             
             <div id="errorState" class="error-state" style="display: none;">
-                <span class="error-icon">鈿狅笍</span>
-                <p id="errorMessage">鍔犺浇澶辫触</p>
-                <button id="retryBtn" class="retry-btn">閲嶈瘯</button>
+                <span class="error-icon">⚠️</span>
+                <p id="errorMessage">加载失败</p>
+                <button id="retryBtn" class="retry-btn">重试</button>
             </div>
             
             <div id="content" style="display: none;">
                 <header class="page-header">
-                    <h1 id="tagName">#鏍囩</h1>
-                    <p id="tagInfo">0 绡囩浉鍏虫枃绔?/p>
+                    <h1 id="tagName">#标签</h1>
+                    <p id="tagInfo">0 篇相关文章</p>
                 </header>
                 
                 <div id="emptyState" class="empty-state" style="display: none;">
-                    <span class="empty-icon">馃彿锔?/span>
-                    <p>璇ユ爣绛句笅鏆傛棤鏂囩珷</p>
+                    <span class="empty-icon">📂</span>
+                    <p>该标签下无文章</p>
                 </div>
                 
                 <div id="articlesList" class="articles-list">
-                    <!-- 鏂囩珷鍗＄墖灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                    <!-- 文章卡片将通过JavaScript动态生成 -->
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 妯℃嫙鏍囩鏁版嵁
+        // 模拟标签数据
         const mockTags = [
             {
                 id: 1,
@@ -309,12 +324,12 @@
             }
         ];
 
-        // 妯℃嫙鏂囩珷鏁版嵁
+        // 模拟文章数据
         const mockArticles = [
             {
                 id: 1,
-                title: "FastAPI鍚庣寮€鍙戞渶浣冲疄璺?,
-                excerpt: "鏈枃浠嬬粛浜嗕娇鐢‵astAPI寮€鍙戝悗绔簲鐢ㄧ殑鏈€浣冲疄璺碉紝鍖呮嫭璺敱璁捐銆佹暟鎹簱闆嗘垚銆佽璇佹巿鏉冪瓑鏂归潰銆?,
+                title: "FastAPI后端开发最佳实践",
+                excerpt: "本文介绍了使用FastAPI开发后端应用的最佳实践，包括路由设计、数据库集成、认证体系等方面。",
                 author: { username: "admin" },
                 category: "tech",
                 tags: ["fastapi", "python", "backend"],
@@ -324,8 +339,8 @@
             },
             {
                 id: 2,
-                title: "Python寮傛缂栫▼鍏ラ棬",
-                excerpt: "鏈枃浠嬬粛浜哖ython寮傛缂栫▼鐨勫熀鏈蹇靛拰浣跨敤鏂规硶锛屽寘鎷琣sync/await璇硶銆乤syncio搴撶瓑銆?,
+                title: "Python异步编程入门",
+                excerpt: "本文介绍了Python异步编程的基本概念和使用方法，包括async/await语法、asyncio库等。",
                 author: { username: "testuser" },
                 category: "tech",
                 tags: ["python", "async"],
@@ -335,8 +350,8 @@
             },
             {
                 id: 3,
-                title: "FastAPI涓嶴QLAlchemy闆嗘垚",
-                excerpt: "鏈枃浠嬬粛浜嗗浣曞皢FastAPI涓嶴QLAlchemy ORM闆嗘垚锛屽疄鐜版暟鎹簱鎿嶄綔銆?,
+                title: "FastAPI与SQLAlchemy集成",
+                excerpt: "本文介绍了如何将FastAPI与SQLAlchemy ORM集成，实现数据库操作。",
                 author: { username: "admin" },
                 category: "tech",
                 tags: ["fastapi", "python", "sqlalchemy"],
@@ -346,12 +361,13 @@
             }
         ];
 
-        // 鐘舵€佺鐞?        let tag = null;
+        // 状态管理
+        let tag = null;
         let articles = [];
         let loading = true;
         let error = null;
 
-        // DOM鍏冪礌
+        // DOM元素
         const loadingElement = document.getElementById('loading');
         const errorStateElement = document.getElementById('errorState');
         const errorMessageElement = document.getElementById('errorMessage');
@@ -362,34 +378,37 @@
         const emptyStateElement = document.getElementById('emptyState');
         const articlesListElement = document.getElementById('articlesList');
 
-        // 椤甸潰鍔犺浇鏃跺垵濮嬪寲
+        // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 缁戝畾浜嬩欢鐩戝惉鍣?            retryBtn.addEventListener('click', fetchData);
+            // 绑定事件监听器
+            retryBtn.addEventListener('click', fetchData);
             
-            // 鑾峰彇鏍囩slug骞跺姞杞芥暟鎹?            fetchData();
+            // 获取标签slug并加载数据
+            fetchData();
         });
 
-        // 鑾峰彇鏍囩slug骞跺姞杞芥暟鎹?        function fetchData() {
+        // 获取标签slug并加载数据
+        function fetchData() {
             loading = true;
             error = null;
             updateUI();
             
-            // 妯℃嫙浠嶶RL鑾峰彇鏍囩slug锛岃繖閲屼娇鐢ㄩ粯璁ゅ€?fastapi"
-            const slug = "fastapi"; // 瀹為檯椤圭洰涓彲浠ヤ粠URL鍙傛暟鑾峰彇
+            // 模拟从URL获取标签slug，这里使用默认值 "fastapi"
+            const slug = "fastapi"; // 实际项目中可以从URL参数获取
             
-            // 妯℃嫙API璇锋眰寤惰繜
+            // 模拟API请求延迟
             setTimeout(() => {
                 try {
-                    // 妯℃嫙鑾峰彇鏍囩淇℃伅
+                    // 模拟获取标签信息
                     tag = mockTags.find(t => t.slug === slug) || null;
                     
-                    // 妯℃嫙鑾峰彇鐩稿叧鏂囩珷
+                    // 模拟获取相关文章
                     articles = mockArticles.filter(article => 
                         article.tags.includes(slug)
                     );
                 } catch (err) {
                     console.error('Failed to fetch data:', err);
-                    error = '鍔犺浇澶辫触';
+                    error = '加载失败';
                 } finally {
                     loading = false;
                     updateUI();
@@ -397,7 +416,7 @@
             }, 800);
         }
 
-        // 鏇存柊UI
+        // 更新UI
         function updateUI() {
             if (loading) {
                 loadingElement.style.display = 'flex';
@@ -413,16 +432,16 @@
                 errorStateElement.style.display = 'none';
                 contentElement.style.display = 'block';
                 
-                // 鏇存柊鏍囩淇℃伅
+                // 更新标签信息
                 if (tag) {
                     tagNameElement.textContent = `#${tag.name}`;
-                    tagInfoElement.textContent = `${tag.usageCount} 绡囩浉鍏虫枃绔燻;
+                    tagInfoElement.textContent = `${tag.usageCount} 篇相关文章`;
                 } else {
-                    tagNameElement.textContent = '#鏍囩';
-                    tagInfoElement.textContent = `${articles.length} 绡囩浉鍏虫枃绔燻;
+                    tagNameElement.textContent = '#标签';
+                    tagInfoElement.textContent = `${articles.length} 篇相关文章`;
                 }
                 
-                // 鏇存柊鏂囩珷鍒楄〃
+                // 更新文章列表
                 if (articles.length === 0) {
                     emptyStateElement.style.display = 'flex';
                     articlesListElement.style.display = 'none';
@@ -434,7 +453,7 @@
             }
         }
 
-        // 娓叉煋鏂囩珷鍒楄〃
+        // 渲染文章列表
         function renderArticles() {
             articlesListElement.innerHTML = '';
             
@@ -442,9 +461,10 @@
                 const articleCard = document.createElement('div');
                 articleCard.className = 'article-card';
                 
-                // 鏍煎紡鍖栨棩鏈?                const createdAt = new Date(article.created_at).toLocaleDateString('zh-CN');
+                // 格式化日期
+                const createdAt = new Date(article.created_at).toLocaleDateString('zh-CN');
                 
-                // 鐢熸垚鏍囩HTML
+                // 生成标签HTML
                 const tagsHTML = article.tags.map(tag => 
                     `<a href="tag-articles.html?tag=${tag}" class="article-card-tag">${tag}</a>`
                 ).join('');
@@ -456,19 +476,19 @@
                         </h2>
                         <div class="article-card-meta">
                             <span class="article-card-meta-item">
-                                <span>馃懁</span>
+                                <span>👤</span>
                                 <span>${article.author.username}</span>
                             </span>
                             <span class="article-card-meta-item">
-                                <span>馃搮</span>
+                                <span>📅</span>
                                 <span>${createdAt}</span>
                             </span>
                             <span class="article-card-meta-item">
-                                <span>馃憗锔?/span>
+                                <span>👁️</span>
                                 <span>${article.view_count}</span>
                             </span>
                             <span class="article-card-meta-item">
-                                <span>馃挰</span>
+                                <span>💬</span>
                                 <span>${article.comment_count}</span>
                             </span>
                         </div>
@@ -476,7 +496,7 @@
                     <div class="article-card-excerpt">${article.excerpt}</div>
                     <div class="article-card-footer">
                         <div class="article-card-tags">${tagsHTML}</div>
-                        <a href="article-detail.html?id=${article.id}" class="article-card-read-more">闃呰鏇村 鈫?/a>
+                        <a href="article-detail.html?id=${article.id}" class="article-card-read-more">阅读更多 →</a>
                     </div>
                 `;
                 

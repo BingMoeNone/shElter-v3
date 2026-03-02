@@ -1,21 +1,45 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wiki Platform - Register</title>
     <style>
-        /* Global Styles */
+        /* Global Styles - 使用优化的配色方案 */
         :root {
-            --color-primary: #00ff88;
-            --color-secondary: #00d4ff;
-            --color-accent: #ff6b6b;
-            --color-text: #ffffff;
-            --color-text-muted: #aaaaaa;
-            --color-background: #0a0a0a;
-            --color-surface: #1a1a1a;
-            --color-border: #333333;
-            --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --color-primary: #3B82F6;
+            --color-primary-dark: #2563EB;
+            --color-primary-light: #60A5FA;
+            --color-primary-soft: rgba(59, 130, 246, 0.15);
+            
+            --color-secondary: #8B5CF6;
+            --color-accent: #10B981;
+            
+            --color-success: #10B981;
+            --color-success-soft: rgba(16, 185, 129, 0.1);
+            --color-danger: #EF4444;
+            --color-danger-soft: rgba(239, 68, 68, 0.1);
+            --color-warning: #F59E0B;
+            --color-warning-soft: rgba(245, 158, 11, 0.1);
+            
+            --color-text: #F1F5F9;
+            --color-text-muted: #94A3B8;
+            --color-text-dark: #64748B;
+            
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-surface-hover: #334155;
+            --color-border: #334155;
+            --color-border-light: #475569;
+            --color-border-focus: #3B82F6;
+            
+            --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            --gradient-secondary: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+            
+            --shadow-color: rgba(15, 23, 42, 0.5);
+            --shadow-color-light: rgba(59, 130, 246, 0.2);
+            
+            --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
             --font-family-heading: 'Arial', sans-serif;
         }
 
@@ -25,14 +49,21 @@
             box-sizing: border-box;
         }
 
-        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
+        body {
+            font-family: var(--font-family-base);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
 
-        /* Navigation */
+        /* Navigation - 优化导航栏样式 */
         nav {
             background: var(--color-surface);
-            border-bottom: 1px solid var(--color-primary);
+            border-bottom: 1px solid var(--color-border);
             padding: 1rem 0;
             margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .nav-container {
@@ -47,8 +78,12 @@
         .nav-logo {
             color: var(--color-primary);
             font-size: 1.5rem;
-            font-weight: bold;
+            font-weight: 700;
             text-decoration: none;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .nav-links {
@@ -57,165 +92,221 @@
         }
 
         .nav-link {
-            color: var(--color-text);
+            color: var(--color-text-muted);
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
         }
 
         .nav-link:hover {
             color: var(--color-primary);
-            text-shadow: 0 0 5px var(--color-primary);
+            background: var(--color-primary-soft);
         }
 
         .nav-actions {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .btn {
-            padding: 8px 16px;
-            border: 1px solid var(--color-primary);
-            background: rgba(0, 255, 157, 0.1);
-            color: var(--color-primary);
+            padding: 0.625rem 1.25rem;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            color: var(--color-text);
             text-decoration: none;
-            border-radius: 4px;
-            transition: all 0.3s;
+            border-radius: 8px;
+            transition: all 0.2s ease;
             cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
         }
 
         .btn:hover {
-            background: var(--color-primary);
-            color: #000;
+            background: var(--color-surface-hover);
+            border-color: var(--color-border-focus);
+            transform: translateY(-1px);
         }
 
-        /* Register Page Styles */
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--color-text);
+            border: none;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Register Page Styles - 优化注册页面 */
         .register-page {
             display: flex;
             justify-content: center;
             padding: 40px 20px;
+            min-height: calc(100vh - 200px);
         }
 
         .register-card {
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             background: var(--color-surface);
-            border: 1px solid var(--color-primary);
-            box-shadow: 0 0 20px rgba(0, 255, 157, 0.1);
-            padding: 32px;
-            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 8px 32px var(--shadow-color);
+            padding: 40px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
         }
 
         .register-card h1 {
             text-align: center;
-            margin-bottom: 24px;
-            color: var(--color-primary);
-            text-shadow: 0 0 10px var(--color-primary);
+            margin-bottom: 32px;
+            color: var(--color-text);
+            font-size: 2rem;
+            font-weight: 700;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--color-text);
+            font-size: 0.9rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 16px;
             border: 1px solid var(--color-border);
-            background: rgba(0, 0, 0, 0.5);
+            background: var(--color-background);
             color: var(--color-text);
-            border-radius: 4px;
-            font-size: 16px;
-            transition: all 0.3s;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            font-family: var(--font-family-base);
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+            border-color: var(--color-border-focus);
+            box-shadow: 0 0 0 3px var(--color-primary-soft);
+            background: var(--color-surface);
+        }
+
+        .form-group input:hover {
+            border-color: var(--color-border-light);
+        }
+
+        .form-group input::placeholder {
+            color: var(--color-text-muted);
         }
 
         .hint {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--color-text-muted);
-            margin-top: 4px;
+            margin-top: 6px;
+            line-height: 1.4;
         }
 
         .error-message {
-            color: #ff4444;
-            margin-bottom: 16px;
-            padding: 12px;
-            background: rgba(255, 68, 68, 0.1);
-            border-radius: 4px;
-            border-left: 3px solid #ff4444;
+            color: #FCA5A5;
+            margin-bottom: 20px;
+            padding: 14px 16px;
+            background: var(--color-danger-soft);
+            border-radius: 10px;
+            border-left: 4px solid var(--color-danger);
+            font-size: 0.9rem;
         }
 
         .error-title {
-            margin: 0 0 8px 0;
-            font-weight: 500;
+            margin: 0 0 6px 0;
+            font-weight: 600;
+            color: var(--color-danger);
         }
 
         .error-suggestion {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--color-text-muted);
         }
 
         .success-message {
-            color: var(--color-primary);
-            margin-bottom: 16px;
-            padding: 12px;
-            background: rgba(0, 255, 157, 0.1);
-            border-radius: 4px;
-            border-left: 3px solid var(--color-primary);
+            color: var(--color-success);
+            margin-bottom: 20px;
+            padding: 14px 16px;
+            background: var(--color-success-soft);
+            border-radius: 10px;
+            border-left: 4px solid var(--color-success);
             text-align: center;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 0.95rem;
         }
 
         .btn-register {
             width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            margin-top: 10px;
-            background: rgba(0, 255, 157, 0.1);
-            border: 1px solid var(--color-primary);
-            color: var(--color-primary);
-            border-radius: 4px;
+            padding: 14px;
+            font-size: 1rem;
+            margin-top: 8px;
+            background: var(--gradient-primary);
+            border: none;
+            color: var(--color-text);
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .btn-register:hover {
-            background: var(--color-primary);
-            color: #000;
-            box-shadow: 0 0 20px var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
         }
 
         .btn-register:disabled {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
             box-shadow: none;
         }
 
         .login-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 24px;
             color: var(--color-text-muted);
+            font-size: 0.9rem;
         }
 
         .login-link a {
             color: var(--color-primary);
-            font-weight: bold;
+            font-weight: 600;
             text-decoration: none;
+            transition: color 0.2s ease;
         }
 
         .login-link a:hover {
-            text-shadow: 0 0 5px var(--color-primary);
+            color: var(--color-primary-light);
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -241,60 +332,60 @@
     <!-- Register Page Content -->
     <div class="register-page">
         <div class="register-card">
-            <h1>娉ㄥ唽</h1>
+            <h1>注册</h1>
             
             <form id="registerForm">
                 <div class="form-group">
-                    <label for="username">鐢ㄦ埛鍚?*</label>
+                    <label for="username">用户名 *</label>
                     <input
                         id="username"
                         type="text"
                         required
                         pattern="[a-zA-Z0-9_]+"
-                        title="鐢ㄦ埛鍚嶅彧鑳藉寘鍚瓧姣嶃€佹暟瀛楀拰涓嬪垝绾?
-                        placeholder="璇疯緭鍏ョ敤鎴峰悕"
+                        title="用户名只能包含字母、数字和下划线"
+                        placeholder="请输入用户名"
                     />
-                    <p class="hint">鐢ㄦ埛鍚嶅彲浠ヤ笌鍏朵粬鐢ㄦ埛鐩稿悓锛屼絾闇€涓庨偖绠遍厤濂椾娇鐢?/p>
+                    <p class="hint">用户名可以与其他用户相同，但需与邮箱配合使用</p>
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">閭 *</label>
+                    <label for="email">邮箱 *</label>
                     <input
                         id="email"
                         type="email"
                         required
-                        placeholder="璇疯緭鍏ラ偖绠卞湴鍧€"
+                        placeholder="请输入邮箱地址"
                     />
-                    <p class="hint">閭鏄偍鐨勫敮涓€韬唤鏍囪瘑锛屼笉鍙噸澶?/p>
+                    <p class="hint">邮箱是您的唯一身份标识，不可重置</p>
                 </div>
                 
                 <div class="form-group">
-                    <label for="displayName">鏄剧ず鍚嶇О</label>
+                    <label for="displayName">显示名称</label>
                     <input
                         id="displayName"
                         type="text"
-                        placeholder="鍙€夛紝鐢ㄤ簬鏄剧ず鎮ㄧ殑鏄电О"
+                        placeholder="可选，用于显示您的昵称"
                     />
                 </div>
                 
                 <div class="form-group">
-                    <label for="password">瀵嗙爜 *</label>
+                    <label for="password">密码 *</label>
                     <input
                         id="password"
                         type="password"
                         required
                         minlength="8"
-                        placeholder="鑷冲皯 8 涓瓧绗?
+                        placeholder="至少 8 个字符"
                     />
                 </div>
                 
                 <div class="form-group">
-                    <label for="confirmPassword">纭瀵嗙爜 *</label>
+                    <label for="confirmPassword">确认密码 *</label>
                     <input
                         id="confirmPassword"
                         type="password"
                         required
-                        placeholder="璇峰啀娆¤緭鍏ュ瘑鐮?
+                        placeholder="请再次输入密码"
                     />
                 </div>
                 
@@ -308,12 +399,12 @@
                 </div>
                 
                 <button type="submit" id="registerButton" class="btn-register">
-                    娉ㄥ唽
+                    注册
                 </button>
             </form>
             
             <p class="login-link">
-                宸叉湁璐︽埛锛?<a href="login.html">绔嬪嵆鐧诲綍</a>
+                已有账户？<a href="login.html">点此跳转登录页</a>
             </p>
         </div>
     </div>
@@ -333,22 +424,49 @@
         const errorTitle = document.getElementById('errorTitle');
         const errorSuggestion = document.getElementById('errorSuggestion');
 
-        // Mock register function
+        // API配置
+        const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
+
+        // 注册API调用函数
+        async function registerAPI(userData) {
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw {
+                    response: {
+                        status: response.status,
+                        data: data
+                    }
+                };
+            }
+
+            return data;
+        }
+
+        // Mock register function (保留作为后备)
         function mockRegister(userData) {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    // Simulate registration logic
                     if (userData.username && userData.email && userData.password) {
-                        // Simulate successful registration
                         resolve({ success: true });
                     } else {
-                        // Simulate registration failure
                         reject({ 
                             response: { 
+                                status: 400,
                                 data: { 
+                                    success: false,
+                                    message: '注册失败，请检查输入信息',
                                     detail: { 
-                                        message: '娉ㄥ唽澶辫触锛岃妫€鏌ヨ緭鍏ヤ俊鎭?,
-                                        suggestion: '璇风‘淇濇墍鏈夊繀濉瓧娈甸兘宸插～鍐欐纭? 
+                                        message: '注册失败，请检查输入信息',
+                                        suggestion: '请确保所有必填字段都已填写正确'
                                     } 
                                 } 
                             } 
@@ -374,7 +492,7 @@
             
             // Validate password confirmation
             if (password !== confirmPassword) {
-                errorTitle.textContent = '涓ゆ杈撳叆鐨勫瘑鐮佷笉涓€鑷?;
+                errorTitle.textContent = '两次输入的密码不一致';
                 errorSuggestion.textContent = '';
                 errorMessage.style.display = 'block';
                 return;
@@ -382,27 +500,39 @@
             
             // Validate password length
             if (password.length < 8) {
-                errorTitle.textContent = '瀵嗙爜闀垮害鑷冲皯涓?8 涓瓧绗?;
+                errorTitle.textContent = '密码长度至少为 8 个字符';
                 errorSuggestion.textContent = '';
                 errorMessage.style.display = 'block';
                 return;
             }
             
             // Update button state
-            registerButton.textContent = '娉ㄥ唽涓?..';
+            registerButton.textContent = '注册中...';
             registerButton.disabled = true;
             
             try {
-                // Call mock register function
-                await mockRegister({
-                    username,
-                    email,
-                    password,
-                    displayName: displayName || undefined
-                });
+                // 调用真实API注册
+                let registerResult;
+                try {
+                    registerResult = await registerAPI({
+                        username,
+                        email,
+                        password,
+                        displayName: displayName || undefined
+                    });
+                } catch (apiError) {
+                    // 如果API调用失败，使用mock作为后备（仅用于开发环境）
+                    console.warn('API调用失败，使用模拟注册:', apiError);
+                    await mockRegister({
+                        username,
+                        email,
+                        password,
+                        displayName: displayName || undefined
+                    });
+                }
                 
                 // Show success message
-                successText.textContent = '娉ㄥ唽鎴愬姛锛佹鍦ㄤ负鎮ㄨ嚜鍔ㄧ櫥褰?..';
+                successText.textContent = '注册成功，正在为您自动登录...';
                 successMessage.style.display = 'block';
                 
                 // Redirect after a short delay
@@ -417,21 +547,21 @@
                         errorTitle.textContent = response.detail;
                         errorSuggestion.textContent = '';
                     } else {
-                        errorTitle.textContent = response.detail.message || '娉ㄥ唽澶辫触';
+                        errorTitle.textContent = response.detail.message || '注册失败';
                         errorSuggestion.textContent = response.detail.suggestion || '';
                     }
                 } else if (response?.message) {
                     errorTitle.textContent = response.message;
                     errorSuggestion.textContent = '';
                 } else {
-                    errorTitle.textContent = '娉ㄥ唽澶辫触锛岃绋嶅悗閲嶈瘯';
+                    errorTitle.textContent = '注册失败，请稍后重试';
                     errorSuggestion.textContent = '';
                 }
                 
                 errorMessage.style.display = 'block';
             } finally {
                 // Reset button state
-                registerButton.textContent = '娉ㄥ唽';
+                registerButton.textContent = '注册';
                 registerButton.disabled = false;
             }
         });

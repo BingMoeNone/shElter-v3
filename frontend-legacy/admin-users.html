@@ -1,16 +1,41 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>用户管理</title>
     <style>
+        /* Wiki Platform V3 统一样式 - 优化后的现代深色主题 */
         :root {
-            --color-primary: #00ff9d;
-            --color-text: #fff;
-            --color-text-muted: #aaa;
-            --color-surface: #1a1a1a;
-            --color-border: #333;
+            --color-primary: #3B82F6;
+            --color-primary-dark: #2563EB;
+            --color-primary-light: #60A5FA;
+            --color-primary-soft: rgba(59, 130, 246, 0.15);
+            
+            --color-secondary: #8B5CF6;
+            --color-accent: #10B981;
+            
+            --color-success: #10B981;
+            --color-success-soft: rgba(16, 185, 129, 0.1);
+            --color-danger: #EF4444;
+            --color-danger-soft: rgba(239, 68, 68, 0.1);
+            --color-warning: #F59E0B;
+            --color-warning-soft: rgba(245, 158, 11, 0.1);
+            
+            --color-text: #F1F5F9;
+            --color-text-muted: #94A3B8;
+            --color-text-dark: #64748B;
+            
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-surface-hover: #334155;
+            --color-border: #334155;
+            --color-border-light: #475569;
+            --color-border-focus: #3B82F6;
+            
+            --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            --shadow-color: rgba(15, 23, 42, 0.5);
+            --shadow-color-light: rgba(59, 130, 246, 0.2);
         }
 
         * {
@@ -19,7 +44,12 @@
             box-sizing: border-box;
         }
 
-        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
 
         header {
             background: var(--color-surface);
@@ -29,6 +59,15 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
         }
 
         nav ul {
@@ -38,16 +77,17 @@
         }
 
         nav a {
-            color: var(--color-text);
+            color: var(--color-text-muted);
             text-decoration: none;
             padding: 8px 15px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
         nav a:hover, nav a.active {
-            background: var(--color-primary);
-            color: #000;
+            color: var(--color-primary);
+            background: var(--color-primary-soft);
         }
 
         .container {
@@ -64,15 +104,19 @@
 
         .page-title {
             font-size: 2rem;
-            color: var(--color-primary);
-            margin-bottom: 20px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 24px;
             text-align: center;
+            font-weight: 700;
         }
 
         .users-header {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .search-bar {
@@ -81,52 +125,57 @@
 
         .search-bar input {
             width: 100%;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
+            padding: 12px 16px;
+            background: var(--color-background);
             border: 1px solid var(--color-border);
-            border-radius: 4px;
+            border-radius: 10px;
             color: var(--color-text);
-            font-size: 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
         }
 
         .search-bar input:focus {
             outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+            border-color: var(--color-border-focus);
+            box-shadow: 0 0 0 3px var(--color-primary-soft);
+        }
+
+        .search-bar input::placeholder {
+            color: var(--color-text-muted);
         }
 
         .loading {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--color-text-muted);
-            padding: 40px;
+            padding: 60px 20px;
         }
 
         .users-table-container {
             overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .users-table {
             width: 100%;
             border-collapse: collapse;
             background: var(--color-surface);
-            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
         }
 
         .users-table th,
         .users-table td {
-            padding: 12px;
+            padding: 14px 12px;
             text-align: left;
             border-bottom: 1px solid var(--color-border);
         }
 
         .users-table th {
-            background: rgba(0, 255, 157, 0.1);
+            background: var(--color-surface-hover);
             color: var(--color-primary);
-            font-weight: bold;
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -136,49 +185,49 @@
         }
 
         .users-table tr:hover {
-            background: rgba(0, 255, 157, 0.05);
+            background: var(--color-surface-hover);
         }
 
         .role-badge {
             display: inline-block;
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.8rem;
-            font-weight: bold;
+            font-weight: 600;
             text-transform: capitalize;
         }
 
         .role-user {
-            background: rgba(79, 172, 254, 0.2);
-            color: #4facfe;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60A5FA;
         }
 
         .role-moderator {
-            background: rgba(67, 233, 123, 0.2);
-            color: #43e97b;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34D399;
         }
 
         .role-admin {
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
+            background: rgba(239, 68, 68, 0.2);
+            color: #F87171;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.8rem;
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .status-active {
-            background: rgba(67, 233, 123, 0.2);
-            color: #43e97b;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34D399;
         }
 
         .status-inactive {
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
+            background: rgba(100, 116, 139, 0.2);
+            color: #94A3B8;
         }
 
         .action-buttons {
@@ -189,73 +238,85 @@
         .btn {
             padding: 6px 12px;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
-            font-size: 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
         .btn-view {
-            background: rgba(79, 172, 254, 0.1);
-            color: #4facfe;
+            background: rgba(59, 130, 246, 0.1);
+            color: #60A5FA;
+            border-color: rgba(59, 130, 246, 0.3);
         }
 
         .btn-edit {
-            background: rgba(0, 242, 254, 0.1);
-            color: #00f2fe;
+            background: rgba(139, 92, 246, 0.1);
+            color: #A78BFA;
+            border-color: rgba(139, 92, 246, 0.3);
         }
 
         .btn-delete {
-            background: rgba(255, 107, 107, 0.1);
-            color: #ff6b6b;
+            background: rgba(239, 68, 68, 0.1);
+            color: #F87171;
+            border-color: rgba(239, 68, 68, 0.3);
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 2px 8px rgba(0, 255, 157, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .btn-view:hover {
-            background: #4facfe;
+            background: #3B82F6;
             color: #fff;
+            border-color: #3B82F6;
         }
 
         .btn-edit:hover {
-            background: #00f2fe;
-            color: #000;
+            background: #8B5CF6;
+            color: #fff;
+            border-color: #8B5CF6;
         }
 
         .btn-delete:hover {
-            background: #ff6b6b;
+            background: #EF4444;
             color: #fff;
+            border-color: #EF4444;
         }
 
         .pagination {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
-            gap: 10px;
+            margin-top: 24px;
+            gap: 12px;
         }
 
         .page-btn {
-            padding: 8px 16px;
-            background: rgba(0, 255, 157, 0.1);
-            color: var(--color-primary);
-            border: 1px solid var(--color-primary);
-            border-radius: 4px;
+            padding: 10px 18px;
+            background: var(--color-surface);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
         .page-btn:hover:not(:disabled) {
             background: var(--color-primary);
-            color: #000;
+            color: #fff;
+            border-color: var(--color-primary);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .page-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
         }
 
         .page-info {
@@ -266,10 +327,10 @@
 </head>
 <body>
     <header>
-        <h1>管理后台?/h1>
+        <h1>管理后台</h1>
         <nav>
             <ul>
-                <li><a href="admin-dashboard.html">仪表盘?/a></li>
+                <li><a href="admin-dashboard.html">仪表盘</a></li>
                 <li><a href="admin-articles.html">文章管理</a></li>
                 <li><a href="admin-users.html" class="active">用户管理</a></li>
                 <li><a href="admin-comments.html">评论管理</a></li>
@@ -293,24 +354,24 @@
                 </div>
             </div>
             
-            <div id="loading" class="loading">鍔犺浇涓?..</div>
+            <div id="loading" class="loading">加载中..</div>
             
             <div id="usersTableContainer" class="users-table-container" style="display: none;">
                 <table class="users-table">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>用户名?/th>
-                            <th>閭</th>
-                            <th>鏄剧ず鍚?/th>
-                            <th>瑙掕壊</th>
-                            <th>鐘舵€?/th>
+                            <th>用户名</th>
+                            <th>邮箱</th>
+                            <th>显示名</th>
+                            <th>角色</th>
+                            <th>状态</th>
                             <th>注册时间</th>
-                            <th>鎿嶄綔</th>
+                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <!-- 用户名鏁版嵁灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                        <!-- 用户数据将通过JavaScript动态生成 -->
                     </tbody>
                 </table>
                 
@@ -320,30 +381,33 @@
                         id="prevPageBtn"
                         disabled
                     >
-                        涓婁竴椤?                    </button>
+                        上一页
+                    </button>
                     
                     <span class="page-info" id="pageInfo">
-                        绗?1 / 1 椤?                    </span>
+                        第 1 / 1 页
+                    </span>
                     
                     <button 
                         class="page-btn" 
                         id="nextPageBtn"
                         disabled
                     >
-                        涓嬩竴椤?                    </button>
+                        下一页
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 妯℃嫙用户名鏁版嵁
+        // 模拟用户名数据
         const mockUsers = [
             {
                 id: 1,
                 username: "admin",
                 email: "admin@example.com",
-                display_name: "管理员?,
+                display_name: "管理员",
                 role: "admin",
                 is_active: true,
                 created_at: "2023-01-01T00:00:00Z"
@@ -352,7 +416,7 @@
                 id: 2,
                 username: "moderator",
                 email: "moderator@example.com",
-                display_name: "鐗堜富",
+                display_name: "版主",
                 role: "moderator",
                 is_active: true,
                 created_at: "2023-01-02T10:30:00Z"
@@ -361,7 +425,7 @@
                 id: 3,
                 username: "testuser",
                 email: "test@example.com",
-                display_name: "娴嬭瘯用户名",
+                display_name: "测试用户",
                 role: "user",
                 is_active: true,
                 created_at: "2023-01-03T15:45:00Z"
@@ -370,7 +434,7 @@
                 id: 4,
                 username: "user1",
                 email: "user1@example.com",
-                display_name: "鏅€氱敤鎴?",
+                display_name: "普通用户 1",
                 role: "user",
                 is_active: true,
                 created_at: "2023-01-04T09:15:00Z"
@@ -379,14 +443,42 @@
                 id: 5,
                 username: "user2",
                 email: "user2@example.com",
-                display_name: "",
+                display_name: "普通用户 2",
                 role: "user",
                 is_active: false,
                 created_at: "2023-01-05T14:20:00Z"
+            },
+            {
+                id: 6,
+                username: "user3",
+                email: "user3@example.com",
+                display_name: "普通用户 3",
+                role: "user",
+                is_active: true,
+                created_at: "2023-01-06T08:30:00Z"
+            },
+            {
+                id: 7,
+                username: "user4",
+                email: "user4@example.com",
+                display_name: "普通用户 4",
+                role: "user",
+                is_active: true,
+                created_at: "2023-01-07T11:45:00Z"
+            },
+            {
+                id: 8,
+                username: "user5",
+                email: "user5@example.com",
+                display_name: "普通用户 5",
+                role: "user",
+                is_active: true,
+                created_at: "2023-01-08T16:20:00Z"
             }
         ];
 
-        // 鐘舵€佺鐞?        let users = [];
+        // 状态管理
+        let users = [];
         let loading = true;
         let searchQuery = '';
         let currentPage = 1;
@@ -394,15 +486,17 @@
         let totalItems = 0;
         let totalPages = 0;
 
-        // 椤甸潰鍔犺浇鏃跺垵濮嬪寲
+        // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 缁戝畾浜嬩欢鐩戝惉鍣?            bindEventListeners();
+            // 绑定事件监听器
+            bindEventListeners();
             
-            // 鑾峰彇用户名鏁版嵁
+            // 获取用户数据
             fetchUsers();
         });
 
-        // 缁戝畾浜嬩欢鐩戝惉鍣?        function bindEventListeners() {
+        // 绑定事件监听器
+        function bindEventListeners() {
             const searchInput = document.getElementById('searchQuery');
             const prevPageBtn = document.getElementById('prevPageBtn');
             const nextPageBtn = document.getElementById('nextPageBtn');
@@ -414,7 +508,7 @@
                 fetchUsers();
             });
 
-            // 鍒嗛〉鎸夐挳浜嬩欢
+            // 分页按钮事件
             prevPageBtn.addEventListener('click', function() {
                 handlePageChange(currentPage - 1);
             });
@@ -424,18 +518,19 @@
             });
         }
 
-        // 鑾峰彇用户名鏁版嵁
+        // 获取用户数据
         function fetchUsers() {
             loading = true;
             updateUI();
             
-            // 妯℃嫙API璇锋眰寤惰繜
+            // 模拟 API 请求延迟
             setTimeout(() => {
                 try {
-                    // 妯℃嫙API鍝嶅簲
+                    // 模拟 API 响应
                     let filteredUsers = [...mockUsers];
                     
-                    // 搴旂敤鎼滅储绛涢€?                    if (searchQuery) {
+                    // 应用搜索过滤
+                    if (searchQuery) {
                         const query = searchQuery.toLowerCase();
                         filteredUsers = filteredUsers.filter(user => 
                             user.username.toLowerCase().includes(query) ||
@@ -444,9 +539,15 @@
                         );
                     }
                     
+                    // 更新用户列表和总数
                     users = filteredUsers;
                     totalItems = users.length;
-                    totalPages = Math.ceil(totalItems / limit);
+                    totalPages = Math.max(1, Math.ceil(totalItems / limit));
+                    
+                    // 确保当前页不超过总页数
+                    if (currentPage > totalPages) {
+                        currentPage = totalPages;
+                    }
                 } catch (error) {
                     console.error('Failed to fetch users:', error);
                 } finally {
@@ -456,7 +557,7 @@
             }, 500);
         }
 
-        // 鏇存柊UI
+        // 更新UI
         function updateUI() {
             const loadingElement = document.getElementById('loading');
             const usersTableContainer = document.getElementById('usersTableContainer');
@@ -472,25 +573,38 @@
             }
         }
 
-        // 娓叉煋用户名琛ㄦ牸
+        // 渲染用户表格
         function renderUsersTable() {
             const tableBody = document.getElementById('usersTableBody');
             
-            // 娓呯┖琛ㄦ牸
+            // 清空表格
             tableBody.innerHTML = '';
             
-            // 璁＄畻褰撳墠椤电殑用户名
+            // 检查是否有数据
+            if (users.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `
+                    <td colspan="8" style="text-align: center; padding: 40px 20px; color: var(--color-text-muted);">
+                        暂无用户数据
+                    </td>
+                `;
+                tableBody.appendChild(emptyRow);
+                return;
+            }
+            
+            // 计算当前页的用户
             const startIndex = (currentPage - 1) * limit;
             const endIndex = startIndex + limit;
             const currentUsers = users.slice(startIndex, endIndex);
             
-            // 娓叉煋用户名琛?            currentUsers.forEach(user => {
+            // 渲染用户表
+            currentUsers.forEach(user => {
                 const row = document.createElement('tr');
                 
                 const createdAt = new Date(user.created_at).toLocaleString();
                 const displayName = user.display_name || '-';
                 const status = user.is_active ? 'active' : 'inactive';
-                const statusText = user.is_active ? '娲昏穬' : '绂佺敤';
+                const statusText = user.is_active ? '活跃' : '禁用';
                 
                 row.innerHTML = `
                     <td>${user.id}</td>
@@ -510,9 +624,9 @@
                     <td>${createdAt}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-view" onclick="handleViewUser(${user.id})">鏌ョ湅</button>
-                            <button class="btn btn-edit" onclick="handleEditUser(${user.id})">缂栬緫</button>
-                            <button class="btn btn-delete" onclick="handleDeleteUser(${user.id})">鍒犻櫎</button>
+                            <button class="btn btn-view" onclick="handleViewUser(${user.id})">查看</button>
+                            <button class="btn btn-edit" onclick="handleEditUser(${user.id})">编辑</button>
+                            <button class="btn btn-delete" onclick="handleDeleteUser(${user.id})">删除</button>
                         </div>
                     </td>
                 `;
@@ -521,42 +635,69 @@
             });
         }
 
-        // 鏇存柊鍒嗛〉
+        // 更新分页
         function updatePagination() {
+            const paginationElement = document.getElementById('pagination');
             const prevPageBtn = document.getElementById('prevPageBtn');
             const nextPageBtn = document.getElementById('nextPageBtn');
             const pageInfo = document.getElementById('pageInfo');
             
-            pageInfo.textContent = `绗?${currentPage} / ${totalPages} 椤礰;
+            // 如果只有一页或没有数据，隐藏分页控件
+            if (totalPages <= 1) {
+                paginationElement.style.display = 'none';
+                return;
+            }
+            
+            paginationElement.style.display = 'flex';
+            pageInfo.textContent = `第 ${currentPage} / ${totalPages} 页`;
             prevPageBtn.disabled = currentPage === 1;
             nextPageBtn.disabled = currentPage === totalPages;
         }
 
-        // 澶勭悊椤电爜鍙樺寲
+        // 处理页码变化
         function handlePageChange(page) {
-            if (page < 1 || page > totalPages) return;
+            // 验证页码范围
+            if (page < 1 || page > totalPages || totalPages === 0) {
+                return;
+            }
+            
+            // 更新当前页
             currentPage = page;
+            
+            // 重新获取数据（会更新 UI）
             fetchUsers();
         }
 
-        // 澶勭悊鏌ョ湅用户名
+        // 处理查看用户
         function handleViewUser(userId) {
-            // 杩欓噷鍙互璺宠浆鍒扮敤鎴疯鎯呴〉闈?            console.log('鏌ョ湅用户名:', userId);
+            // 这里可以跳转到用户详情页面
+            console.log('查看用户:', userId);
         }
 
-        // 澶勭悊缂栬緫用户名
+        // 处理编辑用户
         function handleEditUser(userId) {
-            // 杩欓噷鍙互璺宠浆鍒扮敤鎴风紪杈戦〉闈?            console.log('缂栬緫用户名:', userId);
+            // 这里可以跳转到用户编辑页面
+            console.log('编辑用户:', userId);
         }
 
-        // 澶勭悊鍒犻櫎用户名
+        // 处理删除用户
         function handleDeleteUser(userId) {
-            if (confirm('纭畾瑕佸垹闄よ繖涓敤鎴峰悧锛?)) {
-                // 妯℃嫙API璇锋眰
+            if (confirm('确定要删除这个用户吗？')) {
+                // 模拟 API 请求
                 setTimeout(() => {
-                    // 浠庢ā鎷熸暟鎹腑鍒犻櫎用户名
+                    // 从模拟数据中删除用户
                     mockUsers = mockUsers.filter(user => user.id !== userId);
-                    // 閲嶆柊鑾峰彇用户名鏁版嵁
+                    
+                    // 计算删除后的总页数
+                    const remainingItems = mockUsers.length;
+                    const newTotalPages = Math.max(1, Math.ceil(remainingItems / limit));
+                    
+                    // 如果当前页超过最大页数，调整到最大页
+                    if (currentPage > newTotalPages && newTotalPages > 0) {
+                        currentPage = newTotalPages;
+                    }
+                    
+                    // 重新获取用户数据（会应用搜索过滤）
                     fetchUsers();
                 }, 300);
             }

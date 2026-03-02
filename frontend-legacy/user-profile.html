@@ -1,19 +1,25 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鐢ㄦ埛璧勬枡</title>
+    <title>用户资料</title>
     <style>
-        /* 鍩虹鏍峰紡 */
+        /* Wiki Platform V3 统一样式 */
         :root {
-            --color-primary: #00ff9d;
-            --color-secondary: #00ccff;
+            --color-primary: #0D8ABC;
+            --color-primary-dark: #096a8f;
+            --color-primary-light: #3498db;
+            --color-secondary: #9b59b6;
             --color-accent: #ff6b6b;
+            --color-success: #27ae60;
+            --color-danger: #e74c3c;
+            --color-warning: #f39c12;
             --color-text: #ffffff;
-            --color-text-muted: #b0b0b0;
-            --color-background: #0a0a0a;
+            --color-text-muted: #a0a0a0;
+            --color-background: #121212;
             --color-surface: #1a1a1a;
+            --color-surface-hover: #2a2a2a;
             --color-border: #333333;
         }
 
@@ -23,16 +29,23 @@
             box-sizing: border-box;
         }
 
-        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
 
-        /* 椤甸潰瀹瑰櫒 */
+        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
+
+        /* 页面容器 */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* 鍔犺浇鐘舵€?*/
+        /* 加载状态 */
         .loading {
             display: flex;
             flex-direction: column;
@@ -55,7 +68,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 閿欒鐘舵€?*/
+        /* 错误状态 */
         .error-state {
             display: flex;
             flex-direction: column;
@@ -86,7 +99,7 @@
             color: white;
         }
 
-        /* 鐢ㄦ埛鍗＄墖 */
+        /* 用户卡片 */
         .user-card {
             display: flex;
             flex-direction: column;
@@ -253,7 +266,7 @@
             animation: spin 1s linear infinite;
         }
 
-        /* 鐢ㄦ埛鏂囩珷 */
+        /* 用户文章 */
         .user-articles {
             margin-top: 32px;
         }
@@ -286,7 +299,7 @@
             gap: 20px;
         }
 
-        /* 鏂囩珷鍗＄墖 */
+        /* 文章卡片 */
         .article-card {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
@@ -334,22 +347,22 @@
 <body>
     <div class="container">
         <div id="user-profile-page">
-            <!-- 鍔犺浇鐘舵€?-->
+            <!-- 加载状态 -->
             <div id="loading" class="loading" style="display: block;">
                 <div class="loading-spinner"></div>
-                <p>鍔犺浇鐢ㄦ埛璧勬枡涓?..</p>
+                <p>加载用户资料中...</p>
             </div>
             
-            <!-- 閿欒鐘舵€?-->
+            <!-- 错误状态 -->
             <div id="error-state" class="error-state" style="display: none;">
-                <span class="error-icon">鈿狅笍</span>
+                <span class="error-icon">⚠️</span>
                 <p id="error-message"></p>
-                <button id="retry-btn" class="retry-btn">閲嶈瘯</button>
+                <button id="retry-btn" class="retry-btn">重试</button>
             </div>
             
-            <!-- 鐢ㄦ埛璧勬枡 -->
+            <!-- 用户资料 -->
             <div id="user-content" style="display: none;">
-                <!-- 鐢ㄦ埛鍗＄墖 -->
+                <!-- 用户卡片 -->
                 <div class="user-card">
                     <div class="user-avatar">
                         <div id="avatar-placeholder" class="avatar-placeholder"></div>
@@ -362,7 +375,7 @@
                         
                         <div class="stats">
                             <span class="stat">
-                                <strong id="user-contribution-count"></strong> 璐＄尞
+                                <strong id="user-contribution-count"></strong> 贡献
                             </span>
                             <span id="user-role" class="stat role-badge"></span>
                         </div>
@@ -371,13 +384,13 @@
                     <div id="user-actions" class="user-actions"></div>
                 </div>
                 
-                <!-- 鐢ㄦ埛鏂囩珷 -->
+                <!-- 用户文章 -->
                 <section class="user-articles">
                     <h2 id="articles-title"></h2>
                     
                     <div id="empty-articles" class="empty-state" style="display: block;">
-                        <span class="empty-icon">馃摑</span>
-                        <p>鏆傛棤鏂囩珷</p>
+                        <span class="empty-icon">📂</span>
+                        <p>无文章</p>
                     </div>
                     
                     <div id="articles-list" class="articles-list" style="display: none;"></div>
@@ -387,12 +400,12 @@
     </div>
 
     <script>
-        // 妯℃嫙鏁版嵁
+        // 模拟数据
         const mockUser = {
             id: 1,
             username: 'testuser',
-            displayName: '娴嬭瘯鐢ㄦ埛',
-            bio: '杩欐槸涓€涓祴璇曠敤鎴风殑绠€浠?,
+            displayName: '测试用户',
+            bio: '这是一个测试用户的简介',
             avatarUrl: null,
             contributionCount: 12,
             role: 'user',
@@ -402,25 +415,25 @@
         const mockArticles = [
             {
                 id: 1,
-                title: '娴嬭瘯鏂囩珷1',
-                content: '杩欐槸娴嬭瘯鏂囩珷1鐨勫唴瀹?..',
+                title: '测试文章1',
+                content: '这是测试文章1的内容...',
                 createdAt: '2024-01-01',
                 updatedAt: '2024-01-01',
                 author: 'testuser',
-                tags: ['娴嬭瘯', '鏂囩珷']
+                tags: ['测试', '文章']
             },
             {
                 id: 2,
-                title: '娴嬭瘯鏂囩珷2',
-                content: '杩欐槸娴嬭瘯鏂囩珷2鐨勫唴瀹?..',
+                title: '测试文章2',
+                content: '这是测试文章2的内容...',
                 createdAt: '2024-01-02',
                 updatedAt: '2024-01-02',
                 author: 'testuser',
-                tags: ['娴嬭瘯']
+                tags: ['测试']
             }
         ];
 
-        // DOM 鍏冪礌
+        // DOM元素
         const loadingEl = document.getElementById('loading');
         const errorStateEl = document.getElementById('error-state');
         const errorMessageEl = document.getElementById('error-message');
@@ -437,40 +450,42 @@
         const emptyArticlesEl = document.getElementById('empty-articles');
         const articlesListEl = document.getElementById('articles-list');
 
-        // 鍔犺浇鐘舵€?        let loading = true;
+        // 加载状态        let loading = true;
         let error = null;
         let user = null;
         let articles = [];
 
-        // 妯℃嫙API璋冪敤
+        // 模拟API调用
         async function fetchUser() {
             loading = true;
             error = null;
             
-            // 鏄剧ず鍔犺浇鐘舵€?            loadingEl.style.display = 'block';
+            // 显示加载状态
+            loadingEl.style.display = 'block';
             errorStateEl.style.display = 'none';
             userContentEl.style.display = 'none';
             
             try {
-                // 妯℃嫙缃戠粶寤惰繜
+                // 模拟网络延迟
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                // 浣跨敤妯℃嫙鏁版嵁
+                // 使用模拟数据
                 user = mockUser;
                 articles = mockArticles;
                 
-                // 娓叉煋鐢ㄦ埛璧勬枡
+                // 渲染用户资料
                 renderUserProfile();
                 renderArticles();
                 
-                // 鏄剧ず鐢ㄦ埛鍐呭
+                // 显示用户内容
                 loadingEl.style.display = 'none';
                 userContentEl.style.display = 'block';
             } catch (err) {
-                error = '鍔犺浇鐢ㄦ埛璧勬枡澶辫触';
+                error = '加载用户资料失败';
                 console.error(err);
                 
-                // 鏄剧ず閿欒鐘舵€?                loadingEl.style.display = 'none';
+                // 显示错误状态
+                loadingEl.style.display = 'none';
                 errorMessageEl.textContent = error;
                 errorStateEl.style.display = 'block';
             } finally {
@@ -478,24 +493,24 @@
             }
         }
 
-        // 娓叉煋鐢ㄦ埛璧勬枡
+        // 渲染用户资料
         function renderUserProfile() {
             if (!user) return;
             
-            // 璁剧疆澶村儚
+            // 设置头像
             if (user.avatarUrl) {
                 avatarPlaceholderEl.innerHTML = `<img src="${user.avatarUrl}" alt="${user.displayName || user.username}">`;
             } else {
                 avatarPlaceholderEl.textContent = (user.displayName || user.username).charAt(0).toUpperCase();
             }
             
-            // 璁剧疆鐢ㄦ埛淇℃伅
+            // 设置用户信息
             userDisplayNameEl.textContent = user.displayName || user.username;
             userUsernameEl.textContent = `@${user.username}`;
             userBioEl.textContent = user.bio || '';
             userContributionCountEl.textContent = user.contributionCount;
             
-            // 璁剧疆瑙掕壊
+            // 设置角色
             if (user.role) {
                 userRoleEl.textContent = user.role;
                 userRoleEl.className = `stat role-badge ${user.role}`;
@@ -503,15 +518,16 @@
                 userRoleEl.style.display = 'none';
             }
             
-            // 娓叉煋鐢ㄦ埛鎿嶄綔鎸夐挳
+            // 渲染用户操作按钮
             renderUserActions();
         }
 
-        // 娓叉煋鐢ㄦ埛鎿嶄綔鎸夐挳
+        // 渲染用户操作按钮
         function renderUserActions() {
             if (!user) return;
             
-            // 妯℃嫙褰撳墠鐢ㄦ埛宸茬櫥褰曚笖涓嶆槸鑷繁鐨勮祫鏂?            const isAuthenticated = true;
+            // 模拟当前用户已登录且不是自己的资料
+            const isAuthenticated = true;
             const isOwnProfile = false;
             
             if (!isOwnProfile && isAuthenticated) {
@@ -520,32 +536,34 @@
                 if (!user.isFollowing) {
                     actionButtons += `
                         <button id="btn-follow" class="btn-follow">
-                            <span>鍏虫敞</span>
+                            <span>关注</span>
                         </button>
                     `;
                 } else {
                     actionButtons += `
                         <button id="btn-following" class="btn-following" disabled>
-                            宸插叧娉?                        </button>
+                            已关注
+                        </button>
                     `;
                 }
                 
                 actionButtons += `
                     <button id="btn-friend" class="btn-friend">
-                        <span>娣诲姞濂藉弸</span>
+                        <span>添加好友</span>
                     </button>
                 `;
                 
                 userActionsEl.innerHTML = actionButtons;
                 
-                // 娣诲姞浜嬩欢鐩戝惉鍣?                document.getElementById('btn-follow')?.addEventListener('click', () => handleConnect('follow'));
+                // 添加事件监听器
+                document.getElementById('btn-follow')?.addEventListener('click', () => handleConnect('follow'));
                 document.getElementById('btn-friend')?.addEventListener('click', () => handleConnect('friend'));
             } else {
                 userActionsEl.innerHTML = '';
             }
         }
 
-        // 澶勭悊鍏虫敞/娣诲姞濂藉弸
+        // 处理关注/添加好友
         async function handleConnect(type) {
             const btn = type === 'follow' ? document.getElementById('btn-follow') : document.getElementById('btn-friend');
             if (!btn || btn.disabled) return;
@@ -554,27 +572,28 @@
             btn.innerHTML = `<span class="btn-spinner"></span>`;
             
             try {
-                // 妯℃嫙API璋冪敤
+                // 模拟API调用
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                // 鏇存柊鐢ㄦ埛鐘舵€?                if (type === 'follow') {
+                // 更新用户状态
+                if (type === 'follow') {
                     user.isFollowing = true;
                     renderUserActions();
-                    showToast('宸插叧娉?);
+                    showToast('已关注');
                 } else {
-                    showToast('宸插悜鐢ㄦ埛鍙戦€佸ソ鍙嬭姹?);
+                    showToast('已向用户发送好友请求');
                 }
             } catch (err) {
                 console.error(err);
-                showToast('鎿嶄綔澶辫触锛岃閲嶈瘯', 'error');
+                showToast('操作失败，请重试', 'error');
             } finally {
                 btn.disabled = false;
             }
         }
 
-        // 娓叉煋鏂囩珷鍒楄〃
+        // 渲染文章列表
         function renderArticles() {
-            articlesTitleEl.textContent = `${user.displayName || user.username} 鐨勬枃绔燻;
+            articlesTitleEl.textContent = `${user.displayName || user.username} 的文章`;
             
             if (articles.length === 0) {
                 emptyArticlesEl.style.display = 'block';
@@ -589,7 +608,7 @@
                         <div class="article-card">
                             <h3>${article.title}</h3>
                             <div class="article-meta">
-                                ${article.createdAt} 鈥?${article.author}
+                                ${article.createdAt} · ${article.author}
                             </div>
                             <div class="article-excerpt">${article.content}</div>
                             <div class="article-tags">
@@ -603,9 +622,9 @@
             }
         }
 
-        // 鏄剧ず鎻愮ず淇℃伅
+        // 显示提示信息
         function showToast(message, type = 'success') {
-            // 绠€鍗曠殑toast瀹炵幇
+            // 简单的toast实现
             const toast = document.createElement('div');
             toast.style.cssText = `
                 position: fixed;
@@ -628,10 +647,10 @@
             }, 3000);
         }
 
-        // 鍒濆鍖?        document.addEventListener('DOMContentLoaded', () => {
+        // 初始化        document.addEventListener('DOMContentLoaded', () => {
             fetchUser();
             
-            // 娣诲姞閲嶈瘯鎸夐挳浜嬩欢鐩戝惉鍣?            retryBtnEl.addEventListener('click', fetchUser);
+            // 添加重试按钮事件监听器            retryBtnEl.addEventListener('click', fetchUser);
         });
     </script>
 </body>

@@ -46,6 +46,7 @@ class UserProfileResponse(UserResponse):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+    username: Optional[str] = None
 
 
 class LoginResponse(BaseModel):

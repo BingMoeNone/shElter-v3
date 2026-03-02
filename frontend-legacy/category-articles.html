@@ -1,16 +1,67 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鍒嗙被鏂囩珷</title>
+    <title>分类文章</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="utils.js"></script>
     <style>
+        /* Wiki Platform V3 统一样式 - 优化后的现代深色主题 */
         :root {
-            --color-primary: #00ff9d;
-            --color-text: #fff;
-            --color-text-muted: #aaa;
-            --color-surface: #1a1a1a;
-            --color-border: #333;
+            /* 主色调 - 使用更亮的蓝色，提高对比度和可读性 */
+            --color-primary: #3B82F6;
+            --color-primary-dark: #2563EB;
+            --color-primary-light: #60A5FA;
+            --color-primary-soft: rgba(59, 130, 246, 0.15);
+            
+            /* 辅助色 - 紫色系 */
+            --color-secondary: #8B5CF6;
+            --color-secondary-dark: #7C3AED;
+            --color-secondary-light: #A78BFA;
+            --color-secondary-soft: rgba(139, 92, 246, 0.15);
+            
+            /* 强调色 - 绿色系 */
+            --color-accent: #10B981;
+            --color-accent-dark: #059669;
+            --color-accent-light: #34D399;
+            --color-accent-soft: rgba(16, 185, 129, 0.15);
+            
+            /* 语义色 */
+            --color-success: #10B981;
+            --color-success-soft: rgba(16, 185, 129, 0.1);
+            --color-danger: #EF4444;
+            --color-danger-soft: rgba(239, 68, 68, 0.1);
+            --color-warning: #F59E0B;
+            --color-warning-soft: rgba(245, 158, 11, 0.1);
+            --color-info: #3B82F6;
+            --color-info-soft: rgba(59, 130, 246, 0.1);
+            
+            /* 文字颜色 - 提高对比度 */
+            --color-text: #F1F5F9;
+            --color-text-muted: #94A3B8;
+            --color-text-dark: #64748B;
+            --color-text-inverse: #0F172A;
+            
+            /* 背景颜色 - 使用蓝灰色调，更现代 */
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-surface-hover: #334155;
+            --color-surface-active: #475569;
+            
+            /* 边框颜色 */
+            --color-border: #334155;
+            --color-border-light: #475569;
+            --color-border-focus: #3B82F6;
+            
+            /* 阴影颜色 */
+            --shadow-color: rgba(15, 23, 42, 0.5);
+            --shadow-color-light: rgba(59, 130, 246, 0.2);
+            
+            /* 渐变背景 */
+            --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            --gradient-secondary: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+            --gradient-dark: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
         }
 
         * {
@@ -19,64 +70,136 @@
             box-sizing: border-box;
         }
 
-        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
 
-        header {
+        /* 导航栏 */
+        nav {
             background: var(--color-surface);
-            padding: 15px 20px;
             border-bottom: 1px solid var(--color-border);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            padding: 0 20px;
         }
 
-        nav ul {
-            list-style: none;
+        .nav-logo {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-logo:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 1.5rem;
         }
 
-        nav a {
+        .nav-link {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--color-primary);
+            background: var(--color-primary-soft);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
             color: var(--color-text);
             text-decoration: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
 
-        nav a:hover, nav a.active {
+        .btn:hover {
             background: var(--color-primary);
-            color: #000;
+            border-color: var(--color-primary);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-color-light);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
 
         .category-articles-page {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
         .page-header {
             margin-bottom: 32px;
+            padding: 24px;
+            background: var(--color-surface);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
         }
 
         .page-header h1 {
-            margin-bottom: 8px;
-            color: var(--color-primary);
-            text-shadow: 0 0 10px var(--color-primary);
+            margin: 0 0 8px 0;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 2rem;
         }
 
         .page-header p {
             color: var(--color-text-muted);
-        }
-
-        .no-description {
-            font-style: italic;
+            margin: 0;
         }
 
         .loading {
@@ -85,6 +208,9 @@
             align-items: center;
             padding: 60px;
             color: var(--color-text-muted);
+            background: var(--color-surface);
+            border-radius: 12px;
+            border: 2px dashed var(--color-border);
         }
 
         .loading-spinner {
@@ -106,8 +232,11 @@
             flex-direction: column;
             align-items: center;
             padding: 60px;
-            color: #ff4444;
+            color: var(--color-danger);
             text-align: center;
+            background: var(--color-surface);
+            border-radius: 12px;
+            border: 2px dashed var(--color-danger-soft);
         }
 
         .error-icon {
@@ -117,18 +246,21 @@
 
         .retry-btn {
             margin-top: 16px;
-            padding: 8px 24px;
-            background: rgba(255, 68, 68, 0.1);
-            border: 1px solid #ff4444;
-            color: #ff4444;
-            border-radius: 4px;
+            padding: 10px 24px;
+            background: var(--color-danger-soft);
+            border: 1px solid var(--color-danger);
+            color: var(--color-danger);
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            font-weight: 500;
         }
 
         .retry-btn:hover {
-            background: #ff4444;
+            background: var(--color-danger);
             color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         .empty-state {
@@ -138,8 +270,9 @@
             padding: 60px;
             color: var(--color-text-muted);
             text-align: center;
-            border: 1px dashed var(--color-border);
-            border-radius: 8px;
+            background: var(--color-surface);
+            border: 2px dashed var(--color-border);
+            border-radius: 12px;
         }
 
         .empty-icon {
@@ -150,16 +283,20 @@
         .create-link {
             margin-top: 16px;
             color: var(--color-primary);
-            padding: 8px 24px;
+            padding: 10px 24px;
             border: 1px solid var(--color-primary);
-            border-radius: 4px;
+            border-radius: 8px;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            display: inline-block;
         }
 
         .create-link:hover {
             background: var(--color-primary);
-            color: #000;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .articles-list {
@@ -168,19 +305,20 @@
             gap: 20px;
         }
 
-        /* 鏂囩珷鍗＄墖鏍峰紡 */
+        /* 文章卡片样式 */
         .article-card {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
-            transition: all 0.3s ease;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            transition: all 0.2s ease;
         }
 
         .article-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0, 255, 157, 0.2);
+            transform: translateY(-4px);
+            border-color: var(--color-primary);
+            box-shadow: 0 8px 24px var(--shadow-color);
         }
 
         .article-card-header {
@@ -189,18 +327,21 @@
 
         .article-card-title {
             font-size: 1.5rem;
-            font-weight: bold;
+            font-weight: 600;
             margin-bottom: 8px;
-            color: var(--color-primary);
         }
 
         .article-card-title a {
-            color: var(--color-primary);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-decoration: none;
+            transition: all 0.2s ease;
         }
 
         .article-card-title a:hover {
-            text-decoration: underline;
+            opacity: 0.8;
         }
 
         .article-card-meta {
@@ -208,6 +349,7 @@
             gap: 16px;
             font-size: 0.9rem;
             color: var(--color-text-muted);
+            flex-wrap: wrap;
         }
 
         .article-card-meta-item {
@@ -226,6 +368,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .article-card-tags {
@@ -235,106 +379,119 @@
         }
 
         .article-card-tag {
-            background: rgba(0, 255, 157, 0.1);
-            color: var(--color-primary);
-            padding: 4px 12px;
-            border-radius: 12px;
+            background: var(--color-accent-soft);
+            color: var(--color-accent);
+            padding: 6px 14px;
+            border-radius: 16px;
             font-size: 0.8rem;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            font-weight: 500;
         }
 
         .article-card-tag:hover {
-            background: var(--color-primary);
-            color: #000;
+            background: var(--color-accent);
+            color: #fff;
+            transform: translateY(-1px);
         }
 
         .article-card-read-more {
             color: var(--color-primary);
             text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .article-card-read-more:hover {
-            text-decoration: underline;
+            opacity: 0.8;
+            transform: translateX(4px);
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>鍒嗙被鏂囩珷</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">棣栭〉</a></li>
-                <li><a href="articles.html">鏂囩珷</a></li>
-                <li><a href="profile.html">涓汉璧勬枡</a></li>
-                <li><a href="login.html">鐧诲綍</a></li>
-            </ul>
-        </nav>
-    </header>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Wiki Platform</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="articles.html" class="nav-link">文章</a>
+                <a href="categories.html" class="nav-link">分类</a>
+                <a href="metro.html" class="nav-link">地铁图</a>
+                <a href="music.html" class="nav-link">音乐</a>
+            </div>
+            <div class="nav-actions">
+                <a href="login.html" class="btn">登录</a>
+                <a href="register.html" class="btn btn-primary">注册</a>
+            </div>
+        </div>
+    </nav>
 
     <div class="container">
         <div class="category-articles-page">
             <div id="loading" class="loading">
                 <div class="loading-spinner"></div>
-                <p>鍔犺浇涓?..</p>
+                <p>正在加载文章...</p>
             </div>
             
             <div id="errorState" class="error-state" style="display: none;">
-                <span class="error-icon">鈿狅笍</span>
-                <p id="errorMessage">鍔犺浇澶辫触</p>
-                <button id="retryBtn" class="retry-btn">閲嶈瘯</button>
+                <span class="error-icon">⚠️</span>
+                <p id="errorMessage">加载失败</p>
+                <button id="retryBtn" class="retry-btn">重试</button>
             </div>
             
             <div id="content" style="display: none;">
                 <header class="page-header">
-                    <h1 id="categoryName">鍒嗙被</h1>
-                    <p id="categoryDescription" class="no-description">鏆傛棤鎻忚堪</p>
+                    <h1 id="categoryName">分类</h1>
+                    <p id="categoryDescription">无描述</p>
                 </header>
                 
                 <div id="emptyState" class="empty-state" style="display: none;">
-                    <span class="empty-icon">馃摑</span>
-                    <p>璇ュ垎绫讳笅鏆傛棤鏂囩珷</p>
-                    <a href="create-article.html" class="create-link">鍒涘缓绗竴绡囨枃绔?/a>
+                    <span class="empty-icon">📂</span>
+                    <p>该分类下无文章</p>
+                    <a href="create-article.html" class="create-link">创建第一篇文章</a>
                 </div>
                 
                 <div id="articlesList" class="articles-list">
-                    <!-- 鏂囩珷鍗＄墖灏嗛€氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                    <!-- 文章卡片将通过 JavaScript 动态生成 -->
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 妯℃嫙鏁版嵁
+        // 模拟数据
         const mockCategories = [
             {
                 id: 1,
-                name: "鎶€鏈垎浜?,
+                name: "技术分类",
                 slug: "tech",
-                description: "鍒嗕韩鍚勭鎶€鏈枃绔犲拰鏁欑▼"
+                description: "分享各种技术文章和教程"
             },
             {
                 id: 2,
-                name: "鐢熸椿闅忕瑪",
+                name: "生活随笔",
                 slug: "life",
-                description: "璁板綍鐢熸椿涓殑鐐规淮鎰熸偀"
+                description: "记录生活中的点滴感悟"
             },
             {
                 id: 3,
-                name: "鏃呰鏃ヨ",
+                name: "旅行日记",
                 slug: "travel",
-                description: "鍒嗕韩鏃呰缁忓巻鍜岃闂?
+                description: "分享旅行经历和见闻"
             }
         ];
 
         const mockArticles = [
             {
                 id: 1,
-                title: "FastAPI鍚庣寮€鍙戞渶浣冲疄璺?,
+                title: "FastAPI 后端开发最佳实践",
                 slug: "fastapi-best-practices",
-                excerpt: "鏈枃浠嬬粛浜嗕娇鐢‵astAPI寮€鍙戝悗绔簲鐢ㄧ殑鏈€浣冲疄璺碉紝鍖呮嫭璺敱璁捐銆佹暟鎹簱闆嗘垚銆佽璇佹巿鏉冪瓑鏂归潰銆?,
+                excerpt: "本文介绍了使用 FastAPI 开发后端应用的最佳实践，包括路由设计、数据库集成、认证体系等方面。",
                 author: { username: "admin" },
                 category: "tech",
                 tags: ["fastapi", "python", "backend"],
@@ -345,9 +502,9 @@
             },
             {
                 id: 2,
-                title: "Vue椤圭洰杩佺Щ鎸囧崡",
+                title: "Vue 项目迁移指南",
                 slug: "vue-migration-guide",
-                excerpt: "鏈枃浠嬬粛浜嗗浣曞皢Vue 2椤圭洰杩佺Щ鍒癡ue 3锛屽寘鎷富瑕佸彉鏇寸偣銆佽縼绉荤瓥鐣ュ拰娉ㄦ剰浜嬮」銆?,
+                excerpt: "本文介绍了如何将 Vue 2 项目迁移到 Vue 3，包括主要变更点、迁移策略和注意事项。",
                 author: { username: "testuser" },
                 category: "tech",
                 tags: ["vue", "frontend", "migration"],
@@ -358,9 +515,9 @@
             },
             {
                 id: 3,
-                title: "HTML/CSS/JS鍒嗙鏋舵瀯璁捐",
+                title: "HTML/CSS/JS 分离架构设计",
                 slug: "html-css-js-architecture",
-                excerpt: "鏈枃鎺㈣浜咹TML銆丆SS鍜孞avaScript鍒嗙鏋舵瀯鐨勮璁″師鍒欏拰鏈€浣冲疄璺碉紝浠ュ強濡備綍鏋勫缓鍙淮鎶ょ殑鍓嶇搴旂敤銆?,
+                excerpt: "本文探讨了 HTML、CSS 和 JavaScript 分离架构的设计原则和最佳实践，以及如何构建可维护的前端应用。",
                 author: { username: "admin" },
                 category: "tech",
                 tags: ["html", "css", "javascript", "architecture"],
@@ -371,46 +528,49 @@
             }
         ];
 
-        // 鐘舵€佺鐞?        let category = null;
+        // 状态管理
+        let category = null;
         let articles = [];
         let loading = true;
         let error = null;
 
-        // 椤甸潰鍔犺浇鏃跺垵濮嬪寲
+        // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 缁戝畾浜嬩欢鐩戝惉鍣?            bindEventListeners();
+            // 绑定事件监听器
+            bindEventListeners();
             
-            // 鑾峰彇鏁版嵁
+            // 获取数据
             fetchData();
         });
 
-        // 缁戝畾浜嬩欢鐩戝惉鍣?        function bindEventListeners() {
-            // 閲嶈瘯鎸夐挳浜嬩欢
+        // 绑定事件监听器
+        function bindEventListeners() {
+            // 重试按钮事件
             document.getElementById('retryBtn').addEventListener('click', function() {
                 fetchData();
             });
         }
 
-        // 鑾峰彇鏁版嵁
+        // 获取数据
         function fetchData() {
             loading = true;
             error = null;
             updateUI();
             
-            // 妯℃嫙API璇锋眰寤惰繜
+            // 模拟 API 请求延迟
             setTimeout(() => {
                 try {
-                    // 妯℃嫙浠嶶RL鑾峰彇鍒嗙被slug锛岃繖閲屼娇鐢ㄩ粯璁ゅ€?tech"
-                    const slug = "tech"; // 瀹為檯椤圭洰涓彲浠ヤ粠URL鍙傛暟鑾峰彇
+                    // 模拟从 URL 获取分类 slug，这里使用默认值"tech"
+                    const slug = "tech"; // 实际项目中可以从 URL 参数获取
                     
-                    // 妯℃嫙鑾峰彇鍒嗙被
+                    // 模拟获取分类
                     category = mockCategories.find(c => c.slug === slug) || null;
                     
-                    // 妯℃嫙鑾峰彇鏂囩珷
-                    articles = mockArticles.filter(article => article.category === slug);
+                    // 模拟获取文章
+                    articles = [...mockArticles.filter(article => article.category === slug)]; // 使用扩展运算符保护原始数据
                 } catch (err) {
                     console.error('Failed to fetch data:', err);
-                    error = "鍔犺浇澶辫触";
+                    error = "加载失败，请稍后重试";
                 } finally {
                     loading = false;
                     updateUI();
@@ -418,7 +578,7 @@
             }, 800);
         }
 
-        // 鏇存柊UI
+        // 更新 UI
         function updateUI() {
             const loadingElement = document.getElementById('loading');
             const errorStateElement = document.getElementById('errorState');
@@ -438,19 +598,17 @@
                 errorStateElement.style.display = 'none';
                 contentElement.style.display = 'block';
                 
-                // 鏇存柊鍒嗙被淇℃伅
+                // 更新分类信息
                 if (category) {
                     document.getElementById('categoryName').textContent = category.name;
                     if (category.description) {
                         document.getElementById('categoryDescription').textContent = category.description;
-                        document.getElementById('categoryDescription').classList.remove('no-description');
                     } else {
-                        document.getElementById('categoryDescription').textContent = '鏆傛棤鎻忚堪';
-                        document.getElementById('categoryDescription').classList.add('no-description');
+                        document.getElementById('categoryDescription').textContent = '无描述';
                     }
                 }
                 
-                // 鏇存柊鏂囩珷鍒楄〃
+                // 更新文章列表
                 if (articles.length === 0) {
                     document.getElementById('emptyState').style.display = 'flex';
                     document.getElementById('articlesList').style.display = 'none';
@@ -462,21 +620,26 @@
             }
         }
 
-        // 娓叉煋鏂囩珷鍒楄〃
+        // 渲染文章列表
         function renderArticlesList() {
             const articlesList = document.getElementById('articlesList');
             
-            // 娓呯┖鍒楄〃
+            // 清空列表
             articlesList.innerHTML = '';
             
-            // 娓叉煋鏂囩珷鍗＄墖
+            // 渲染文章卡片
             articles.forEach(article => {
                 const articleCard = document.createElement('div');
                 articleCard.className = 'article-card';
                 
-                // 鏍煎紡鍖栨棩鏈?                const createdAt = new Date(article.created_at).toLocaleDateString('zh-CN');
+                // 格式化日期
+                const createdAt = new Date(article.created_at).toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
                 
-                // 鐢熸垚鏍囩HTML
+                // 生成标签 HTML
                 const tagsHTML = article.tags.map(tag => 
                     `<a href="tag-articles.html?tag=${tag}" class="article-card-tag">${tag}</a>`
                 ).join('');
@@ -488,19 +651,19 @@
                         </h2>
                         <div class="article-card-meta">
                             <span class="article-card-meta-item">
-                                <span>馃懁</span>
+                                <span>👤</span>
                                 <span>${article.author.username}</span>
                             </span>
                             <span class="article-card-meta-item">
-                                <span>馃搮</span>
+                                <span>📅</span>
                                 <span>${createdAt}</span>
                             </span>
                             <span class="article-card-meta-item">
-                                <span>馃憗锔?/span>
+                                <span>👁️</span>
                                 <span>${article.view_count}</span>
                             </span>
                             <span class="article-card-meta-item">
-                                <span>馃挰</span>
+                                <span>💬</span>
                                 <span>${article.comment_count}</span>
                             </span>
                         </div>
@@ -508,7 +671,7 @@
                     <div class="article-card-excerpt">${article.excerpt}</div>
                     <div class="article-card-footer">
                         <div class="article-card-tags">${tagsHTML}</div>
-                        <a href="article-detail.html?id=${article.id}" class="article-card-read-more">闃呰鏇村 鈫?/a>
+                        <a href="article-detail.html?id=${article.id}" class="article-card-read-more">阅读更多 →</a>
                     </div>
                 `;
                 

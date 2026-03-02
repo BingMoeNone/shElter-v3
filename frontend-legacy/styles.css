@@ -1,0 +1,390 @@
+/* ============================================
+   Wiki Platform V3 统一CSS样式规范
+   ============================================ */
+
+/* 1. 基础颜色变量 - 优化后的现代深色主题 */
+:root {
+    /* 主色调 - 使用更亮的蓝色，提高对比度和可读性 */
+    --color-primary: #3B82F6;
+    --color-primary-dark: #2563EB;
+    --color-primary-light: #60A5FA;
+    --color-primary-soft: rgba(59, 130, 246, 0.15);
+    
+    /* 辅助色 - 紫色系 */
+    --color-secondary: #8B5CF6;
+    --color-secondary-dark: #7C3AED;
+    --color-secondary-light: #A78BFA;
+    --color-secondary-soft: rgba(139, 92, 246, 0.15);
+    
+    /* 强调色 - 绿色系 */
+    --color-accent: #10B981;
+    --color-accent-dark: #059669;
+    --color-accent-light: #34D399;
+    --color-accent-soft: rgba(16, 185, 129, 0.15);
+    
+    /* 语义色 */
+    --color-success: #10B981;
+    --color-success-soft: rgba(16, 185, 129, 0.1);
+    --color-danger: #EF4444;
+    --color-danger-soft: rgba(239, 68, 68, 0.1);
+    --color-warning: #F59E0B;
+    --color-warning-soft: rgba(245, 158, 11, 0.1);
+    --color-info: #3B82F6;
+    --color-info-soft: rgba(59, 130, 246, 0.1);
+    
+    /* 文字颜色 - 提高对比度 */
+    --color-text: #F1F5F9;
+    --color-text-muted: #94A3B8;
+    --color-text-dark: #64748B;
+    --color-text-inverse: #0F172A;
+    
+    /* 背景颜色 - 使用蓝灰色调，更现代 */
+    --color-background: #0F172A;
+    --color-surface: #1E293B;
+    --color-surface-hover: #334155;
+    --color-surface-active: #475569;
+    
+    /* 边框颜色 */
+    --color-border: #334155;
+    --color-border-light: #475569;
+    --color-border-focus: #3B82F6;
+    
+    /* 阴影颜色 */
+    --shadow-color: rgba(15, 23, 42, 0.5);
+    --shadow-color-light: rgba(59, 130, 246, 0.2);
+    
+    /* 渐变背景 */
+    --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+    --gradient-secondary: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+    --gradient-dark: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+    
+    /* 2. 间距变量 */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+    
+    /* 3. 圆角变量 */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+    
+    /* 4. 阴影变量 */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3);
+    
+    /* 5. 字体变量 */
+    --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体';
+    --font-family-heading: 'Arial', sans-serif;
+    --font-size-xs: 12px;
+    --font-size-sm: 14px;
+    --font-size-md: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 24px;
+    --font-size-xxl: 32px;
+    
+    /* 6. 过渡变量 */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+    --transition-slow: 350ms ease;
+    
+    /* 7. 布局变量 */
+    --container-max-width: 1200px;
+    --header-height: 60px;
+    --sidebar-width: 250px;
+}
+
+/* ============================================
+   基础重置样式
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-md);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+/* ============================================
+   统一按钮样式 - 优化交互体验
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    gap: var(--spacing-xs);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: var(--color-text);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-border-focus);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: var(--color-text);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+    background-color: #DC2626;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-success {
+    background-color: var(--color-success);
+    color: var(--color-text);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+    background-color: var(--color-accent-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ============================================
+   统一表单样式 - 优化交互体验
+   ============================================ */
+input, textarea, select {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+input:hover, textarea:hover, select:hover {
+    border-color: var(--color-border-light);
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--color-text-muted);
+}
+
+input:disabled, textarea:disabled, select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   统一卡片样式 - 优化视觉层次
+   ============================================ */
+.card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-border-focus);
+}
+
+.card-header {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.card-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.card-body {
+    flex: 1;
+}
+
+.card-footer {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+/* ============================================
+   统一导航栏样式
+   ============================================ */
+nav, .navbar {
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--spacing-md) 0;
+}
+
+.nav-container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ============================================
+   统一表格样式
+   ============================================ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+th, td {
+    padding: var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+th {
+    background-color: var(--color-surface-hover);
+    font-weight: 600;
+}
+
+tr:hover td {
+    background-color: var(--color-surface-hover);
+}
+
+/* ============================================
+   统一徽章样式
+   ============================================ */
+.badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: var(--color-success);
+}
+
+.badge-danger {
+    background-color: var(--color-danger);
+}
+
+.badge-warning {
+    background-color: var(--color-warning);
+    color: var(--color-text-inverse);
+}
+
+.badge-info {
+    background-color: var(--color-info);
+}
+
+/* ============================================
+   统一链接样式
+   ============================================ */
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-primary-light);
+    text-decoration: underline;
+}
+
+/* ============================================
+   工具类
+   ============================================ */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+
+.d-flex { display: flex; }
+.d-block { display: block; }
+.d-none { display: none; }
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

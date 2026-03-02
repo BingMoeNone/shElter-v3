@@ -1,26 +1,22 @@
-<!DOCTYPE html>
+import os
+import re
+
+def fix_admin_articles():
+    filepath = r"c:\BM_Program\shElter-v3\frontend-legacy\admin-articles.html"
+
+    content = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>评论管理</title>
+    <title>文章管理</title>
     <style>
-        /* Wiki Platform V3 统一样式 */
         :root {
-            --color-primary: #0D8ABC;
-            --color-primary-dark: #096a8f;
-            --color-primary-light: #3498db;
-            --color-secondary: #9b59b6;
-            --color-accent: #ff6b6b;
-            --color-success: #27ae60;
-            --color-danger: #e74c3c;
-            --color-warning: #f39c12;
-            --color-text: #ffffff;
-            --color-text-muted: #a0a0a0;
-            --color-background: #121212;
+            --color-primary: #00ff9d;
+            --color-text: #fff;
+            --color-text-muted: #aaa;
             --color-surface: #1a1a1a;
-            --color-surface-hover: #2a2a2a;
-            --color-border: #333333;
+            --color-border: #333;
         }
 
         * {
@@ -71,12 +67,6 @@
             padding: 20px;
         }
 
-        .admin-comments {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
         .page-title {
             font-size: 2rem;
             color: var(--color-primary);
@@ -84,7 +74,7 @@
             text-align: center;
         }
 
-        .comments-header {
+        .articles-header {
             display: flex;
             gap: 20px;
             margin-bottom: 20px;
@@ -116,7 +106,7 @@
             min-width: 200px;
         }
 
-        .filter-bar input {
+        .filter-bar select {
             width: 100%;
             padding: 10px;
             background: rgba(0, 0, 0, 0.5);
@@ -126,12 +116,6 @@
             font-size: 1rem;
         }
 
-        .filter-bar input:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
-        }
-
         .loading {
             text-align: center;
             font-size: 1.2rem;
@@ -139,11 +123,11 @@
             padding: 40px;
         }
 
-        .comments-table-container {
+        .articles-table-container {
             overflow-x: auto;
         }
 
-        .comments-table {
+        .articles-table {
             width: 100%;
             border-collapse: collapse;
             background: var(--color-surface);
@@ -152,14 +136,14 @@
             box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
         }
 
-        .comments-table th,
-        .comments-table td {
+        .articles-table th,
+        .articles-table td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--color-border);
         }
 
-        .comments-table th {
+        .articles-table th {
             background: rgba(0, 255, 157, 0.1);
             color: var(--color-primary);
             font-weight: bold;
@@ -168,33 +152,28 @@
             letter-spacing: 0.5px;
         }
 
-        .comments-table tr:last-child td {
+        .articles-table tr:last-child td {
             border-bottom: none;
         }
 
-        .comments-table tr:hover {
+        .articles-table tr:hover {
             background: rgba(0, 255, 157, 0.05);
         }
 
-        .comment-content {
-            max-width: 400px;
+        .article-title {
+            max-width: 300px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-        .article-link {
-            background: none;
-            border: none;
+        .article-title a {
             color: var(--color-primary);
-            text-decoration: underline;
-            cursor: pointer;
-            font-size: 0.9rem;
-            padding: 0;
+            text-decoration: none;
         }
 
-        .article-link:hover {
-            color: #00c853;
+        .article-title a:hover {
+            text-decoration: underline;
         }
 
         .status-badge {
@@ -206,14 +185,19 @@
             text-transform: capitalize;
         }
 
-        .status-approved {
+        .status-published {
             background: rgba(67, 233, 123, 0.2);
             color: #43e97b;
         }
 
-        .status-pending {
+        .status-draft {
             background: rgba(255, 204, 0, 0.2);
             color: #ffcc00;
+        }
+
+        .status-archived {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
         }
 
         .action-buttons {
@@ -228,6 +212,18 @@
             font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-edit {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-primary);
+        }
+
+        .btn-edit:hover {
+            background: var(--color-primary);
+            color: #000;
         }
 
         .btn-delete {
@@ -238,7 +234,6 @@
         .btn-delete:hover {
             background: #ff6b6b;
             color: #fff;
-            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
         }
 
         .pagination {
@@ -281,9 +276,9 @@
         <nav>
             <ul>
                 <li><a href="admin-dashboard.html">仪表盘</a></li>
-                <li><a href="admin-articles.html">文章管理</a></li>
+                <li><a href="admin-articles.html" class="active">文章管理</a></li>
                 <li><a href="admin-users.html">用户管理</a></li>
-                <li><a href="admin-comments.html" class="active">评论管理</a></li>
+                <li><a href="admin-comments.html">评论管理</a></li>
                 <li><a href="admin-moderation.html">内容审核</a></li>
                 <li><a href="index.html">返回首页</a></li>
             </ul>
@@ -291,157 +286,145 @@
     </header>
 
     <div class="container">
-        <div class="admin-comments">
-            <h1 class="page-title">评论管理</h1>
-            
-            <div class="comments-header">
-                <div class="search-bar">
-                    <input
-                        type="text"
-                        id="searchQuery"
-                        placeholder="搜索评论内容..."
-                    />
-                </div>
-                <div class="filter-bar">
-                    <input
-                        type="text"
-                        id="articleIdFilter"
-                        placeholder="按文章ID过滤..."
-                    />
-                </div>
+        <h1 class="page-title">文章管理</h1>
+        
+        <div class="articles-header">
+            <div class="search-bar">
+                <input
+                    type="text"
+                    id="searchQuery"
+                    placeholder="搜索文章标题..."
+                />
             </div>
+            <div class="filter-bar">
+                <select id="statusFilter">
+                    <option value="">所有状态</option>
+                    <option value="published">已发布</option>
+                    <option value="draft">草稿</option>
+                    <option value="archived">已归档</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="loading" class="loading">加载中...</div>
+        
+        <div id="articlesTableContainer" class="articles-table-container" style="display: none;">
+            <table class="articles-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>标题</th>
+                        <th>作者</th>
+                        <th>状态</th>
+                        <th>浏览量</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="articlesTableBody">
+                </tbody>
+            </table>
             
-            <div id="loading" class="loading">加载中...</div>
-            
-            <div id="commentsTableContainer" class="comments-table-container" style="display: none;">
-                <table class="comments-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>内容</th>
-                            <th>作者</th>
-                            <th>文章</th>
-                            <th>状态</th>
-                            <th>创建时间</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="commentsTableBody">
-                        <!-- 评论数据将通过JavaScript动态生成 -->
-                    </tbody>
-                </table>
+            <div id="pagination" class="pagination">
+                <button 
+                    class="page-btn" 
+                    id="prevPageBtn"
+                    disabled
+                >
+                    上一页
+                </button>
                 
-                <div id="pagination" class="pagination">
-                    <button 
-                        class="page-btn" 
-                        id="prevPageBtn"
-                        disabled
-                    >
-                        上一页
-                    </button>
-                    
-                    <span class="page-info" id="pageInfo">
-                        第 1 / 1 页
-                    </span>
-                    
-                    <button 
-                        class="page-btn" 
-                        id="nextPageBtn"
-                        disabled
-                    >
-                        下一页
-                    </button>
-                </div>
+                <span class="page-info" id="pageInfo">
+                    第 1 / 1 页
+                </span>
+                
+                <button 
+                    class="page-btn" 
+                    id="nextPageBtn"
+                    disabled
+                >
+                    下一页
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // 模拟评论数据
-        const mockComments = [
+        const mockArticles = [
             {
                 id: 1,
-                content: "这是一个很好的文章，学到了很多。",
-                author: { username: "user1" },
-                article_id: 1,
-                is_approved: true,
-                created_at: "2023-01-15T11:30:00Z"
+                title: "FastAPI后端开发最佳实践",
+                author: { username: "admin" },
+                status: "published",
+                view_count: 1234,
+                created_at: "2023-01-15T10:30:00Z"
             },
             {
                 id: 2,
-                content: "期待更多这样的内容！",
-                author: { username: "user2" },
-                article_id: 1,
-                is_approved: true,
-                created_at: "2023-01-15T12:45:00Z"
+                title: "Vue3组合式API使用指南",
+                author: { username: "testuser" },
+                status: "published",
+                view_count: 890,
+                created_at: "2023-02-20T14:20:00Z"
             },
             {
                 id: 3,
-                content: "这个问题我也遇到过，感谢分享。",
-                author: { username: "user3" },
-                article_id: 2,
-                is_approved: true,
-                created_at: "2023-02-20T15:20:00Z"
+                title: "Python异步编程入门",
+                author: { username: "admin" },
+                status: "draft",
+                view_count: 456,
+                created_at: "2023-03-10T09:15:00Z"
             },
             {
                 id: 4,
-                content: "我有不同的看法..",
-                author: { username: "user4" },
-                article_id: 2,
-                is_approved: false,
-                created_at: "2023-02-20T16:10:00Z"
+                title: "TypeScript高级类型技巧",
+                author: { username: "moderator" },
+                status: "published",
+                view_count: 789,
+                created_at: "2023-04-05T16:45:00Z"
             },
             {
                 id: 5,
-                content: "非常实用的指导，谢谢。",
-                author: { username: "user5" },
-                article_id: 3,
-                is_approved: true,
-                created_at: "2023-03-10T10:05:00Z"
+                title: "Docker容器化部署教程",
+                author: { username: "admin" },
+                status: "archived",
+                view_count: 234,
+                created_at: "2023-05-12T11:30:00Z"
             }
         ];
 
-        // 状态管理
-        let comments = [];
+        let articles = [];
         let loading = true;
         let searchQuery = '';
         let currentPage = 1;
         let limit = 20;
         let totalItems = 0;
         let totalPages = 0;
-        let articleIdFilter = '';
+        let statusFilter = '';
 
-        // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 绑定事件监听器
             bindEventListeners();
-            
-            // 获取评论数据
-            fetchComments();
+            fetchArticles();
         });
 
-        // 绑定事件监听器
         function bindEventListeners() {
             const searchInput = document.getElementById('searchQuery');
-            const articleIdFilterInput = document.getElementById('articleIdFilter');
+            const statusFilterSelect = document.getElementById('statusFilter');
             const prevPageBtn = document.getElementById('prevPageBtn');
             const nextPageBtn = document.getElementById('nextPageBtn');
 
-            // 搜索输入事件
             searchInput.addEventListener('input', function() {
                 searchQuery = this.value;
                 currentPage = 1;
-                fetchComments();
+                fetchArticles();
             });
 
-            // 文章ID过滤事件
-            articleIdFilterInput.addEventListener('input', function() {
-                articleIdFilter = this.value;
+            statusFilterSelect.addEventListener('change', function() {
+                statusFilter = this.value;
                 currentPage = 1;
-                fetchComments();
+                fetchArticles();
             });
 
-            // 分页按钮事件
             prevPageBtn.addEventListener('click', function() {
                 handlePageChange(currentPage - 1);
             });
@@ -451,39 +434,31 @@
             });
         }
 
-        // 获取评论数据
-        function fetchComments() {
+        function fetchArticles() {
             loading = true;
             updateUI();
             
-            // 模拟API请求延迟
             setTimeout(() => {
                 try {
-                    // 模拟API响应
-                    let filteredComments = [...mockComments];
+                    let filteredArticles = [...mockArticles];
                     
-                    // 应用搜索过滤
                     if (searchQuery) {
-                        filteredComments = filteredComments.filter(comment => 
-                            comment.content.toLowerCase().includes(searchQuery.toLowerCase())
+                        filteredArticles = filteredArticles.filter(article => 
+                            article.title.toLowerCase().includes(searchQuery.toLowerCase())
                         );
                     }
                     
-                    // 应用文章ID过滤
-                    if (articleIdFilter) {
-                        const articleId = parseInt(articleIdFilter);
-                        if (!isNaN(articleId)) {
-                            filteredComments = filteredComments.filter(comment => 
-                                comment.article_id === articleId
-                            );
-                        }
+                    if (statusFilter) {
+                        filteredArticles = filteredArticles.filter(article => 
+                            article.status === statusFilter
+                        );
                     }
                     
-                    comments = filteredComments;
-                    totalItems = comments.length;
+                    articles = filteredArticles;
+                    totalItems = articles.length;
                     totalPages = Math.ceil(totalItems / limit);
                 } catch (error) {
-                    console.error('Failed to fetch comments:', error);
+                    console.error('Failed to fetch articles:', error);
                 } finally {
                     loading = false;
                     updateUI();
@@ -491,60 +466,57 @@
             }, 500);
         }
 
-        // 更新UI
         function updateUI() {
             const loadingElement = document.getElementById('loading');
-            const commentsTableContainer = document.getElementById('commentsTableContainer');
+            const articlesTableContainer = document.getElementById('articlesTableContainer');
             
             if (loading) {
                 loadingElement.style.display = 'block';
-                commentsTableContainer.style.display = 'none';
+                articlesTableContainer.style.display = 'none';
             } else {
                 loadingElement.style.display = 'none';
-                commentsTableContainer.style.display = 'block';
-                renderCommentsTable();
+                articlesTableContainer.style.display = 'block';
+                renderArticlesTable();
                 updatePagination();
             }
         }
 
-        // 渲染评论表格
-        function renderCommentsTable() {
-            const tableBody = document.getElementById('commentsTableBody');
-            
-            // 清空表格
+        function renderArticlesTable() {
+            const tableBody = document.getElementById('articlesTableBody');
             tableBody.innerHTML = '';
             
-            // 计算当前页的评论
             const startIndex = (currentPage - 1) * limit;
             const endIndex = startIndex + limit;
-            const currentComments = comments.slice(startIndex, endIndex);
+            const currentArticles = articles.slice(startIndex, endIndex);
             
-            // 渲染评论表
-            currentComments.forEach(comment => {
+            currentArticles.forEach(article => {
                 const row = document.createElement('tr');
                 
-                const createdAt = new Date(comment.created_at).toLocaleString();
-                const status = comment.is_approved ? 'approved' : 'pending';
-                const statusText = comment.is_approved ? '已批准' : '待批准';
+                const createdAt = new Date(article.created_at).toLocaleString();
+                const statusClass = `status-${article.status}`;
+                const statusText = {
+                    'published': '已发布',
+                    'draft': '草稿',
+                    'archived': '已归档'
+                }[article.status] || article.status;
                 
                 row.innerHTML = `
-                    <td>${comment.id}</td>
-                    <td class="comment-content">${comment.content}</td>
-                    <td>${comment.author.username}</td>
-                    <td>
-                        <button class="article-link" onclick="handleViewArticle(${comment.article_id})">
-                            查看文章
-                        </button>
+                    <td>${article.id}</td>
+                    <td class="article-title">
+                        <a href="article-detail.html?id=${article.id}">${article.title}</a>
                     </td>
+                    <td>${article.author.username}</td>
                     <td>
-                        <span class="status-badge status-${status}">
+                        <span class="status-badge ${statusClass}">
                             ${statusText}
                         </span>
                     </td>
+                    <td>${article.view_count}</td>
                     <td>${createdAt}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-delete" onclick="handleDeleteComment(${comment.id})">删除</button>
+                            <a href="edit-article.html?id=${article.id}" class="btn btn-edit">编辑</a>
+                            <button class="btn btn-delete" onclick="handleDeleteArticle(${article.id})">删除</button>
                         </div>
                     </td>
                 `;
@@ -553,7 +525,6 @@
             });
         }
 
-        // 更新分页
         function updatePagination() {
             const prevPageBtn = document.getElementById('prevPageBtn');
             const nextPageBtn = document.getElementById('nextPageBtn');
@@ -564,30 +535,27 @@
             nextPageBtn.disabled = currentPage === totalPages;
         }
 
-        // 处理页码变化
         function handlePageChange(page) {
             if (page < 1 || page > totalPages) return;
             currentPage = page;
-            fetchComments();
+            fetchArticles();
         }
 
-        // 处理查看文章
-        function handleViewArticle(articleId) {
-            window.location.href = `article-detail.html?id=${articleId}`;
-        }
-
-        // 处理删除评论
-        function handleDeleteComment(commentId) {
-            if (confirm('确认要删除这个评论吗？')) {
-                // 模拟API请求
+        function handleDeleteArticle(articleId) {
+            if (confirm('确定要删除这篇文章吗？')) {
                 setTimeout(() => {
-                    // 从模拟数据中删除评论
-                    mockComments = mockComments.filter(comment => comment.id !== commentId);
-                    // 重新获取评论数据
-                    fetchComments();
+                    mockArticles = mockArticles.filter(article => article.id !== articleId);
+                    fetchArticles();
                 }, 300);
             }
         }
     </script>
 </body>
-</html>
+</html>"""
+
+    with open(filepath, 'w', encoding='utf-8') as f:
+        f.write(content)
+    print(f"Fixed: {filepath}")
+
+if __name__ == "__main__":
+    fix_admin_articles()

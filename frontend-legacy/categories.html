@@ -1,20 +1,67 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鍒嗙被</title>
+    <title>分类</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="utils.js"></script>
     <style>
-        /* 鍩虹鏍峰紡 */
+        /* Wiki Platform V3 统一样式 - 优化后的现代深色主题 */
         :root {
-            --color-primary: #00ff9d;
-            --color-secondary: #00ccff;
-            --color-accent: #ff6b6b;
-            --color-text: #ffffff;
-            --color-text-muted: #b0b0b0;
-            --color-background: #0a0a0a;
-            --color-surface: #1a1a1a;
-            --color-border: #333333;
+            /* 主色调 - 使用更亮的蓝色，提高对比度和可读性 */
+            --color-primary: #3B82F6;
+            --color-primary-dark: #2563EB;
+            --color-primary-light: #60A5FA;
+            --color-primary-soft: rgba(59, 130, 246, 0.15);
+            
+            /* 辅助色 - 紫色系 */
+            --color-secondary: #8B5CF6;
+            --color-secondary-dark: #7C3AED;
+            --color-secondary-light: #A78BFA;
+            --color-secondary-soft: rgba(139, 92, 246, 0.15);
+            
+            /* 强调色 - 绿色系 */
+            --color-accent: #10B981;
+            --color-accent-dark: #059669;
+            --color-accent-light: #34D399;
+            --color-accent-soft: rgba(16, 185, 129, 0.15);
+            
+            /* 语义色 */
+            --color-success: #10B981;
+            --color-success-soft: rgba(16, 185, 129, 0.1);
+            --color-danger: #EF4444;
+            --color-danger-soft: rgba(239, 68, 68, 0.1);
+            --color-warning: #F59E0B;
+            --color-warning-soft: rgba(245, 158, 11, 0.1);
+            --color-info: #3B82F6;
+            --color-info-soft: rgba(59, 130, 246, 0.1);
+            
+            /* 文字颜色 - 提高对比度 */
+            --color-text: #F1F5F9;
+            --color-text-muted: #94A3B8;
+            --color-text-dark: #64748B;
+            --color-text-inverse: #0F172A;
+            
+            /* 背景颜色 - 使用蓝灰色调，更现代 */
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-surface-hover: #334155;
+            --color-surface-active: #475569;
+            
+            /* 边框颜色 */
+            --color-border: #334155;
+            --color-border-light: #475569;
+            --color-border-focus: #3B82F6;
+            
+            /* 阴影颜色 */
+            --shadow-color: rgba(15, 23, 42, 0.5);
+            --shadow-color-light: rgba(59, 130, 246, 0.2);
+            
+            /* 渐变背景 */
+            --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            --gradient-secondary: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+            --gradient-dark: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
         }
 
         * {
@@ -23,34 +70,141 @@
             box-sizing: border-box;
         }
 
-        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
 
-        /* 椤甸潰瀹瑰櫒 */
+        /* 导航栏 */
+        nav {
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-logo {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-logo:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--color-primary);
+            background: var(--color-primary-soft);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            color: var(--color-text);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-color-light);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        /* 页面容器 */
         .container {
             max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* 鍒嗙被椤甸潰 */
+        /* 分类页面 */
         .categories-page {
             max-width: 1000px;
             margin: 0 auto;
         }
 
-        .categories-page h1 {
-            margin-bottom: 24px;
-            color: var(--color-primary);
-            text-shadow: 0 0 10px var(--color-primary);
+        .page-header {
+            margin-bottom: 32px;
         }
 
-        /* 鍔犺浇鐘舵€?*/
+        .categories-page h1 {
+            margin: 0;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 2rem;
+        }
+
+        /* 加载状态 */
         .loading {
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 60px;
             color: var(--color-text-muted);
+            background: var(--color-surface);
+            border-radius: 12px;
+            border: 2px dashed var(--color-border);
         }
 
         .loading-spinner {
@@ -67,14 +221,17 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 閿欒鐘舵€?*/
+        /* 错误状态 */
         .error-state {
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 60px;
-            color: #ff4444;
+            color: var(--color-danger);
             text-align: center;
+            background: var(--color-surface);
+            border-radius: 12px;
+            border: 2px dashed var(--color-danger-soft);
         }
 
         .error-icon {
@@ -84,21 +241,24 @@
 
         .retry-btn {
             margin-top: 16px;
-            padding: 8px 24px;
-            background: rgba(255, 68, 68, 0.1);
-            border: 1px solid #ff4444;
-            color: #ff4444;
-            border-radius: 4px;
+            padding: 10px 24px;
+            background: var(--color-danger-soft);
+            border: 1px solid var(--color-danger);
+            color: var(--color-danger);
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            font-weight: 500;
         }
 
         .retry-btn:hover {
-            background: #ff4444;
+            background: var(--color-danger);
             color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
-        /* 绌虹姸鎬?*/
+        /* 空状态 */
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -106,8 +266,9 @@
             padding: 60px;
             color: var(--color-text-muted);
             text-align: center;
-            border: 1px dashed var(--color-border);
-            border-radius: 8px;
+            background: var(--color-surface);
+            border: 2px dashed var(--color-border);
+            border-radius: 12px;
         }
 
         .empty-icon {
@@ -115,37 +276,40 @@
             margin-bottom: 16px;
         }
 
-        /* 鍒嗙被缃戞牸 */
+        /* 分类网格 */
         .categories-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
         }
 
-        /* 鍒嗙被鍗＄墖 */
+        /* 分类卡片 */
         .category-card {
             text-decoration: none;
             color: inherit;
             background: var(--color-surface);
-            border: 1px solid var(--color-primary);
-            border-radius: 8px;
-            padding: 20px;
-            transition: all 0.3s;
-            box-shadow: 0 0 10px rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px var(--shadow-color);
             display: block;
         }
 
         .category-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 255, 157, 0.2);
-            border-color: var(--color-secondary);
+            border-color: var(--color-primary);
+            box-shadow: 0 8px 24px var(--shadow-color);
         }
 
         .category-card h2 {
             font-size: 1.25rem;
             margin-bottom: 8px;
-            color: var(--color-primary);
-            text-shadow: 0 0 5px var(--color-primary);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
         }
 
         .category-card p {
@@ -157,82 +321,106 @@
         .article-count {
             font-size: 0.85rem;
             color: var(--color-accent);
-            background: rgba(0, 255, 157, 0.1);
-            padding: 4px 12px;
-            border-radius: 12px;
+            background: var(--color-accent-soft);
+            padding: 6px 14px;
+            border-radius: 16px;
+            display: inline-block;
+            font-weight: 500;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
     </style>
 </head>
 <body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Wiki Platform</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="articles.html" class="nav-link">文章</a>
+                <a href="categories.html" class="nav-link active">分类</a>
+                <a href="metro.html" class="nav-link">地铁图</a>
+                <a href="music.html" class="nav-link">音乐</a>
+            </div>
+            <div class="nav-actions">
+                <a href="login.html" class="btn">登录</a>
+                <a href="register.html" class="btn btn-primary">注册</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="categories-page">
-            <h1>鍒嗙被</h1>
+            <div class="page-header">
+                <h1>全部分类</h1>
+            </div>
             
-            <!-- 鍔犺浇鐘舵€?-->
+            <!-- 加载状态 -->
             <div id="loading" class="loading" style="display: block;">
                 <div class="loading-spinner"></div>
-                <p>鍔犺浇鍒嗙被涓?..</p>
+                <p>正在加载分类...</p>
             </div>
             
-            <!-- 閿欒鐘舵€?-->
+            <!-- 错误状态 -->
             <div id="error-state" class="error-state" style="display: none;">
-                <span class="error-icon">鈿狅笍</span>
+                <span class="error-icon">⚠️</span>
                 <p id="error-message"></p>
-                <button id="retry-btn" class="retry-btn">閲嶈瘯</button>
+                <button id="retry-btn" class="retry-btn">重试</button>
             </div>
             
-            <!-- 绌虹姸鎬?-->
+            <!-- 空状态 -->
             <div id="empty-state" class="empty-state" style="display: none;">
-                <span class="empty-icon">馃搨</span>
-                <p>鏆傛棤鍒嗙被</p>
+                <span class="empty-icon">📂</span>
+                <p>暂无分类</p>
+                <p style="margin-top: 8px; font-size: 0.9rem; color: var(--color-text-dark);">还没有创建任何分类</p>
             </div>
             
-            <!-- 鍒嗙被鍒楄〃 -->
+            <!-- 分类列表 -->
             <div id="categories-grid" class="categories-grid" style="display: none;"></div>
         </div>
     </div>
 
     <script>
-        // 妯℃嫙鏁版嵁
+        // 模拟数据
         const mockCategories = [
             {
                 id: 1,
-                name: '鎶€鏈?,
-                description: '鎶€鏈浉鍏崇殑鏂囩珷',
+                name: '技术',
+                description: '技术相关的文章',
                 slug: 'technology',
                 articleCount: 12
             },
             {
                 id: 2,
-                name: '鐢熸椿',
-                description: '鐢熸椿鐩稿叧鐨勬枃绔?,
+                name: '生活',
+                description: '生活相关的文章',
                 slug: 'life',
                 articleCount: 8
             },
             {
                 id: 3,
-                name: '鑹烘湳',
-                description: '鑹烘湳鐩稿叧鐨勬枃绔?,
+                name: '艺术',
+                description: '艺术相关的文章',
                 slug: 'art',
                 articleCount: 5
             },
             {
                 id: 4,
-                name: '绉戝',
-                description: '绉戝鐩稿叧鐨勬枃绔?,
+                name: '科学',
+                description: '科学相关的文章',
                 slug: 'science',
                 articleCount: 15
             },
             {
                 id: 5,
-                name: '闊充箰',
-                description: '闊充箰鐩稿叧鐨勬枃绔?,
+                name: '音乐',
+                description: '音乐相关的文章',
                 slug: 'music',
                 articleCount: 20
             }
         ];
 
-        // DOM 鍏冪礌
+        // DOM 元素
         const loadingEl = document.getElementById('loading');
         const errorStateEl = document.getElementById('error-state');
         const errorMessageEl = document.getElementById('error-message');
@@ -240,31 +428,34 @@
         const emptyStateEl = document.getElementById('empty-state');
         const categoriesGridEl = document.getElementById('categories-grid');
 
-        // 鍔犺浇鐘舵€?        let loading = true;
+        // 加载状态
+        let loading = true;
         let error = null;
         let categories = [];
 
-        // 妯℃嫙API璋冪敤
+        // 模拟 API 调用
         async function fetchCategories() {
             loading = true;
             error = null;
             
-            // 闅愯棌鎵€鏈夊唴瀹?            loadingEl.style.display = 'block';
+            // 隐藏所有内容
+            loadingEl.style.display = 'block';
             errorStateEl.style.display = 'none';
             emptyStateEl.style.display = 'none';
             categoriesGridEl.style.display = 'none';
             
             try {
-                // 妯℃嫙缃戠粶寤惰繜
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // 模拟网络延迟
+                await new Promise(resolve => setTimeout(resolve, 800));
                 
-                // 浣跨敤妯℃嫙鏁版嵁
-                categories = mockCategories;
+                // 使用模拟数据
+                categories = [...mockCategories]; // 使用扩展运算符保护原始数据
                 
-                // 娓叉煋鍒嗙被
+                // 渲染分类
                 renderCategories();
                 
-                // 鏄剧ず鍒嗙被鍒楄〃鎴栫┖鐘舵€?                if (categories.length === 0) {
+                // 显示分类列表或空状态
+                if (categories.length === 0) {
                     loadingEl.style.display = 'none';
                     emptyStateEl.style.display = 'block';
                 } else {
@@ -272,10 +463,11 @@
                     categoriesGridEl.style.display = 'grid';
                 }
             } catch (err) {
-                error = '鍔犺浇鍒嗙被澶辫触';
+                error = '加载分类失败，请稍后重试';
                 console.error(err);
                 
-                // 鏄剧ず閿欒鐘舵€?                loadingEl.style.display = 'none';
+                // 显示错误状态
+                loadingEl.style.display = 'none';
                 errorMessageEl.textContent = error;
                 errorStateEl.style.display = 'block';
             } finally {
@@ -283,7 +475,7 @@
             }
         }
 
-        // 娓叉煋鍒嗙被
+        // 渲染分类
         function renderCategories() {
             if (categories.length === 0) return;
             
@@ -293,7 +485,7 @@
                     <a href="category-articles.html?slug=${category.slug}" class="category-card">
                         <h2>${category.name}</h2>
                         <p>${category.description}</p>
-                        <span class="article-count">${category.articleCount} 绡囨枃绔?/span>
+                        <span class="article-count">${category.articleCount} 篇文章</span>
                     </a>
                 `;
             });
@@ -301,35 +493,12 @@
             categoriesGridEl.innerHTML = categoriesHtml;
         }
 
-        // 鏄剧ず鎻愮ず淇℃伅
-        function showToast(message, type = 'success') {
-            // 绠€鍗曠殑toast瀹炵幇
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 12px 24px;
-                background: ${type === 'success' ? 'rgba(0, 255, 157, 0.2)' : 'rgba(255, 68, 68, 0.2)'};
-                color: ${type === 'success' ? '#00ff9d' : '#ff4444'};
-                border: 1px solid ${type === 'success' ? '#00ff9d' : '#ff4444'};
-                border-radius: 4px;
-                z-index: 1000;
-                transition: all 0.3s;
-            `;
-            toast.textContent = message;
-            
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
-        }
-
-        // 鍒濆鍖?        document.addEventListener('DOMContentLoaded', () => {
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
             fetchCategories();
             
-            // 娣诲姞閲嶈瘯鎸夐挳浜嬩欢鐩戝惉鍣?            retryBtnEl.addEventListener('click', fetchCategories);
+            // 添加重试按钮事件监听器
+            retryBtnEl.addEventListener('click', fetchCategories);
         });
     </script>
 </body>

@@ -1,3 +1,4 @@
+// -*- coding: utf-8 -*-
 // 通用工具函数
 
 // 登录状态管理
@@ -644,7 +645,16 @@ class NotificationManager {
                 flex-direction: column;
                 gap: 10px;
             `;
-            document.body.appendChild(container);
+            
+            // 确保 body 存在后再添加
+            if (document.body) {
+                document.body.appendChild(container);
+            } else {
+                // 如果 body 还不存在，等待 DOM 加载完成
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.body.appendChild(container);
+                });
+            }
         }
     }
 
@@ -667,15 +677,20 @@ class NotificationManager {
         notification.textContent = message;
         
         const container = document.getElementById(this.containerId);
-        container.appendChild(notification);
-        
-        // 自动关闭
-        setTimeout(() => {
-            notification.style.animation = 'slideOutRight 0.3s ease-out';
+        if (container) {
+            container.appendChild(notification);
+            
+            // 自动关闭
             setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }, duration);
+                notification.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, duration);
+        } else {
+            // 如果容器不存在，延迟后重试
+            setTimeout(() => this.show(message, type, duration), 100);
+        }
     }
 
     // 显示成功通知
@@ -1106,7 +1121,7 @@ function initPage(pageName, pageLabel) {
     // 保存页面状态
     window.addEventListener('beforeunload', () => {
         const state = {
-            scrollY: window.scrollY,
+            scrollY: window.scrollY || window.pageYOffset || 0,
             timestamp: Date.now()
         };
         pageStateManager.saveState(pageName, state);
@@ -1115,10 +1130,11 @@ function initPage(pageName, pageLabel) {
     // 恢复页面状态
     window.addEventListener('load', () => {
         const savedState = pageStateManager.getState(pageName);
-        if (savedState) {
-            // 只恢复最近5分钟的状态
+        if (savedState && savedState.state) {
+            // 只恢复最近 5 分钟的状态
             if (Date.now() - savedState.timestamp < 5 * 60 * 1000) {
-                window.scrollTo(0, savedState.state.scrollY);
+                const scrollY = savedState.state.scrollY || 0;
+                window.scrollTo(0, scrollY);
             }
         }
     });

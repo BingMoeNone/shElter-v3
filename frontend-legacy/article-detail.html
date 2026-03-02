@@ -1,22 +1,65 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wiki Platform - Article Detail</title>
     <style>
-        /* Global Styles */
+        /* Wiki Platform V3 统一样式 - 优化后的现代深色主题 */
         :root {
-            --color-primary: #00ff88;
-            --color-secondary: #00d4ff;
-            --color-accent: #ff6b6b;
-            --color-text: #ffffff;
-            --color-text-muted: #aaaaaa;
-            --color-background: #0a0a0a;
-            --color-surface: #1a1a1a;
-            --color-border: #333333;
-            --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            --font-family-heading: 'Arial', sans-serif;
+            /* 主色调 - 使用更亮的蓝色，提高对比度和可读性 */
+            --color-primary: #3B82F6;
+            --color-primary-dark: #2563EB;
+            --color-primary-light: #60A5FA;
+            --color-primary-soft: rgba(59, 130, 246, 0.15);
+            
+            /* 辅助色 - 紫色系 */
+            --color-secondary: #8B5CF6;
+            --color-secondary-dark: #7C3AED;
+            --color-secondary-light: #A78BFA;
+            --color-secondary-soft: rgba(139, 92, 246, 0.15);
+            
+            /* 强调色 - 绿色系 */
+            --color-accent: #10B981;
+            --color-accent-dark: #059669;
+            --color-accent-light: #34D399;
+            --color-accent-soft: rgba(16, 185, 129, 0.15);
+            
+            /* 语义色 */
+            --color-success: #10B981;
+            --color-success-soft: rgba(16, 185, 129, 0.1);
+            --color-danger: #EF4444;
+            --color-danger-soft: rgba(239, 68, 68, 0.1);
+            --color-warning: #F59E0B;
+            --color-warning-soft: rgba(245, 158, 11, 0.1);
+            --color-info: #3B82F6;
+            --color-info-soft: rgba(59, 130, 246, 0.1);
+            
+            /* 文字颜色 - 提高对比度 */
+            --color-text: #F1F5F9;
+            --color-text-muted: #94A3B8;
+            --color-text-dark: #64748B;
+            --color-text-inverse: #0F172A;
+            
+            /* 背景颜色 - 使用蓝灰色调，更现代 */
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-surface-hover: #334155;
+            --color-surface-active: #475569;
+            
+            /* 边框颜色 */
+            --color-border: #334155;
+            --color-border-light: #475569;
+            --color-border-focus: #3B82F6;
+            
+            /* 阴影颜色 */
+            --shadow-color: rgba(15, 23, 42, 0.5);
+            --shadow-color-light: rgba(59, 130, 246, 0.2);
+            
+            /* 渐变背景 */
+            --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            --gradient-secondary: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+            --gradient-dark: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
         }
 
         * {
@@ -25,14 +68,15 @@
             box-sizing: border-box;
         }
 
-        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
+        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
 
         /* Navigation */
         nav {
             background: var(--color-surface);
-            border-bottom: 1px solid var(--color-primary);
+            border-bottom: 1px solid var(--color-border);
             padding: 1rem 0;
             margin-bottom: 2rem;
+            box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .nav-container {
@@ -45,10 +89,19 @@
         }
 
         .nav-logo {
-            color: var(--color-primary);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-size: 1.5rem;
-            font-weight: bold;
+            font-weight: 700;
             text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-logo:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
         }
 
         .nav-links {
@@ -57,14 +110,17 @@
         }
 
         .nav-link {
-            color: var(--color-text);
+            color: var(--color-text-muted);
             text-decoration: none;
-            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
-        .nav-link:hover {
+        .nav-link:hover, .nav-link.active {
             color: var(--color-primary);
-            text-shadow: 0 0 5px var(--color-primary);
+            background: var(--color-primary-soft);
         }
 
         .nav-actions {
@@ -73,24 +129,41 @@
         }
 
         .btn {
-            padding: 8px 16px;
-            border: 1px solid var(--color-primary);
-            background: rgba(0, 255, 157, 0.1);
-            color: var(--color-primary);
+            padding: 10px 20px;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            color: var(--color-text);
             text-decoration: none;
-            border-radius: 4px;
-            transition: all 0.3s;
+            border-radius: 8px;
+            transition: all 0.2s ease;
             cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .btn:hover {
             background: var(--color-primary);
-            color: #000;
+            border-color: var(--color-primary);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-color-light);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
         }
 
         /* Article Detail Styles */
         .article-detail {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -102,8 +175,12 @@
         .article-title {
             font-size: 2.5rem;
             margin-bottom: 16px;
-            color: var(--color-primary);
-            text-shadow: 0 0 10px var(--color-primary);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            line-height: 1.2;
         }
 
         .article-meta {
@@ -126,17 +203,21 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--color-primary);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: #000;
+            font-weight: 600;
+            color: #fff;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px var(--shadow-color-light);
         }
 
         .author-name {
             color: var(--color-text);
             text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
         .author-name:hover {
@@ -151,41 +232,51 @@
         }
 
         .tag {
-            background: rgba(0, 255, 157, 0.1);
+            background: var(--color-primary-soft);
             color: var(--color-primary);
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 16px;
             font-size: 0.85rem;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            border: 1px solid rgba(59, 130, 246, 0.2);
         }
 
         .tag:hover {
             background: var(--color-primary);
-            color: #000;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-color-light);
         }
 
         .article-content {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 32px;
             margin-bottom: 32px;
             line-height: 1.8;
+            box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .article-content h2 {
             color: var(--color-secondary);
-            margin: 24px 0 16px;
+            margin: 32px 0 20px;
+            font-size: 1.8rem;
+            font-weight: 600;
         }
 
         .article-content h3 {
-            color: var(--color-secondary);
-            margin: 20px 0 12px;
+            color: var(--color-primary);
+            margin: 24px 0 14px;
+            font-size: 1.3rem;
+            font-weight: 600;
         }
 
         .article-content p {
             margin-bottom: 16px;
+            color: var(--color-text);
         }
 
         .article-content ul,
@@ -195,6 +286,33 @@
 
         .article-content li {
             margin-bottom: 8px;
+            color: var(--color-text);
+        }
+
+        .article-content code {
+            background: var(--color-background);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: var(--color-accent);
+        }
+
+        .article-content pre {
+            background: var(--color-background);
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid var(--color-border);
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid var(--color-primary);
+            padding-left: 16px;
+            margin: 20px 0;
+            color: var(--color-text-muted);
+            font-style: italic;
         }
 
         .article-actions {
@@ -206,21 +324,37 @@
 
         .action-btn {
             padding: 10px 20px;
-            background: rgba(0, 255, 157, 0.1);
-            border: 1px solid var(--color-primary);
-            color: var(--color-primary);
-            border-radius: 4px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            border-radius: 8px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
             cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .action-btn:hover {
             background: var(--color-primary);
-            color: #000;
+            border-color: var(--color-primary);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-color-light);
+        }
+
+        .action-btn.btn-like {
+            background: var(--color-danger-soft);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #F87171;
+        }
+
+        .action-btn.btn-like:hover {
+            background: var(--color-danger);
+            color: #fff;
         }
 
         /* Comments Section */
@@ -231,15 +365,20 @@
         .comments-title {
             font-size: 1.5rem;
             margin-bottom: 24px;
-            color: var(--color-primary);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
         }
 
         .comment-form {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 24px;
             margin-bottom: 32px;
+            box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .form-group {
@@ -249,27 +388,33 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--color-text);
+            font-size: 0.95rem;
         }
 
         .form-group textarea {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 16px;
             border: 1px solid var(--color-border);
-            background: rgba(0, 0, 0, 0.5);
+            background: var(--color-background);
             color: var(--color-text);
-            border-radius: 4px;
-            font-size: 16px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
             resize: vertical;
             min-height: 120px;
+            transition: all 0.2s ease;
         }
 
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+            border-color: var(--color-border-focus);
+            box-shadow: 0 0 0 3px var(--color-primary-soft);
+        }
+
+        .form-group textarea::placeholder {
+            color: var(--color-text-muted);
         }
 
         .comment-list {
@@ -281,8 +426,14 @@
         .comment {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .comment:hover {
+            border-color: var(--color-border-light);
+            box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .comment-header {
@@ -306,9 +457,10 @@
         }
 
         .comment-author-name {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--color-text);
             text-decoration: none;
+            transition: all 0.2s ease;
         }
 
         .comment-author-name:hover {
@@ -318,19 +470,23 @@
         .comment-date {
             font-size: 0.8rem;
             color: var(--color-text-muted);
+            margin-top: 2px;
         }
 
         .comment-content {
             color: var(--color-text);
             line-height: 1.6;
+            margin-top: 12px;
         }
 
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 60px 20px;
             color: var(--color-text-muted);
-            border: 1px dashed var(--color-text-muted);
-            border-radius: 8px;
+            border: 2px dashed var(--color-border);
+            border-radius: 12px;
+            background: var(--color-surface);
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -340,15 +496,15 @@
         <div class="nav-container">
             <a href="index.html" class="nav-logo">Wiki Platform</a>
             <div class="nav-links">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="articles.html" class="nav-link">Articles</a>
-                <a href="categories.html" class="nav-link">Categories</a>
-                <a href="metro.html" class="nav-link">Metro</a>
-                <a href="music.html" class="nav-link">Music</a>
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="articles.html" class="nav-link">文章</a>
+                <a href="categories.html" class="nav-link">分类</a>
+                <a href="metro.html" class="nav-link">地铁图</a>
+                <a href="music.html" class="nav-link">音乐</a>
             </div>
             <div class="nav-actions">
-                <a href="login.html" class="btn">Login</a>
-                <a href="register.html" class="btn">Register</a>
+                <a href="login.html" class="btn">登录</a>
+                <a href="register.html" class="btn btn-primary">注册</a>
             </div>
         </div>
     </nav>
@@ -356,7 +512,7 @@
     <!-- Article Detail Content -->
     <div class="article-detail">
         <div id="loading" class="loading">
-            Loading article...
+            加载中...
         </div>
         
         <div id="articleContent" style="display: none;">
@@ -366,7 +522,7 @@
                 <div class="article-meta">
                     <div class="author-info">
                         <div class="author-avatar" id="authorAvatar"></div>
-                        <span>By <a href="#" id="authorLink" class="author-name"></a></span>
+                        <span>作者 <a href="#" id="authorLink" class="author-name"></a></span>
                     </div>
                     <span id="articleDate"></span>
                     <span id="articleReadTime"></span>
@@ -377,16 +533,16 @@
             <!-- Article actions -->
             <div class="article-actions">
                 <a href="#" class="action-btn">
-                    <span>馃摑</span> Edit
+                    <span>📝</span> 编辑
                 </a>
                 <a href="#" class="action-btn">
-                    <span>馃挰</span> Comment
+                    <span>💬</span> 评论
+                </a>
+                <a href="#" class="action-btn btn-like">
+                    <span>❤️</span> 点赞
                 </a>
                 <a href="#" class="action-btn">
-                    <span>鉂わ笍</span> Like
-                </a>
-                <a href="#" class="action-btn">
-                    <span>馃敆</span> Share
+                    <span>📤</span> 分享
                 </a>
             </div>
             
@@ -395,15 +551,15 @@
             
             <!-- Comments section -->
             <div class="comments-section">
-                <h2 class="comments-title">Comments</h2>
+                <h2 class="comments-title">评论</h2>
                 
                 <!-- Comment form -->
                 <form class="comment-form">
                     <div class="form-group">
-                        <label for="commentContent">Leave a comment</label>
-                        <textarea id="commentContent" placeholder="Write your comment here..."></textarea>
+                        <label for="commentContent">发表评论</label>
+                        <textarea id="commentContent" placeholder="写下你的评论..."></textarea>
                     </div>
-                    <button type="submit" class="action-btn">Post Comment</button>
+                    <button type="submit" class="action-btn btn-primary">发表评论</button>
                 </form>
                 
                 <!-- Comments list -->
@@ -426,6 +582,8 @@
         const articleTagsElement = document.getElementById('articleTags');
         const articleBodyElement = document.getElementById('articleBody');
         const commentsListElement = document.getElementById('commentsList');
+        const commentForm = document.querySelector('.comment-form');
+        const commentContentElement = document.getElementById('commentContent');
 
         // Get article ID from URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -435,68 +593,68 @@
         const mockArticles = {
             "1": {
                 id: "1",
-                title: "Getting Started with Wiki Platform",
+                title: "Wiki Platform 入门指南",
                 content: `
-                    <p>Welcome to our wiki platform! This guide will help you get started with creating and sharing knowledge.</p>
+                    <p>欢迎来到我们的 Wiki 平台！本指南将帮助您开始创建和分享知识。</p>
                     
-                    <h2>What is a Wiki Platform?</h2>
-                    <p>A wiki platform is a collaborative space where users can create, edit, and share articles on various topics. It's a powerful tool for knowledge management and community collaboration.</p>
+                    <h2>什么是 Wiki 平台？</h2>
+                    <p>Wiki 平台是一个协作空间，用户可以在其中创建、编辑和分享各种主题的文章。它是知识管理和社区协作的强大工具。</p>
                     
-                    <h2>Key Features</h2>
+                    <h2>主要功能</h2>
                     <ul>
-                        <li>Easy article creation and editing</li>
-                        <li>Rich text formatting</li>
-                        <li>Version control for articles</li>
-                        <li>User contribution tracking</li>
-                        <li>Content moderation tools</li>
-                        <li>Search functionality</li>
+                        <li>轻松创建和编辑文章</li>
+                        <li>丰富的文本格式</li>
+                        <li>文章版本控制</li>
+                        <li>用户贡献追踪</li>
+                        <li>内容审核工具</li>
+                        <li>强大的搜索功能</li>
                     </ul>
                     
-                    <h2>How to Get Started</h2>
+                    <h2>如何开始</h2>
                     <ol>
-                        <li>Create an account or log in</li>
-                        <li>Explore existing articles</li>
-                        <li>Create your first article</li>
-                        <li>Share your knowledge with the community</li>
+                        <li>创建账户或登录</li>
+                        <li>浏览现有文章</li>
+                        <li>创建您的第一篇文章</li>
+                        <li>与社区分享您的知识</li>
                     </ol>
                     
-                    <h2>Tips for Writing Great Articles</h2>
-                    <p>When creating articles, keep these tips in mind:</p>
+                    <h2>撰写优质文章的技巧</h2>
+                    <p>创建文章时，请记住以下技巧：</p>
                     <ul>
-                        <li>Use clear, concise language</li>
-                        <li>Organize content with headings and subheadings</li>
-                        <li>Include relevant images and media</li>
-                        <li>Cite your sources</li>
-                        <li>Keep articles focused on a single topic</li>
+                        <li>使用清晰、简洁的语言</li>
+                        <li>使用标题和子标题组织内容</li>
+                        <li>包含相关的图片和媒体</li>
+                        <li>引用您的来源</li>
+                        <li>保持文章专注于单一主题</li>
                     </ul>
                     
-                    <p>We're excited to have you join our community! Start exploring and contributing today.</p>
+                    <p>我们很高兴您加入我们的社区！立即开始探索和贡献吧。</p>
                 `,
                 author: { username: "admin", id: "1" },
                 created_at: "2026-02-19T10:00:00Z",
-                categories: [{ name: "Guides", slug: "guides" }],
-                tags: [{ name: "getting-started", slug: "getting-started" }, { name: "wiki", slug: "wiki" }]
+                categories: [{ name: "指南", slug: "guides" }],
+                tags: [{ name: "入门", slug: "getting-started" }, { name: "wiki", slug: "wiki" }]
             },
             "2": {
                 id: "2",
-                title: "Understanding the Metro Map Feature",
+                title: "了解地铁图功能",
                 content: `
-                    <p>Our platform features an interactive metro map that allows users to navigate through different stations and explore content based on their interests.</p>
+                    <p>我们的平台设有一个交互式地铁图，允许用户通过不同的站点导航，并根据他们的兴趣探索内容。</p>
                     
-                    <h2>How It Works</h2>
-                    <p>The metro map is organized into lines and stations, where each station represents a different topic or category. Users can click on stations to view related articles and content.</p>
+                    <h2>工作原理</h2>
+                    <p>地铁图按线路和站点组织，每个站点代表一个不同的主题或类别。用户可以点击站点查看相关文章和内容。</p>
                     
-                    <h2>Navigating the Map</h2>
+                    <h2>导航地图</h2>
                     <ul>
-                        <li>Click on a station to view content</li>
-                        <li>Follow lines to explore related topics</li>
-                        <li>Use the search function to find specific stations</li>
+                        <li>点击站点查看内容</li>
+                        <li>跟随线路探索相关主题</li>
+                        <li>使用搜索功能查找特定站点</li>
                     </ul>
                 `,
                 author: { username: "moderator", id: "2" },
                 created_at: "2026-02-18T15:30:00Z",
-                categories: [{ name: "Features", slug: "features" }],
-                tags: [{ name: "metro", slug: "metro" }, { name: "map", slug: "map" }]
+                categories: [{ name: "功能", slug: "features" }],
+                tags: [{ name: "地铁图", slug: "metro" }, { name: "地图", slug: "map" }]
             }
         };
 
@@ -505,13 +663,13 @@
             {
                 id: "1",
                 author: { username: "user1", id: "3" },
-                content: "Great article! Very helpful for getting started.",
+                content: "很不错的文章！对入门很有帮助。",
                 created_at: "2026-02-19T14:30:00Z"
             },
             {
                 id: "2",
                 author: { username: "user2", id: "4" },
-                content: "I've been looking for something like this. Thanks for sharing!",
+                content: "我一直在寻找这样的内容。感谢分享！",
                 created_at: "2026-02-19T16:45:00Z"
             }
         ];
@@ -519,7 +677,26 @@
         // Initialize page
         document.addEventListener('DOMContentLoaded', () => {
             fetchArticle();
+            bindEventListeners();
         });
+
+        // Bind event listeners
+        function bindEventListeners() {
+            // Comment form submit
+            commentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                handlePostComment();
+            });
+
+            // Like button
+            const likeBtn = document.querySelector('.btn-like');
+            if (likeBtn) {
+                likeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleLike();
+                });
+            }
+        }
 
         // Fetch article data
         function fetchArticle() {
@@ -530,7 +707,7 @@
             setTimeout(() => {
                 const article = mockArticles[articleId] || mockArticles["1"];
                 displayArticle(article);
-            }, 800);
+            }, 500);
         }
 
         // Display article
@@ -544,9 +721,9 @@
             authorLinkElement.href = `user-profile.html?id=${article.author.id}`;
             
             // Set date and read time
-            const formattedDate = new Date(article.created_at).toLocaleDateString();
+            const formattedDate = new Date(article.created_at).toLocaleDateString('zh-CN');
             articleDateElement.textContent = formattedDate;
-            articleReadTimeElement.textContent = '5 min read';
+            articleReadTimeElement.textContent = '阅读时间：5 分钟';
             
             // Set tags
             articleTagsElement.innerHTML = article.tags.map(tag => 
@@ -569,6 +746,16 @@
             // Clear existing comments
             commentsListElement.innerHTML = '';
             
+            // Check if there are comments
+            if (mockComments.length === 0) {
+                commentsListElement.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                        暂无评论，快来发表第一条评论吧！
+                    </div>
+                `;
+                return;
+            }
+            
             // Create comment elements
             mockComments.forEach(comment => {
                 const commentElement = createCommentElement(comment);
@@ -581,14 +768,20 @@
             const commentDiv = document.createElement('div');
             commentDiv.className = 'comment';
             
-            const formattedDate = new Date(comment.created_at).toLocaleDateString();
+            const formattedDate = new Date(comment.created_at).toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
             
             commentDiv.innerHTML = `
                 <div class="comment-header">
                     <div class="comment-author">
                         <div class="author-avatar" style="width: 32px; height: 32px; font-size: 0.9rem;">${comment.author.username.charAt(0).toUpperCase()}</div>
                         <div class="comment-author-info">
-                            <a href="user-profile.html?id=${comment.author.id}" class="author-name">${comment.author.username}</a>
+                            <a href="user-profile.html?id=${comment.author.id}" class="comment-author-name">${comment.author.username}</a>
                             <div class="comment-date">${formattedDate}</div>
                         </div>
                     </div>
@@ -597,6 +790,48 @@
             `;
             
             return commentDiv;
+        }
+
+        // Handle post comment
+        function handlePostComment() {
+            const content = commentContentElement.value.trim();
+            
+            if (!content) {
+                alert('请输入评论内容');
+                return;
+            }
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Add new comment
+                const newComment = {
+                    id: String(mockComments.length + 1),
+                    author: { username: "current_user", id: "100" },
+                    content: content,
+                    created_at: new Date().toISOString()
+                };
+                
+                mockComments.unshift(newComment);
+                displayComments();
+                commentContentElement.value = '';
+                
+                // Show success message
+                alert('评论发表成功！');
+            }, 300);
+        }
+
+        // Handle like
+        function handleLike() {
+            // Simulate like action
+            const likeBtn = document.querySelector('.btn-like');
+            if (likeBtn) {
+                likeBtn.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    likeBtn.style.transform = 'scale(1)';
+                }, 200);
+            }
+            
+            alert('感谢您的点赞！');
         }
     </script>
 </body>

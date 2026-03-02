@@ -1,19 +1,26 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Echoom Chamber</title>
     <style>
-        /* 鍏ㄥ眬鏍峰紡 */
+        /* Wiki Platform V3 统一样式 */
         :root {
-            --color-primary: #00ff88;
-            --color-primary-dark: #00cc6a;
-            --color-text: #fff;
-            --color-text-muted: #aaa;
+            --color-primary: #0D8ABC;
+            --color-primary-dark: #096a8f;
+            --color-primary-light: #3498db;
+            --color-secondary: #9b59b6;
+            --color-accent: #ff6b6b;
+            --color-success: #27ae60;
+            --color-danger: #e74c3c;
+            --color-warning: #f39c12;
+            --color-text: #ffffff;
+            --color-text-muted: #a0a0a0;
+            --color-background: #121212;
             --color-surface: #1a1a1a;
-            --color-surface-dark: #0f0f0f;
-            --color-border: #333;
+            --color-surface-hover: #2a2a2a;
+            --color-border: #333333;
         }
 
         * {
@@ -22,7 +29,12 @@
             box-sizing: border-box;
         }
 
-        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
 
         header {
             background: var(--color-surface);
@@ -59,7 +71,7 @@
             padding: 20px;
         }
 
-        /* 椤甸潰鏍囬鏍峰紡 */
+        /* 页面标题样式 */
         .music-view {
             padding: 2rem;
             max-width: 1200px;
@@ -85,7 +97,7 @@
             color: var(--color-text-muted);
         }
 
-        /* 闊充箰鎾斁鍣ㄥ鍣?*/
+        /* 音乐播放器容器 */
         .music-player-container {
             display: flex;
             gap: 2rem;
@@ -93,7 +105,7 @@
             background: #0a0a0a;
             color: #fff;
             min-height: 80vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
             position: relative;
         }
 
@@ -104,7 +116,7 @@
             }
         }
 
-        /* 閿欒閫氱煡 */
+        /* 错误通知 */
         .error-notification {
             position: fixed;
             top: 20px;
@@ -145,7 +157,7 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* 鎾斁鍣ㄥ崱鐗?*/
+        /* 播放器卡片 */
         .player-card {
             flex: 1;
             background: linear-gradient(145deg, var(--color-surface), var(--color-surface-dark));
@@ -161,7 +173,7 @@
             max-width: 500px;
         }
 
-        /* 鍙鍖栨晥鏋?*/
+        /* 可视化效果 */
         .visualizer {
             display: flex;
             align-items: flex-end;
@@ -201,7 +213,7 @@
             }
         }
 
-        /* 姝屾洸淇℃伅 */
+        /* 曲目信息 */
         .track-info {
             text-align: center;
             margin-bottom: 2rem;
@@ -247,7 +259,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 鎾斁鎺у埗鎸夐挳 */
+        /* 播放控制按钮 */
         .controls {
             display: flex;
             gap: 1rem;
@@ -310,7 +322,7 @@
             animation: spin 1s linear infinite;
         }
 
-        /* 杩涘害鍜岄煶閲忔粦鍧?*/
+        /* 进度和音量滑块 */
         .progress-container, .volume-container {
             width: 100%;
             display: flex;
@@ -407,7 +419,7 @@
             transform: scale(1.1);
         }
 
-        /* 閿洏鎻愮ず */
+        /* 键盘提示 */
         .keyboard-hints {
             display: flex;
             gap: 1rem;
@@ -424,7 +436,7 @@
             border: 1px solid #333;
         }
 
-        /* 鎾斁鍒楄〃 */
+        /* 播放列表 */
         .playlist {
             flex: 1;
             background: linear-gradient(145deg, #151515, #0a0a0a);
@@ -571,7 +583,7 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* 婊氬姩鏉℃牱寮?*/
+        /* 滚动条样式 */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -595,12 +607,12 @@
         <h1>Echoom Chamber</h1>
         <nav>
             <ul>
-                <li><a href="index.html">棣栭〉</a></li>
-                <li><a href="articles.html">鏂囩珷</a></li>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="articles.html">文章</a></li>
                 <li><a href="metro.html">Metro</a></li>
                 <li><a href="music.html" class="active">Music</a></li>
-                <li><a href="profile.html">涓汉璧勬枡</a></li>
-                <li><a href="login.html">鐧诲綍</a></li>
+                <li><a href="profile.html">个人资料</a></li>
+                <li><a href="login.html">登录</a></li>
             </ul>
         </nav>
     </header>
@@ -613,17 +625,17 @@
             </div>
             
             <div class="music-player-container">
-                <!-- 閿欒閫氱煡 -->
+                <!-- 错误通知 -->
                 <div id="errorNotification" class="error-notification" style="display: none;">
-                    <span class="error-icon">鈿狅笍</span>
-                    <span id="errorText" class="error-text">鍔犺浇闊充箰鏁版嵁澶辫触</span>
-                    <button id="errorClose" class="error-close">鉁?/button>
-                    <button id="errorRetry" class="error-retry">閲嶈瘯</button>
+                    <span class="error-icon">⚠️</span>
+                    <span id="errorText" class="error-text">加载音乐数据失败</span>
+                    <button id="errorClose" class="error-close">×</button>
+                    <button id="errorRetry" class="error-retry">重试</button>
                 </div>
 
-                <!-- 鎾斁鍣ㄥ崱鐗?-->
+                <!-- 播放器卡片 -->
                 <div class="player-card">
-                    <!-- 鍙鍖栨晥鏋?-->
+                    <!-- 可视化效果 -->
                     <div id="visualizer" class="visualizer">
                         <div class="bar" style="animation-delay: 0.05s;"></div>
                         <div class="bar" style="animation-delay: 0.1s;"></div>
@@ -647,29 +659,29 @@
                         <div class="bar" style="animation-delay: 1s;"></div>
                     </div>
                     
-                    <!-- 姝屾洸淇℃伅 -->
+                    <!-- 曲目信息 -->
                     <div class="track-info">
                         <div id="trackLoading" class="track-loading">
                             <span class="loading-spinner"></span>
-                            鍔犺浇涓?..
+                            加载中...
                         </div>
                         <div id="trackInfo" style="display: none;">
-                            <h2 id="trackTitle">閫夋嫨涓€棣栨瓕鏇?/h2>
-                            <p id="trackArtist" class="no-artist">鏈煡鑹烘湳瀹?/p>
+                            <h2 id="trackTitle">选择一首歌曲</h2>
+                            <p id="trackArtist" class="no-artist">未知艺术家</p>
                         </div>
                     </div>
                     
-                    <!-- 鎾斁鎺у埗 -->
+                    <!-- 播放控制 -->
                     <div class="controls">
-                        <button id="modeBtn" class="control-btn mode-btn" title="鎾斁妯″紡: single">鈻讹笍</button>
-                        <button id="prevBtn" class="control-btn" disabled title="涓婁竴棣?>鈴?/button>
-                        <button id="playBtn" class="control-btn play-btn" disabled title="鎾斁/鏆傚仠 (Space)">
-                            <span id="playBtnContent">鈻?/span>
+                        <button id="modeBtn" class="control-btn mode-btn" title="播放模式: single">🔂</button>
+                        <button id="prevBtn" class="control-btn" disabled title="上一首">⏮</button>
+                        <button id="playBtn" class="control-btn play-btn" disabled title="播放/暂停 (Space)">
+                            <span id="playBtnContent">▶</span>
                         </button>
-                        <button id="nextBtn" class="control-btn" disabled title="涓嬩竴棣?>鈴?/button>
+                        <button id="nextBtn" class="control-btn" disabled title="下一首">⏭</button>
                     </div>
                     
-                    <!-- 杩涘害鎺у埗 -->
+                    <!-- 进度控制 -->
                     <div class="progress-container">
                         <span id="currentTime" class="time">0:00</span>
                         <div class="slider-wrapper">
@@ -687,9 +699,9 @@
                         <span id="duration" class="time">0:00</span>
                     </div>
                     
-                    <!-- 闊抽噺鎺у埗 -->
+                    <!-- 音量控制 -->
                     <div class="volume-container">
-                        <button id="muteBtn" class="mute-btn" title="闈欓煶">馃攰</button>
+                        <button id="muteBtn" class="mute-btn" title="静音">🔊</button>
                         <div class="slider-wrapper">
                             <input 
                                 type="range" 
@@ -703,40 +715,40 @@
                         </div>
                     </div>
                     
-                    <!-- 閿洏鎻愮ず -->
+                    <!-- 键盘提示 -->
                     <div class="keyboard-hints">
-                        <span>Space: 鎾斁/鏆傚仠</span>
-                        <span>鈫?鈫? 蹇繘/蹇€€</span>
-                        <span>鈫?鈫? 闊抽噺</span>
+                        <span>Space: 播放/暂停</span>
+                        <span>← → 快进/快退</span>
+                        <span>↑ ↓ 音量</span>
                     </div>
                     
-                    <!-- 闊抽鍏冪礌 -->
+                    <!-- 音频元素 -->
                     <audio 
                         id="audio" 
                         preload="metadata"
                     ></audio>
                 </div>
                 
-                <!-- 鎾斁鍒楄〃 -->
+                <!-- 播放列表 -->
                 <div class="playlist">
                     <div class="playlist-header">
-                        <h3>鎾斁鍒楄〃</h3>
-                        <span id="trackCount" class="track-count">0 棣?/span>
+                        <h3>播放列表</h3>
+                        <span id="trackCount" class="track-count">0 首</span>
                     </div>
                     
                     <div id="playlistLoading" class="playlist-loading">
                         <span class="loading-spinner"></span>
-                        鍔犺浇涓?..
+                        加载中..
                     </div>
                     
                     <div id="playlistEmpty" class="playlist-empty" style="display: none;">
-                        <span class="empty-icon">馃幍</span>
-                        <p>鏆傛棤闊充箰</p>
-                        <button id="playlistRetry" class="retry-btn">閲嶆柊鍔犺浇</button>
+                        <span class="empty-icon">🎵</span>
+                        <p>无音乐</p>
+                        <button id="playlistRetry" class="retry-btn">重新加载</button>
                     </div>
                     
                     <ul id="playlistList" style="display: none;">
-                        <!-- 鎾斁鍒楄〃椤瑰皢閫氳繃JavaScript鍔ㄦ€佺敓鎴?-->
+                        <!-- 播放列表项将通过JavaScript动态生成 -->
                     </ul>
                 </div>
             </div>
@@ -744,7 +756,7 @@
     </div>
 
     <script>
-        // ==================== 鐘舵€佺鐞?====================
+        // ==================== 状态管理 ====================
         let tracks = [];
         let currentTrack = null;
         let isPlaying = false;
@@ -761,14 +773,15 @@
         let playMode = 'single'; // 'single', 'loop', 'shuffle'
         let loading = true;
 
-        // ==================== DOM鍏冪礌 ====================
-        // 閿欒閫氱煡
+        // ==================== DOM元素 ====================
+        // 错误通知
         const errorNotification = document.getElementById('errorNotification');
         const errorText = document.getElementById('errorText');
         const errorClose = document.getElementById('errorClose');
         const errorRetry = document.getElementById('errorRetry');
 
-        // 鎾斁鍣?        const visualizer = document.getElementById('visualizer');
+        // 播放器
+        const visualizer = document.getElementById('visualizer');
         const trackLoading = document.getElementById('trackLoading');
         const trackInfo = document.getElementById('trackInfo');
         const trackTitle = document.getElementById('trackTitle');
@@ -787,40 +800,41 @@
         const volumeFill = document.getElementById('volumeFill');
         audio = document.getElementById('audio');
 
-        // 鎾斁鍒楄〃
+        // 播放列表
         const trackCount = document.getElementById('trackCount');
         const playlistLoading = document.getElementById('playlistLoading');
         const playlistEmpty = document.getElementById('playlistEmpty');
         const playlistList = document.getElementById('playlistList');
         const playlistRetry = document.getElementById('playlistRetry');
 
-        // ==================== 鍒濆鍖?====================
+        // ==================== 初始化 ====================
         document.addEventListener('DOMContentLoaded', function() {
-            // 缁戝畾浜嬩欢鐩戝惉鍣?            bindEventListeners();
+            // 绑定事件监听器
+            bindEventListeners();
             
-            // 鍔犺浇姝屾洸鍒楄〃
+            // 加载曲目列表
             loadTracks();
             
-            // 璁剧疆鍒濆闊抽噺
+            // 设置初始化音量
             audio.volume = volume;
         });
 
-        // ==================== 浜嬩欢鐩戝惉 ====================
+        // ==================== 事件监听 ====================
         function bindEventListeners() {
-            // 閿欒閫氱煡
+            // 错误通知
             errorClose.addEventListener('click', function() {
                 errorNotification.style.display = 'none';
             });
             errorRetry.addEventListener('click', retryLoad);
             playlistRetry.addEventListener('click', retryLoad);
 
-            // 鎾斁鎺у埗
+            // 播放控制
             modeBtn.addEventListener('click', togglePlayMode);
             prevBtn.addEventListener('click', prevTrack);
             playBtn.addEventListener('click', togglePlay);
             nextBtn.addEventListener('click', nextTrack);
 
-            // 杩涘害鎺у埗
+            // 进度控制
             seekSlider.addEventListener('mousedown', onSeekStart);
             seekSlider.addEventListener('input', onSeekInput);
             seekSlider.addEventListener('mouseup', onSeekEnd);
@@ -828,11 +842,11 @@
             seekSlider.addEventListener('touchmove', onSeekInput);
             seekSlider.addEventListener('touchend', onSeekEnd);
 
-            // 闊抽噺鎺у埗
+            // 音量控制
             muteBtn.addEventListener('click', toggleMute);
             volumeSlider.addEventListener('input', updateVolume);
 
-            // 闊抽浜嬩欢
+            // 音频事件
             audio.addEventListener('timeupdate', onTimeUpdate);
             audio.addEventListener('ended', onEnded);
             audio.addEventListener('loadedmetadata', onLoadedMetadata);
@@ -840,20 +854,20 @@
             audio.addEventListener('canplay', onCanPlay);
             audio.addEventListener('error', onError);
 
-            // 閿洏浜嬩欢
+            // 键盘事件
             window.addEventListener('keydown', handleKeyboard);
         }
 
-        // ==================== 姝屾洸鍔犺浇 ====================
+        // ==================== 曲目加载 ====================
         function loadTracks() {
             loading = true;
             error = null;
             updateUI();
             
-            // 妯℃嫙API璇锋眰寤惰繜
+            // 模拟API请求延迟
             setTimeout(() => {
                 try {
-                    // 妯℃嫙姝屾洸鏁版嵁
+                    // 模拟曲目数据
                     tracks = [
                         {
                             id: 1,
@@ -878,10 +892,10 @@
                         }
                     ];
                     
-                    // 鍔犺浇鎴愬姛
+                    // 加载成功
                     loading = false;
                     
-                    // 濡傛灉鏈夋瓕鏇诧紝璁剧疆绗竴棣栦负褰撳墠姝屾洸
+                    // 如果有曲目，设置第一首为当前曲目
                     if (tracks.length > 0) {
                         currentTrack = tracks[0];
                         audio.src = getAudioUrl(tracks[0].fileUrl);
@@ -889,7 +903,7 @@
                     }
                 } catch (err) {
                     console.error('Failed to load tracks', err);
-                    error = '鏃犳硶鍔犺浇闊充箰鍒楄〃锛岃绋嶅悗閲嶈瘯';
+                    error = '无法加载音乐列表，请稍后重试';
                     loading = false;
                 } finally {
                     updateUI();
@@ -904,7 +918,7 @@
             return `${baseUrl}${url}`;
         }
 
-        // ==================== 鎾斁鎺у埗 ====================
+        // ==================== 播放控制 ====================
         function togglePlay() {
             if (isLoading || !currentTrack) return;
             
@@ -917,7 +931,7 @@
                     isPlaying = true;
                 } catch (err) {
                     console.error('Play failed:', err);
-                    showError('鎾斁澶辫触锛岃妫€鏌ラ煶棰戞枃浠?);
+                    showError('播放失败，请检查音频文件');
                 }
             }
             updateUI();
@@ -942,7 +956,7 @@
                 isPlaying = true;
             } catch (err) {
                 console.error('Play failed:', err);
-                showError('鎾斁澶辫触锛岄煶棰戞枃浠跺彲鑳戒笉瀛樺湪');
+                showError('播放失败，音频文件可能不存在');
                 isPlaying = false;
             } finally {
                 isLoading = false;
@@ -1017,7 +1031,7 @@
         function onError() {
             isLoading = false;
             isPlaying = false;
-            showError('闊抽鍔犺浇澶辫触锛屾枃浠跺彲鑳戒笉瀛樺湪鎴栨牸寮忎笉鏀寔');
+            showError('音频加载失败，文件可能不存在或格式不支持');
             updateUI();
         }
 
@@ -1068,7 +1082,7 @@
             updateUI();
         }
 
-        // ==================== 閿欒澶勭悊 ====================
+        // ==================== 错误澶勭悊 ====================
         function showError(message) {
             error = message;
             errorText.textContent = message;
@@ -1125,9 +1139,9 @@
             return `${m}:${s.toString().padStart(2, '0')}`;
         }
 
-        // ==================== UI鏇存柊 ====================
+        // ==================== UI更新 ====================
         function updateUI() {
-            // 鏇存柊閿欒閫氱煡
+            // 更新错误通知
             if (error) {
                 errorText.textContent = error;
                 errorNotification.style.display = 'flex';
@@ -1135,13 +1149,14 @@
                 errorNotification.style.display = 'none';
             }
 
-            // 鏇存柊鎾斁鐘舵€?            if (isPlaying) {
+            // 更新播放状态
+            if (isPlaying) {
                 visualizer.classList.add('playing');
             } else {
                 visualizer.classList.remove('playing');
             }
 
-            // 鏇存柊姝屾洸淇℃伅
+            // 更新曲目信息
             if (loading) {
                 trackLoading.style.display = 'flex';
                 trackInfo.style.display = 'none';
@@ -1163,69 +1178,70 @@
                 }
             }
 
-            // 鏇存柊姝屾洸鏍囬鍜岃壓鏈
+            // 更新曲目标题和艺术家
             if (currentTrack) {
                 trackTitle.textContent = currentTrack.title;
                 if (currentTrack.artists?.length) {
                     trackArtist.textContent = currentTrack.artists.map(a => a.name).join(', ');
                     trackArtist.classList.remove('no-artist');
                 } else {
-                    trackArtist.textContent = '鏈煡鑹烘湳瀹?;
+                    trackArtist.textContent = '未知艺术家';
                     trackArtist.classList.add('no-artist');
                 }
             } else if (tracks.length === 0) {
-                trackTitle.textContent = '鏆傛棤闊充箰';
+                trackTitle.textContent = '无音乐';
                 trackArtist.textContent = '';
                 trackArtist.classList.add('no-artist');
             } else {
-                trackTitle.textContent = '閫夋嫨涓€棣栨瓕鏇?;
+                trackTitle.textContent = '选择一首歌曲';
                 trackArtist.textContent = '';
                 trackArtist.classList.add('no-artist');
             }
 
-            // 鏇存柊鎾斁鎸夐挳
+            // 更新播放按钮
             if (isLoading) {
                 playBtn.classList.add('loading');
                 playBtnContent.innerHTML = '<span class="btn-spinner"></span>';
             } else {
                 playBtn.classList.remove('loading');
-                playBtnContent.textContent = isPlaying ? '鈴? : '鈻?;
+                playBtnContent.textContent = isPlaying ? '⏸' : '▶';
             }
 
-            // 鏇存柊鎾斁妯″紡鎸夐挳
+            // 更新播放模式按钮
             const modeIcons = {
-                'single': '鈻讹笍',
-                'loop': '馃攣',
-                'shuffle': '馃攢'
+                'single': '🔂',
+                'loop': '🔁',
+                'shuffle': '🔀'
             };
             modeBtn.textContent = modeIcons[playMode];
-            modeBtn.title = `鎾斁妯″紡: ${playMode}`;
+            modeBtn.title = `播放模式: ${playMode}`;
 
-            // 鏇存柊鎺у埗鎸夐挳鐘舵€?            const canPlay = !isLoading && !!currentTrack;
+            // 更新控制按钮状态
+            const canPlay = !isLoading && !!currentTrack;
             prevBtn.disabled = !canPlay;
             playBtn.disabled = !canPlay;
             nextBtn.disabled = !canPlay;
             seekSlider.disabled = !canPlay;
 
-            // 鏇存柊杩涘害婊戝潡
+            // 更新进度滑块
             const displayProgress = isDragging ? dragValue : progress;
             seekSlider.value = displayProgress;
             progressFill.style.width = `${displayProgress}%`;
 
-            // 鏇存柊鏃堕棿鏄剧ず
+            // 更新时间显示
             currentTimeEl.textContent = formatTime(currentTime);
             durationEl.textContent = formatTime(duration);
 
-            // 鏇存柊闊抽噺婊戝潡
+            // 更新音量滑块
             volumeSlider.value = volume;
             volumeFill.style.width = `${volume * 100}%`;
 
-            // 鏇存柊闊抽噺鍥炬爣
+            // 更新音量图标
             const volumeIcons = {
-                'muted': '馃攪',
-                'low': '馃攬',
-                'medium': '馃攭',
-                'high': '馃攰'
+                'muted': '🔇',
+                'low': '🔈',
+                'medium': '🔉',
+                'high': '🔊'
             };
             let volumeIcon;
             if (isMuted || volume === 0) {
@@ -1238,13 +1254,13 @@
                 volumeIcon = volumeIcons.high;
             }
             muteBtn.textContent = volumeIcon;
-            muteBtn.title = isMuted ? '鍙栨秷闈欓煶' : '闈欓煶';
+            muteBtn.title = isMuted ? '取消静音' : '静音';
 
-            // 鏇存柊鎾斁鍒楄〃鏍囬
-            trackCount.textContent = `${tracks.length} 棣朻;
+            // 更新播放列表标题
+            trackCount.textContent = `${tracks.length} 首`;
         }
 
-        // ==================== 娓叉煋鎾斁鍒楄〃 ====================
+        // ==================== 渲染播放列表 ====================
         function renderPlaylist() {
             playlistList.innerHTML = '';
             
@@ -1262,7 +1278,7 @@
                     <div class="track-number-wrapper">
                         <span class="track-number">${index + 1}</span>
                         <span class="playing-indicator" style="display: ${currentTrack?.id === track.id ? 'inline' : 'none'}">
-                            ${isPlaying ? '鈻? : '鈴?}
+                            ${isPlaying ? '▶' : '⏸'}
                         </span>
                     </div>
                     <div class="track-info-wrapper">

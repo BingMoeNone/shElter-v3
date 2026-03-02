@@ -1,20 +1,72 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>缂栬緫鏂囩珷</title>
-    <!-- 寮曞叆Quill瀵屾枃鏈紪杈戝櫒 -->
+    <title>编辑文章</title>
+    <!-- 引入 Quill 富文本编辑器 -->
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="config.js"></script>
+    <script src="utils.js"></script>
+    <script src="api-client.js"></script>
     <style>
+        /* Wiki Platform V3 统一样式 - 优化后的现代深色主题 */
         :root {
-            --color-primary: #00ff9d;
-            --color-text: #fff;
-            --color-text-muted: #aaa;
-            --color-surface: #1a1a1a;
-            --color-surface-hover: #2a2a2a;
-            --color-border: #333;
+            /* 主色调 - 使用更亮的蓝色，提高对比度和可读性 */
+            --color-primary: #3B82F6;
+            --color-primary-dark: #2563EB;
+            --color-primary-light: #60A5FA;
+            --color-primary-soft: rgba(59, 130, 246, 0.15);
+            
+            /* 辅助色 - 紫色系 */
+            --color-secondary: #8B5CF6;
+            --color-secondary-dark: #7C3AED;
+            --color-secondary-light: #A78BFA;
+            --color-secondary-soft: rgba(139, 92, 246, 0.15);
+            
+            /* 强调色 - 绿色系 */
+            --color-accent: #10B981;
+            --color-accent-dark: #059669;
+            --color-accent-light: #34D399;
+            --color-accent-soft: rgba(16, 185, 129, 0.15);
+            
+            /* 语义色 */
+            --color-success: #10B981;
+            --color-success-soft: rgba(16, 185, 129, 0.1);
+            --color-danger: #EF4444;
+            --color-danger-soft: rgba(239, 68, 68, 0.1);
+            --color-warning: #F59E0B;
+            --color-warning-soft: rgba(245, 158, 11, 0.1);
+            --color-info: #3B82F6;
+            --color-info-soft: rgba(59, 130, 246, 0.1);
+            
+            /* 文字颜色 - 提高对比度 */
+            --color-text: #F1F5F9;
+            --color-text-muted: #94A3B8;
+            --color-text-dark: #64748B;
+            --color-text-inverse: #0F172A;
+            
+            /* 背景颜色 - 使用蓝灰色调，更现代 */
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-surface-hover: #334155;
+            --color-surface-active: #475569;
+            
+            /* 边框颜色 */
+            --color-border: #334155;
+            --color-border-light: #475569;
+            --color-border-focus: #3B82F6;
+            
+            /* 阴影颜色 */
+            --shadow-color: rgba(15, 23, 42, 0.5);
+            --shadow-color-light: rgba(59, 130, 246, 0.2);
+            
+            /* 渐变背景 */
+            --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            --gradient-secondary: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+            --gradient-dark: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
         }
 
         * {
@@ -23,120 +75,198 @@
             box-sizing: border-box;
         }
 
-        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;\n            background-color: var(--color-background);\n            color: var(--color-text);\n            line-height: 1.6;\n        }
-
-        header {
-            background: var(--color-surface);
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--color-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-        }
-
-        nav a {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
+            background-color: var(--color-background);
             color: var(--color-text);
-            text-decoration: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
+            line-height: 1.6;
         }
 
-        nav a:hover, nav a.active {
-            background: var(--color-primary);
-            color: #000;
-        }
-
-        .container {
-            max-width: 800px;
+        /* 页面容器 */
+        .edit-article {
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        .edit-article-page {
-            max-width: 800px;
-            margin: 0 auto;
+        .page-header {
+            margin-bottom: 32px;
+            padding: 24px;
+            background: var(--color-surface);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
         }
 
-        .edit-article-page h1 {
-            margin-bottom: 24px;
-            color: var(--color-primary);
+        .page-title {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 8px;
         }
 
-        .loading {
-            text-align: center;
-            padding: 40px;
+        .page-subtitle {
             color: var(--color-text-muted);
+            font-size: 1rem;
         }
 
         .article-form {
-            max-width: 800px;
             background: var(--color-surface);
-            padding: 30px;
-            border-radius: 8px;
-            border: 1px solid var(--color-primary);
-            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 32px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--color-text);
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: var(--color-danger);
+            margin-left: 4px;
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.5);
+            padding: 12px 16px;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
-            font-size: 14px;
+            background: var(--color-background);
             color: var(--color-text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;
-            transition: all 0.3s;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
         }
 
         .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
+            border-color: var(--color-border-focus);
+            box-shadow: 0 0 0 3px var(--color-primary-soft);
         }
 
-        /* 瀵屾枃鏈紪杈戝櫒鏍峰紡 */
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            color: var(--color-text);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--color-surface-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-soft);
+            color: var(--color-primary);
+        }
+
+        /* Quill 编辑器样式 */
         .rich-text-editor {
             min-height: 400px;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .rich-text-editor .ql-container {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '寰蒋闆呴粦', SimHei, '榛戜綋', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Microsoft YaHei', '微软雅黑', SimHei, '黑体', sans-serif;
             color: var(--color-text);
             min-height: 300px;
+            background: var(--color-background);
+            border: none !important;
         }
 
         .rich-text-editor .ql-editor {
-            font-size: 14px;
+            font-size: 1rem;
             line-height: 1.6;
+            min-height: 300px;
+        }
+
+        .rich-text-editor .ql-editor.ql-blank::before {
+            color: var(--color-text-muted);
+            font-style: italic;
         }
 
         .rich-text-editor .ql-toolbar {
-            background: rgba(0, 0, 0, 0.3);
-            border-bottom: 1px solid var(--color-border);
+            background: var(--color-surface-hover);
+            border: none !important;
+            border-bottom: 1px solid var(--color-border) !important;
         }
 
         .rich-text-editor .ql-toolbar button:hover,
@@ -144,348 +274,629 @@
             color: var(--color-primary);
         }
 
-        /* 閿欒娑堟伅鏍峰紡 */
-        .error-message {
-            color: #ff4444;
-            margin-bottom: 16px;
-            padding: 12px;
-            background: rgba(255, 68, 68, 0.1);
-            border-radius: 4px;
-            border-left: 3px solid #ff4444;
-        }
-
-        /* 琛ㄥ崟鎿嶄綔鎸夐挳鏍峰紡 */
-        .form-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn-save {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--color-text);
-            border: 1px solid var(--color-border);
-            padding: 10px 20px;
-            border-radius: 4px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .btn-publish {
-            background: rgba(0, 255, 157, 0.1);
+        .rich-text-editor .ql-toolbar button.ql-active,
+        .rich-text-editor .ql-toolbar .ql-picker-label.ql-active {
             color: var(--color-primary);
-            border: 1px solid var(--color-primary);
-            padding: 10px 20px;
-            border-radius: 4px;
-            transition: all 0.3s;
-            cursor: pointer;
         }
 
-        .btn-save:hover:not(:disabled) {
-            background: var(--color-surface-hover);
-            border-color: var(--color-text);
+        .rich-text-editor .ql-stroke {
+            stroke: var(--color-text);
         }
 
-        .btn-publish:hover:not(:disabled) {
-            background: var(--color-primary);
-            color: #000;
-            box-shadow: 0 0 15px var(--color-primary);
+        .rich-text-editor .ql-fill {
+            fill: var(--color-text);
         }
 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .rich-text-editor .ql-picker {
+            color: var(--color-text);
+        }
+
+        /* 错误消息 */
+        .error-message {
+            color: var(--color-danger);
+            margin-top: 8px;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .error-alert {
+            color: var(--color-danger);
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--color-danger-soft);
+            border-radius: 8px;
+            border-left: 4px solid var(--color-danger);
+            display: none;
+        }
+
+        .error-alert.show {
+            display: block;
+        }
+
+        /* 加载状态 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 字符计数 */
+        .character-count {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        /* 表单帮助文本 */
+        .form-help {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: 4px;
+        }
+
+        /* 加载提示 */
+        .loading-state {
+            text-align: center;
+            padding: 60px;
+            color: var(--color-text-muted);
+        }
+
+        .loading-state .loading-spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 16px;
+            border-width: 3px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>缂栬緫鏂囩珷</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">棣栭〉</a></li>
-                <li><a href="articles.html">鏂囩珷</a></li>
-                <li><a href="profile.html">涓汉璧勬枡</a></li>
-                <li><a href="login.html">鐧诲綍</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="container">
-        <div class="edit-article-page">
-            <div id="loading" class="loading">鍔犺浇鏂囩珷涓?..</div>
-            
-            <div id="articleForm" class="article-form" style="display: none;">
-                <h1 id="articleTitle">缂栬緫鏂囩珷</h1>
-                
-                <form id="editForm">
-                    <div class="form-group">
-                        <label for="title">鏍囬</label>
-                        <input
-                            id="title"
-                            type="text"
-                            placeholder="杈撳叆鏂囩珷鏍囬"
-                            required
-                            maxlength="200"
-                        />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="summary">鎽樿 (鍙€?</label>
-                        <input
-                            id="summary"
-                            type="text"
-                            placeholder="鏂囩珷鎽樿"
-                            maxlength="500"
-                        />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="content">鍐呭</label>
-                        <div id="content" class="rich-text-editor"></div>
-                        <input type="hidden" id="contentHidden">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="tags">鏍囩 (閫楀彿鍒嗛殧)</label>
-                        <input
-                            id="tags"
-                            type="text"
-                            placeholder="tag1, tag2, tag3"
-                        />
-                    </div>
-                    
-                    <div id="error" class="error-message" style="display: none;"></div>
-                    
-                    <div class="form-actions">
-                        <button type="submit" id="saveDraftBtn" class="btn-save" disabled>
-                            淇濆瓨鑽夌
-                        </button>
-                        <button type="button" id="publishBtn" class="btn-publish" disabled>
-                            鍙戝竷
-                        </button>
-                    </div>
-                </form>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Wiki Platform</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="articles.html" class="nav-link">文章</a>
+                <a href="categories.html" class="nav-link">分类</a>
+                <a href="metro.html" class="nav-link">地铁图</a>
+                <a href="music.html" class="nav-link">音乐</a>
+            </div>
+            <div class="nav-actions">
+                <a href="login.html" class="btn">登录</a>
+                <a href="register.html" class="btn btn-primary">注册</a>
             </div>
         </div>
+    </nav>
+
+    <!-- 编辑文章 -->
+    <div class="edit-article">
+        <div class="page-header">
+            <h1 class="page-title">编辑文章</h1>
+            <p class="page-subtitle">修改您的文章内容</p>
+        </div>
+        
+        <!-- 加载状态 -->
+        <div id="loadingState" class="loading-state">
+            <div class="loading-spinner"></div>
+            <p>正在加载文章...</p>
+        </div>
+        
+        <!-- 错误提示 -->
+        <div id="errorAlert" class="error-alert"></div>
+        
+        <!-- 表单 -->
+        <form id="articleForm" class="article-form" style="display: none;" novalidate>
+            <!-- 标题 -->
+            <div class="form-group">
+                <label for="title">
+                    文章标题
+                    <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="title" 
+                    name="title" 
+                    placeholder="请输入文章标题" 
+                    required
+                    minlength="5"
+                    maxlength="200"
+                >
+                <div id="titleError" class="error-message"></div>
+                <div class="form-help">标题长度应为 5-200 个字符</div>
+            </div>
+            
+            <!-- 摘要 -->
+            <div class="form-group">
+                <label for="summary">
+                    摘要
+                    <span class="required">*</span>
+                </label>
+                <textarea 
+                    id="summary" 
+                    name="summary" 
+                    placeholder="简要概述文章的核心内容" 
+                    required
+                    minlength="20"
+                    maxlength="500"
+                    style="min-height: 120px;"
+                ></textarea>
+                <div id="summaryError" class="error-message"></div>
+                <div class="character-count"><span id="summaryCount">0</span>/500</div>
+                <div class="form-help">摘要长度应为 20-500 个字符</div>
+            </div>
+            
+            <!-- 内容 -->
+            <div class="form-group">
+                <label for="content">
+                    正文内容
+                    <span class="required">*</span>
+                </label>
+                <div id="content" class="rich-text-editor"></div>
+                <div id="contentError" class="error-message"></div>
+                <div class="form-help">正文内容至少需要 50 个字符</div>
+            </div>
+            
+            <!-- 分类和状态 -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="category">分类</label>
+                    <select id="category" name="category">
+                        <option value="">选择文章分类</option>
+                        <option value="guides">指南</option>
+                        <option value="tutorials">教程</option>
+                        <option value="features">功能</option>
+                        <option value="news">新闻</option>
+                        <option value="opinions">观点</option>
+                        <option value="others">其他</option>
+                    </select>
+                    <div class="form-help">选择最相关的分类</div>
+                </div>
+                <div class="form-group">
+                    <label for="status">发布状态</label>
+                    <select id="status" name="status">
+                        <option value="published">已发布</option>
+                        <option value="draft">草稿</option>
+                    </select>
+                    <div class="form-help">草稿仅自己可见</div>
+                </div>
+            </div>
+            
+            <!-- 标签 -->
+            <div class="form-group">
+                <label>标签</label>
+                <input 
+                    type="text" 
+                    id="tags" 
+                    name="tags" 
+                    placeholder="标签（逗号分隔，例如：python, fastapi, backend）"
+                >
+                <div class="form-help">添加 3-5 个标签有助于读者发现您的文章</div>
+            </div>
+            
+            <!-- 操作按钮 -->
+            <div class="form-actions">
+                <a href="articles.html" class="btn btn-secondary">
+                    <span>取消</span>
+                </a>
+                <button type="button" class="btn btn-secondary" id="saveDraftBtn">
+                    <span>保存草稿</span>
+                </button>
+                <button type="submit" class="btn btn-primary" id="publishBtn">
+                    <span>更新文章</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 加载遮罩 -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
     </div>
 
     <script>
-        // 妯℃嫙鏂囩珷鏁版嵁
-        const mockArticle = {
-            id: 1,
-            title: "FastAPI鍚庣寮€鍙戞渶浣冲疄璺?,
-            content: "<h2>FastAPI绠€浠?/h2><p>FastAPI鏄竴涓幇浠ｅ寲鐨凱ython Web妗嗘灦...</p>",
-            summary: "鏈枃浠嬬粛浜嗕娇鐢‵astAPI寮€鍙戝悗绔簲鐢ㄧ殑鏈€浣冲疄璺?..",
-            author: { id: 1, username: "admin" },
-            tags: [{ name: "fastapi" }, { name: "python" }, { name: "backend" }],
-            status: "published",
-            created_at: "2023-01-15T10:30:00Z",
-            updated_at: "2023-01-15T14:45:00Z"
-        };
-
-        // 妯℃嫙鐢ㄦ埛鏁版嵁
-        const mockUser = {
-            id: 1,
-            username: "admin",
-            email: "admin@example.com",
-            role: "admin"
-        };
-
-        // 鐘舵€佺鐞?        let article = null;
-        let loading = true;
-        let saving = false;
-        let error = null;
+        // DOM 元素
+        const articleForm = document.getElementById('articleForm');
+        const loadingState = document.getElementById('loadingState');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorAlert = document.getElementById('errorAlert');
+        const saveDraftBtn = document.getElementById('saveDraftBtn');
+        const publishBtn = document.getElementById('publishBtn');
+        const summaryTextarea = document.getElementById('summary');
+        const summaryCount = document.getElementById('summaryCount');
+        
+        // 状态
+        let articleId = null;
+        let article = null;
         let quillEditor = null;
+        let isSubmitting = false;
+        let isLoading = true;
 
-        // 椤甸潰鍔犺浇鏃跺垵濮嬪寲
-        document.addEventListener('DOMContentLoaded', function() {
-            // 鍒濆鍖栧瘜鏂囨湰缂栬緫鍣?            initQuillEditor();
-            
-            // 缁戝畾浜嬩欢鐩戝惉鍣?            bindEventListeners();
-            
-            // 鑾峰彇鏂囩珷鏁版嵁
-            fetchArticle();
-        });
+        // =====================================================================
+        // 初始化 Quill 富文本编辑器
+        // =====================================================================
 
-        // 鍒濆鍖栧瘜鏂囨湰缂栬緫鍣?        function initQuillEditor() {
+        function initQuillEditor() {
             quillEditor = new Quill('#content', {
                 theme: 'snow',
                 modules: {
                     toolbar: {
                         container: [
-                            [{ header: [1, 2, 3, false] }],
+                            [{ 'header': [1, 2, 3, false] }],
                             ['bold', 'italic', 'underline', 'strike'],
-                            [{ list: 'ordered' }, { list: 'bullet' }],
-                            [{ indent: '-1' }, { indent: '+1' }],
-                            [{ align: [] }],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            [{ 'indent': '-1' }, { 'indent': '+1' }],
+                            [{ 'align': [] }],
                             ['link', 'image'],
                             ['clean']
                         ]
                     }
                 },
-                placeholder: '鍦ㄨ繖閲屾挵鍐欎綘鐨勬枃绔犲唴瀹?..',
+                placeholder: '在这里撰写你的文章内容...',
                 readOnly: false
             });
 
-            // 鐩戝惉鍐呭鍙樺寲锛屾洿鏂伴殣钘忚緭鍏ユ
-            quillEditor.on('text-change', function() {
+            // 监听内容变化
+            quillEditor.on('text-change', () => {
                 updateContentHidden();
                 checkCanSubmit();
             });
         }
 
-        // 鏇存柊闅愯棌鐨勫唴瀹硅緭鍏ユ
+        // 更新隐藏的内容输入框
         function updateContentHidden() {
             const content = quillEditor.root.innerHTML;
-            document.getElementById('contentHidden').value = content;
+            let hiddenInput = document.getElementById('contentHidden');
+            if (!hiddenInput) {
+                hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.id = 'contentHidden';
+                articleForm.appendChild(hiddenInput);
+            }
+            hiddenInput.value = content;
         }
 
-        // 缁戝畾浜嬩欢鐩戝惉鍣?        function bindEventListeners() {
-            const titleInput = document.getElementById('title');
-            const saveDraftBtn = document.getElementById('saveDraftBtn');
-            const publishBtn = document.getElementById('publishBtn');
-            const editForm = document.getElementById('editForm');
+        // =====================================================================
+        // 字符计数
+        // =====================================================================
 
-            // 鏍囬杈撳叆鍙樺寲鏃舵鏌ユ槸鍚﹀彲浠ユ彁浜?            titleInput.addEventListener('input', checkCanSubmit);
+        summaryTextarea.addEventListener('input', () => {
+            summaryCount.textContent = summaryTextarea.value.length;
+        });
 
-            // 淇濆瓨鑽夌
-            editForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                handleSubmit(false);
-            });
+        // =====================================================================
+        // 表单验证
+        // =====================================================================
 
-            // 鍙戝竷鏂囩珷
-            publishBtn.addEventListener('click', function() {
-                handleSubmit(true);
-            });
-        }
-
-        // 妫€鏌ユ槸鍚﹀彲浠ユ彁浜?        function checkCanSubmit() {
+        function validateForm() {
+            let isValid = true;
+            
+            // 验证标题
             const title = document.getElementById('title').value.trim();
-            const content = quillEditor.root.innerHTML;
-            const plainContent = quillEditor.getText().trim();
-            const canSubmit = title && plainContent.length >= 10;
-            
-            document.getElementById('saveDraftBtn').disabled = !canSubmit || saving;
-            document.getElementById('publishBtn').disabled = !canSubmit || saving;
+            const titleError = document.getElementById('titleError');
+            if (!title) {
+                titleError.textContent = '请输入文章标题';
+                titleError.classList.add('show');
+                isValid = false;
+            } else if (title.length < 5) {
+                titleError.textContent = '标题至少需要 5 个字符';
+                titleError.classList.add('show');
+                isValid = false;
+            } else {
+                titleError.classList.remove('show');
+            }
+
+            // 验证摘要
+            const summary = summaryTextarea.value.trim();
+            const summaryError = document.getElementById('summaryError');
+            if (!summary) {
+                summaryError.textContent = '请输入文章摘要';
+                summaryError.classList.add('show');
+                isValid = false;
+            } else if (summary.length < 20) {
+                summaryError.textContent = '摘要至少需要 20 个字符';
+                summaryError.classList.add('show');
+                isValid = false;
+            } else {
+                summaryError.classList.remove('show');
+            }
+
+            // 验证内容
+            const content = quillEditor.getText().trim();
+            const contentError = document.getElementById('contentError');
+            if (!content || content.length < 50) {
+                contentError.textContent = '正文至少需要 50 个字符';
+                contentError.classList.add('show');
+                isValid = false;
+            } else {
+                contentError.classList.remove('show');
+            }
+
+            return isValid;
         }
 
-        // 鑾峰彇鏂囩珷鏁版嵁
-        function fetchArticle() {
-            loading = true;
-            updateUI();
+        // 清除错误提示
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+            });
+            errorAlert.classList.remove('show');
+        }
+
+        // 检查是否可以提交
+        function checkCanSubmit() {
+            const title = document.getElementById('title').value.trim();
+            const content = quillEditor.getText().trim();
+            const canSubmit = title && content.length >= 10 && !isSubmitting;
             
-            // 妯℃嫙API璇锋眰寤惰繜
-            setTimeout(() => {
-                try {
-                    // 妯℃嫙鑾峰彇鏂囩珷
-                    article = mockArticle;
-                    
-                    // 妫€鏌ユ潈闄?                    const hasPermission = article.author.id === mockUser.id || mockUser.role === 'admin';
-                    
-                    if (!hasPermission) {
-                        // 娌℃湁鏉冮檺锛岄噸瀹氬悜鍒版枃绔犺鎯呴〉
-                        window.location.href = `article-detail.html?id=${article.id}`;
-                        return;
-                    }
-                    
-                    // 濉厖琛ㄥ崟鏁版嵁
-                    fillFormData();
-                } catch (err) {
-                    console.error('Failed to fetch article:', err);
-                    error = '鍔犺浇鏂囩珷澶辫触';
-                } finally {
-                    loading = false;
-                    updateUI();
+            saveDraftBtn.disabled = !canSubmit;
+            publishBtn.disabled = !canSubmit;
+        }
+
+        // 实时验证输入
+        document.getElementById('title').addEventListener('blur', function() {
+            const title = this.value.trim();
+            const titleError = document.getElementById('titleError');
+            if (title && title.length < 5) {
+                titleError.textContent = '标题至少需要 5 个字符';
+                titleError.classList.add('show');
+            } else {
+                titleError.classList.remove('show');
+            }
+        });
+
+        summaryTextarea.addEventListener('blur', function() {
+            const summary = this.value.trim();
+            const summaryError = document.getElementById('summaryError');
+            if (summary && summary.length < 20) {
+                summaryError.textContent = '摘要至少需要 20 个字符';
+                summaryError.classList.add('show');
+            } else {
+                summaryError.classList.remove('show');
+            }
+        });
+
+        // =====================================================================
+        // 获取文章数据
+        // =====================================================================
+
+        async function fetchArticle() {
+            try {
+                // 从 URL 获取文章 ID
+                const urlParams = new URLSearchParams(window.location.search);
+                articleId = urlParams.get('id');
+                
+                if (!articleId) {
+                    showError('文章 ID 无效');
+                    return;
                 }
-            }, 800);
+
+                // 使用标准化的 API 调用
+                const result = await callAPI('GET', `/articles/${articleId}`, {
+                    requiresAuth: false
+                });
+
+                article = result.data || result;
+                
+                // 检查权限
+                const auth = authManager.getAuth();
+                if (!auth.user) {
+                    showError('请先登录');
+                    setTimeout(() => {
+                        window.location.href = `login.html?redirect=${encodeURIComponent(window.location.pathname)}`;
+                    }, 2000);
+                    return;
+                }
+
+                const isAuthor = article.author?.id === auth.user.id || article.author?.username === auth.user.username;
+                const isAdmin = auth.user.role === 'admin';
+
+                if (!isAuthor && !isAdmin) {
+                    showError('您没有权限编辑这篇文章');
+                    setTimeout(() => {
+                        window.location.href = `article-detail.html?id=${articleId}`;
+                    }, 2000);
+                    return;
+                }
+
+                // 填充表单数据
+                fillFormData();
+                
+                // 显示表单
+                loadingState.style.display = 'none';
+                articleForm.style.display = 'block';
+                
+                // 检查是否可以提交
+                checkCanSubmit();
+
+            } catch (error) {
+                const errorInfo = handleAPIError(error);
+                showError('加载文章失败：' + errorInfo.message);
+                
+                if (typeof notificationManager !== 'undefined') {
+                    notificationManager.error(errorInfo.message);
+                }
+            } finally {
+                isLoading = false;
+            }
         }
 
-        // 濉厖琛ㄥ崟鏁版嵁
+        // 填充表单数据
         function fillFormData() {
-            document.getElementById('articleTitle').textContent = `缂栬緫鏂囩珷: ${article.title}`;
-            document.getElementById('title').value = article.title;
-            document.getElementById('summary').value = article.summary;
+            document.getElementById('title').value = article.title || '';
+            document.getElementById('summary').value = article.excerpt || article.summary || '';
+            summaryCount.textContent = (article.excerpt || article.summary || '').length;
             
-            // 璁剧疆瀵屾枃鏈紪杈戝櫒鍐呭
-            quillEditor.root.innerHTML = article.content;
+            // 设置富文本编辑器内容
+            const content = article.content || '';
+            quillEditor.root.innerHTML = content;
             updateContentHidden();
             
-            // 璁剧疆鏍囩
-            const tagNames = article.tags.map(tag => tag.name).join(', ');
-            document.getElementById('tags').value = tagNames;
-            
-            // 妫€鏌ユ槸鍚﹀彲浠ユ彁浜?            checkCanSubmit();
-        }
-
-        // 鏇存柊UI
-        function updateUI() {
-            const loadingElement = document.getElementById('loading');
-            const articleFormElement = document.getElementById('articleForm');
-            const errorElement = document.getElementById('error');
-            
-            if (loading) {
-                loadingElement.style.display = 'block';
-                articleFormElement.style.display = 'none';
-            } else if (error) {
-                loadingElement.style.display = 'none';
-                articleFormElement.style.display = 'block';
-                errorElement.textContent = error;
-                errorElement.style.display = 'block';
-            } else {
-                loadingElement.style.display = 'none';
-                articleFormElement.style.display = 'block';
-                errorElement.style.display = 'none';
+            // 设置分类
+            if (article.category?.id || article.category_id) {
+                document.getElementById('category').value = article.category?.id || article.category_id;
             }
+            
+            // 设置状态
+            document.getElementById('status').value = article.status || 'published';
+            
+            // 设置标签
+            if (article.tags && Array.isArray(article.tags)) {
+                const tagNames = article.tags.map(tag => typeof tag === 'string' ? tag : tag.name).join(', ');
+                document.getElementById('tags').value = tagNames;
+            }
+            
+            // 更新页面标题
+            document.querySelector('.page-title').textContent = `编辑文章：${article.title}`;
         }
 
-        // 澶勭悊鎻愪氦
-        function handleSubmit(publish = false) {
-            const title = document.getElementById('title').value.trim();
-            const summary = document.getElementById('summary').value.trim();
-            const content = document.getElementById('contentHidden').value;
-            const tagNames = document.getElementById('tags').value;
-            
-            // 琛ㄥ崟楠岃瘉
-            if (!title || quillEditor.getText().trim().length < 10) {
+        // 显示错误信息
+        function showError(message) {
+            errorAlert.textContent = message;
+            errorAlert.classList.add('show');
+            loadingState.style.display = 'none';
+        }
+
+        // =====================================================================
+        // 表单提交 - 使用标准化 API 调用
+        // =====================================================================
+
+        async function handleSubmit(isDraft = false) {
+            if (isSubmitting) {
                 return;
             }
-            
-            saving = true;
-            error = null;
-            updateUI();
-            
-            // 鏇存柊鎸夐挳鐘舵€?            document.getElementById('saveDraftBtn').textContent = '淇濆瓨涓?..';
-            document.getElementById('publishBtn').textContent = '鍙戝竷涓?..';
-            
-            // 妯℃嫙API璇锋眰寤惰繜
-            setTimeout(() => {
-                try {
-                    // 妯℃嫙API鍝嶅簲
-                    console.log('淇濆瓨鏂囩珷:', {
-                        id: article.id,
-                        title,
-                        summary,
-                        content,
-                        tagNames: tagNames.split(',').map(t => t.trim()).filter(Boolean),
-                        status: publish ? 'published' : 'draft'
-                    });
-                    
-                    // 淇濆瓨鎴愬姛锛岄噸瀹氬悜鍒版枃绔犺鎯呴〉
-                    window.location.href = `article-detail.html?id=${article.id}`;
-                } catch (err) {
-                    console.error('Failed to save article:', err);
-                    error = '淇濆瓨鏂囩珷澶辫触锛岃閲嶈瘯';
-                } finally {
-                    saving = false;
-                    updateUI();
-                    
-                    // 鎭㈠鎸夐挳鏂囨湰
-                    document.getElementById('saveDraftBtn').textContent = '淇濆瓨鑽夌';
-                    document.getElementById('publishBtn').textContent = '鍙戝竷';
+
+            // 清除之前的错误
+            clearErrors();
+
+            // 验证表单
+            if (!validateForm()) {
+                if (typeof notificationManager !== 'undefined') {
+                    notificationManager.error('请修正表单中的错误');
                 }
-            }, 1500);
+                return;
+            }
+
+            // 获取表单数据
+            const formData = {
+                title: document.getElementById('title').value.trim(),
+                content: document.getElementById('contentHidden')?.value || quillEditor.root.innerHTML,
+                excerpt: summaryTextarea.value.trim(),
+                category_id: document.getElementById('category').value || null,
+                status: isDraft ? 'draft' : (document.getElementById('status').value || 'published'),
+                tags: document.getElementById('tags').value
+                    .split(',')
+                    .map(t => t.trim())
+                    .filter(t => t.length > 0)
+            };
+
+            // 开始提交
+            isSubmitting = true;
+            saveDraftBtn.disabled = true;
+            publishBtn.disabled = true;
+            loadingOverlay.classList.add('show');
+
+            try {
+                // 使用标准化的 API 调用
+                const result = await callAPI('PUT', `/articles/${articleId}`, {
+                    body: formData,
+                    requiresAuth: true
+                });
+
+                // 提交成功
+                if (typeof notificationManager !== 'undefined') {
+                    notificationManager.success(isDraft ? '草稿保存成功！' : '文章更新成功！');
+                } else {
+                    alert(isDraft ? '草稿保存成功！' : '文章更新成功！');
+                }
+
+                // 延迟跳转到文章详情页
+                setTimeout(() => {
+                    window.location.href = `article-detail.html?id=${articleId}`;
+                }, 1000);
+
+            } catch (error) {
+                // 处理错误
+                const errorInfo = handleAPIError(error);
+                
+                if (typeof notificationManager !== 'undefined') {
+                    notificationManager.error(errorInfo.message);
+                } else {
+                    alert((isDraft ? '保存失败：' : '更新失败：') + errorInfo.message);
+                }
+
+                // 如果是认证错误，跳转到登录页
+                if (errorInfo.status === 401 || errorInfo.errorCode === 'AUTH_REQUIRED') {
+                    setTimeout(() => {
+                        window.location.href = `login.html?redirect=${encodeURIComponent(window.location.pathname)}`;
+                    }, 2000);
+                }
+
+            } finally {
+                // 恢复按钮状态
+                isSubmitting = false;
+                checkCanSubmit();
+                loadingOverlay.classList.remove('show');
+            }
         }
+
+        // =====================================================================
+        // 事件监听
+        // =====================================================================
+
+        // 保存草稿
+        saveDraftBtn.addEventListener('click', () => {
+            handleSubmit(true);
+        });
+
+        // 发布/更新文章
+        articleForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleSubmit(false);
+        });
+
+        // 标题输入变化时检查是否可以提交
+        document.getElementById('title').addEventListener('input', checkCanSubmit);
+
+        // =====================================================================
+        // 页面加载时初始化
+        // =====================================================================
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 初始化编辑器
+            initQuillEditor();
+            
+            // 获取文章数据
+            await fetchArticle();
+        });
     </script>
 </body>
 </html>

@@ -1,21 +1,22 @@
-﻿# Data Model: Wiki Platform
+﻿﻿﻿﻿﻿﻿# Data Model: Wiki Platform
 
 ## Entity: User
 **Description**: Represents a registered member with profile information, authentication credentials, and social connections
 
 **Fields**:
 - `id` (UUID): Unique identifier for the user
-- `username` (String, unique): Unique username for login/display
-- `email` (String, unique): User's email address
-- `password_hash` (String): Hashed password for authentication
-- `display_name` (String): Name displayed publicly
+- `username` (String(30), unique): Unique username for login/display
+- `email` (String(255), unique): User's email address
+- `password_hash` (String(255)): Hashed password for authentication
+- `display_name` (String(50), nullable): Name displayed publicly
 - `bio` (Text, nullable): User biography/description
-- `avatar_url` (String, nullable): URL to user's profile picture
+- `avatar_url` (String(500), nullable): URL to user's profile picture
 - `created_at` (DateTime): Account creation timestamp
 - `updated_at` (DateTime): Last profile update timestamp
 - `is_active` (Boolean): Account status flag
-- `role` (Enum: user, moderator, admin): User permission level
-- `contribution_count` (Integer): Number of articles contributed
+- `role` (String(20), default: "user"): User permission level (user, moderator, admin)
+- `level` (Integer, default: 1): User Level (1-10, for v1 integration)
+- `contribution_count` (Integer, default: 0): Number of articles contributed
 
 **Relationships**:
 - One-to-many with Article (user creates articles)
@@ -28,17 +29,18 @@
 
 **Fields**:
 - `id` (UUID): Unique identifier for the article
-- `title` (String): Title of the article
-- `slug` (String, unique): URL-friendly identifier
+- `title` (String(200)): Title of the article
+- `slug` (String(250), unique): URL-friendly identifier
 - `content` (Text): Main content of the article
-- `summary` (Text): Brief summary/description
-- `status` (Enum: draft, published, archived): Publication status
+- `summary` (Text, nullable): Brief summary/description
+- `status` (String(20), default: "draft"): Publication status (draft, published, archived)
 - `author_id` (UUID): Reference to the user who created the article
 - `published_at` (DateTime, nullable): Publication timestamp
 - `created_at` (DateTime): Creation timestamp
 - `updated_at` (DateTime): Last update timestamp
-- `view_count` (Integer): Number of times viewed
-- `is_featured` (Boolean): Flag for featured articles
+- `view_count` (Integer, default: 0): Number of times viewed
+- `is_featured` (Boolean, default: false): Flag for featured articles
+- `is_approved` (Boolean, default: true): Moderation status flag
 
 **Relationships**:
 - Many-to-one with User (author relationship)
@@ -54,8 +56,8 @@
 - `id` (UUID): Unique identifier for the connection
 - `follower_id` (UUID): ID of the user initiating the connection
 - `followed_id` (UUID): ID of the user being connected to
-- `status` (Enum: pending, accepted, blocked): Connection status
-- `connection_type` (Enum: friend, follow): Type of connection
+- `status` (String(20), default: "pending"): Connection status (pending, accepted, blocked)
+- `connection_type` (String(20)): Type of connection (friend, follow)
 - `created_at` (DateTime): Connection request timestamp
 - `accepted_at` (DateTime, nullable): Connection acceptance timestamp
 
@@ -68,13 +70,13 @@
 
 **Fields**:
 - `id` (UUID): Unique identifier for the category
-- `name` (String): Name of the category
-- `slug` (String, unique): URL-friendly identifier
+- `name` (String(100), unique): Name of the category
+- `slug` (String(120), unique): URL-friendly identifier
 - `description` (Text, nullable): Detailed description of the category
 - `parent_id` (UUID, nullable): Reference to parent category for hierarchy
 - `created_at` (DateTime): Creation timestamp
 - `updated_at` (DateTime): Last update timestamp
-- `article_count` (Integer): Number of articles in this category
+- `article_count` (Integer, default: 0): Number of articles in this category
 
 **Relationships**:
 - Self-referencing many-to-one (parent category)
@@ -91,7 +93,7 @@
 - `parent_id` (UUID, nullable): Reference to parent comment for threading
 - `created_at` (DateTime): Creation timestamp
 - `updated_at` (DateTime): Last update timestamp
-- `is_approved` (Boolean): Moderation status
+- `is_approved` (Boolean, default: true): Moderation status
 
 **Relationships**:
 - Many-to-one with User (author relationship)
@@ -105,7 +107,7 @@
 - `id` (UUID): Unique identifier for the revision
 - `article_id` (UUID): Reference to the article being revised
 - `author_id` (UUID): Reference to the user who made the revision
-- `title` (String): Title at the time of revision
+- `title` (String(200)): Title at the time of revision
 - `content` (Text): Content at the time of revision
 - `change_summary` (Text, nullable): Summary of changes made
 - `revision_number` (Integer): Sequential revision number
@@ -120,10 +122,10 @@
 
 **Fields**:
 - `id` (UUID): Unique identifier for the tag
-- `name` (String, unique): Name of the tag
-- `slug` (String, unique): URL-friendly identifier
+- `name` (String(50), unique): Name of the tag
+- `slug` (String(60), unique): URL-friendly identifier
 - `created_at` (DateTime): Creation timestamp
-- `usage_count` (Integer): Number of times this tag is used
+- `usage_count` (Integer, default: 0): Number of times this tag is used
 
 **Relationships**:
 - Many-to-many with Article through ArticleTag (articles tagged with this tag)
@@ -145,6 +147,96 @@
 - `article_id` (UUID): Reference to the article
 - `tag_id` (UUID): Reference to the tag
 - `assigned_at` (DateTime): Timestamp when tag was assigned
+
+## Additional Entities
+
+### Entity: AuditLog
+**Description**: Represents audit logs for tracking system activities and user actions
+
+**Fields**:
+- `id` (UUID): Unique identifier for the audit log
+- `operator_id` (UUID): Reference to the user who performed the action
+- `operator_username` (String(30)): Username of the user who performed the action
+- `action` (String(50)): Type of action performed
+- `target_type` (String(50)): Type of entity affected by the action
+- `target_id` (UUID, nullable): ID of the entity affected by the action
+- `target_info` (Text, nullable): Additional information about the target entity
+- `details` (Text, nullable): Additional details about the action
+- `ip_address` (String(45), nullable): IP address of the user who performed the action
+- `user_agent` (String(500), nullable): User agent string from the client
+- `status` (String(20), default: "success"): Status of the action (success, failed)
+- `error_message` (Text, nullable): Error message if the action failed
+- `created_at` (DateTime): Timestamp when the action was performed
+
+### Entity: Station (Metro Integration)
+**Description**: Represents a metro station in the metro map system
+
+**Fields**:
+- `id` (UUID): Unique identifier for the station
+- `name` (String): Name of the station
+- `slug` (String, unique): URL-friendly identifier
+- `description` (Text, nullable): Description of the station
+- `line_id` (UUID, nullable): Reference to the line this station belongs to
+- `position_x` (Integer): X coordinate on the metro map
+- `position_y` (Integer): Y coordinate on the metro map
+- `created_at` (DateTime): Creation timestamp
+- `updated_at` (DateTime): Last update timestamp
+
+### Entity: Line (Metro Integration)
+**Description**: Represents a metro line in the metro map system
+
+**Fields**:
+- `id` (UUID): Unique identifier for the line
+- `name` (String): Name of the line
+- `color` (String): Color of the line in hex format
+- `description` (Text, nullable): Description of the line
+- `created_at` (DateTime): Creation timestamp
+- `updated_at` (DateTime): Last update timestamp
+
+### Entity: StationLineJunction (Metro Integration)
+**Description**: Association table between stations and lines (many-to-many relationship)
+
+**Fields**:
+- `station_id` (UUID): Reference to the station
+- `line_id` (UUID): Reference to the line
+- `order` (Integer): Order of the station in the line
+- `created_at` (DateTime): Creation timestamp
+
+### Entity: Track (Music Integration)
+**Description**: Represents a music track in the music player system
+
+**Fields**:
+- `id` (UUID): Unique identifier for the track
+- `title` (String): Title of the track
+- `artist_id` (UUID): Reference to the artist who created the track
+- `album_id` (UUID, nullable): Reference to the album this track belongs to
+- `duration` (Integer): Duration of the track in seconds
+- `file_path` (String): Path to the audio file
+- `play_count` (Integer, default: 0): Number of times this track has been played
+- `created_at` (DateTime): Creation timestamp
+- `updated_at` (DateTime): Last update timestamp
+
+### Entity: Album (Music Integration)
+**Description**: Represents a music album in the music player system
+
+**Fields**:
+- `id` (UUID): Unique identifier for the album
+- `title` (String): Title of the album
+- `artist_id` (UUID): Reference to the artist who created the album
+- `release_date` (DateTime, nullable): Release date of the album
+- `cover_path` (String, nullable): Path to the album cover image
+- `created_at` (DateTime): Creation timestamp
+- `updated_at` (DateTime): Last update timestamp
+
+### Entity: Artist (Music Integration)
+**Description**: Represents a music artist in the music player system
+
+**Fields**:
+- `id` (UUID): Unique identifier for the artist
+- `name` (String): Name of the artist
+- `description` (Text, nullable): Description of the artist
+- `created_at` (DateTime): Creation timestamp
+- `updated_at` (DateTime): Last update timestamp
 
 ## Validation Rules
 

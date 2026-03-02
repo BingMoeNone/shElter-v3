@@ -8,5 +8,8 @@ from src.api.connections import router as connections_router
 from src.api.search import router as search_router
 from src.api.media import router as media_router
 from src.api.moderation import router as moderation_router
+from src.api.admin import router as admin_router
+from src.api.metro import router as metro_router
+from src.api.music import router as music_router
 
 router = auth_router

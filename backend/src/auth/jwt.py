@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+JWT认证相关功能
+"""
 from datetime import datetime, timedelta
 from typing import Optional
 import os
@@ -16,7 +20,15 @@ security = HTTPBearer()
 
 
 def _read_key_file(file_path: str) -> str:
-    """璇诲彇瀵嗛挜鏂囦欢"""
+    """
+    读取密钥文件
+    
+    Args:
+        file_path: 密钥文件路径
+    
+    Returns:
+        str: 密钥内容
+    """
     try:
         current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         fixed_path = os.path.join(current_dir, file_path.replace('/', os.sep))
@@ -41,21 +53,36 @@ def _read_key_file(file_path: str) -> str:
 
 
 def _get_private_key() -> str:
-    """鑾峰彇RSA绉侀挜"""
+    """
+    获取RSA私钥
+    
+    Returns:
+        str: 私钥内容
+    """
     if settings.ALGORITHM.startswith("HS"):
         return settings.SECRET_KEY
     return _read_key_file(settings.PRIVATE_KEY_PATH)
 
 
 def _get_public_key() -> str:
-    """鑾峰彇RSA鍏挜"""
+    """
+    获取RSA公钥
+    
+    Returns:
+        str: 公钥内容
+    """
     if settings.ALGORITHM.startswith("HS"):
         return settings.SECRET_KEY
     return _read_key_file(settings.PUBLIC_KEY_PATH)
 
 
 def _get_signing_key() -> str:
-    """鑾峰彇绛惧悕瀵嗛挜"""
+    """
+    获取签名密钥
+    
+    Returns:
+        str: 签名密钥
+    """
     algorithm = settings.ALGORITHM.upper()
     if algorithm.startswith("HS"):
         if not settings.SECRET_KEY:
@@ -68,7 +95,12 @@ def _get_signing_key() -> str:
 
 
 def _get_verification_key() -> str:
-    """鑾峰彇楠岃瘉瀵嗛挜"""
+    """
+    获取验证密钥
+    
+    Returns:
+        str: 验证密钥
+    """
     algorithm = settings.ALGORITHM.upper()
     if algorithm.startswith("HS"):
         if not settings.SECRET_KEY:
@@ -81,14 +113,31 @@ def _get_verification_key() -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """楠岃瘉瀵嗙爜"""
+    """
+    验证密码
+    
+    Args:
+        plain_password: 明文密码
+        hashed_password: 哈希密码
+    
+    Returns:
+        bool: 密码是否正确
+    """
     password_bytes = plain_password.encode('utf-8')
     hashed_bytes = hashed_password.encode('utf-8')
     return bcrypt.checkpw(password_bytes, hashed_bytes)
 
 
 def get_password_hash(password: str) -> str:
-    """鐢熸垚瀵嗙爜鍝堝笇"""
+    """
+    生成密码哈希
+    
+    Args:
+        password: 明文密码
+    
+    Returns:
+        str: 密码哈希
+    """
     password_bytes = password.encode('utf-8')
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(password_bytes, salt)
@@ -96,7 +145,16 @@ def get_password_hash(password: str) -> str:
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """鍒涘缓璁块棶浠ょ墝"""
+    """
+    创建访问令牌
+    
+    Args:
+        data: 要编码的数据
+        expires_delta: 过期时间
+    
+    Returns:
+        str: JWT令牌
+    """
     to_encode = data.copy()
     now = datetime.utcnow()
     
@@ -120,7 +178,16 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
 
 def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """鍒涘缓鍒锋柊浠ょ墝"""
+    """
+    创建刷新令牌
+    
+    Args:
+        data: 要编码的数据
+        expires_delta: 过期时间
+    
+    Returns:
+        str: JWT令牌
+    """
     to_encode = data.copy()
     now = datetime.utcnow()
     
@@ -144,7 +211,16 @@ def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None) 
 
 
 def decode_token(token: str, token_type: str = "access") -> Optional[dict]:
-    """瑙ｇ爜浠ょ墝"""
+    """
+    解码令牌
+    
+    Args:
+        token: JWT令牌
+        token_type: 令牌类型
+    
+    Returns:
+        Optional[dict]: 解码后的payload
+    """
     try:
         payload = jwt.decode(
             token,
@@ -172,10 +248,19 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db),
 ) -> User:
-    """鑾峰彇褰撳墠鐢ㄦ埛"""
+    """
+    获取当前用户
+    
+    Args:
+        credentials: HTTP授权凭证
+        db: 数据库会话
+    
+    Returns:
+        User: 当前用户对象
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="鏃犳晥鐨勮闂护鐗?",
+        detail="无效的访问令牌",
         headers={"WWW-Authenticate": "Bearer"},
     )
     
@@ -189,33 +274,49 @@ async def get_current_user(
     if user_id is None:
         raise credentials_exception
     
-    user = db.query(User).filter(User.id == int(user_id)).first()
+    user = db.query(User).filter(User.id == user_id).first()
     if user is None:
         raise credentials_exception
     
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
-            detail="鐢ㄦ埛宸茶绂佺敤"
+            detail="用户已被禁用"
         )
     
     return user
 
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
-    """鑾峰彇褰撳墠娲昏穬鐢ㄦ埛"""
+    """
+    获取当前活跃用户
+    
+    Args:
+        current_user: 当前用户
+    
+    Returns:
+        User: 当前活跃用户
+    """
     if not current_user.is_active:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="鐢ㄦ埛宸茬鐢?")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="用户已被禁用")
     return current_user
 
 
 def require_role(roles: list[str]):
-    """瑙掕壊鏉冮檺瑁呴グ鍣?"""
+    """
+    角色权限装饰器
+    
+    Args:
+        roles: 允许的角色列表
+    
+    Returns:
+        callable: 权限检查函数
+    """
     async def role_checker(current_user: User = Depends(get_current_user)) -> User:
         if current_user.role not in roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="鏉冮檺涓嶈冻"
+                detail="权限不足"
             )
         return current_user
     return role_checker

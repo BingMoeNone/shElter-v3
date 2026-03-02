@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,18 +6,61 @@
     <title>Wiki Platform - Articles</title>
     <script src="utils.js"></script>
     <style>
-        /* Global Styles */
+        /* Wiki Platform V3 统一样式 - 优化后的现代深色主题 */
         :root {
-            --color-primary: #00ff88;
-            --color-secondary: #00d4ff;
-            --color-accent: #ff6b6b;
-            --color-text: #ffffff;
-            --color-text-muted: #aaaaaa;
-            --color-background: #0a0a0a;
-            --color-surface: #1a1a1a;
-            --color-border: #333333;
-            --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            --font-family-heading: 'Arial', sans-serif;
+            /* 主色调 - 使用更亮的蓝色，提高对比度和可读性 */
+            --color-primary: #3B82F6;
+            --color-primary-dark: #2563EB;
+            --color-primary-light: #60A5FA;
+            --color-primary-soft: rgba(59, 130, 246, 0.15);
+            
+            /* 辅助色 - 紫色系 */
+            --color-secondary: #8B5CF6;
+            --color-secondary-dark: #7C3AED;
+            --color-secondary-light: #A78BFA;
+            --color-secondary-soft: rgba(139, 92, 246, 0.15);
+            
+            /* 强调色 - 绿色系 */
+            --color-accent: #10B981;
+            --color-accent-dark: #059669;
+            --color-accent-light: #34D399;
+            --color-accent-soft: rgba(16, 185, 129, 0.15);
+            
+            /* 语义色 */
+            --color-success: #10B981;
+            --color-success-soft: rgba(16, 185, 129, 0.1);
+            --color-danger: #EF4444;
+            --color-danger-soft: rgba(239, 68, 68, 0.1);
+            --color-warning: #F59E0B;
+            --color-warning-soft: rgba(245, 158, 11, 0.1);
+            --color-info: #3B82F6;
+            --color-info-soft: rgba(59, 130, 246, 0.1);
+            
+            /* 文字颜色 - 提高对比度 */
+            --color-text: #F1F5F9;
+            --color-text-muted: #94A3B8;
+            --color-text-dark: #64748B;
+            --color-text-inverse: #0F172A;
+            
+            /* 背景颜色 - 使用蓝灰色调，更现代 */
+            --color-background: #0F172A;
+            --color-surface: #1E293B;
+            --color-surface-hover: #334155;
+            --color-surface-active: #475569;
+            
+            /* 边框颜色 */
+            --color-border: #334155;
+            --color-border-light: #475569;
+            --color-border-focus: #3B82F6;
+            
+            /* 阴影颜色 */
+            --shadow-color: rgba(15, 23, 42, 0.5);
+            --shadow-color-light: rgba(59, 130, 246, 0.2);
+            
+            /* 渐变背景 */
+            --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+            --gradient-secondary: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+            --gradient-dark: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
         }
 
         * {
@@ -36,9 +79,10 @@
         /* Navigation */
         nav {
             background: var(--color-surface);
-            border-bottom: 1px solid var(--color-primary);
+            border-bottom: 1px solid var(--color-border);
             padding: 1rem 0;
             margin-bottom: 2rem;
+            box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .nav-container {
@@ -51,10 +95,19 @@
         }
 
         .nav-logo {
-            color: var(--color-primary);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-size: 1.5rem;
-            font-weight: bold;
+            font-weight: 700;
             text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-logo:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
         }
 
         .nav-links {
@@ -63,14 +116,17 @@
         }
 
         .nav-link {
-            color: var(--color-text);
+            color: var(--color-text-muted);
             text-decoration: none;
-            transition: all 0.3s;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
-        .nav-link:hover {
+        .nav-link:hover, .nav-link.active {
             color: var(--color-primary);
-            text-shadow: 0 0 5px var(--color-primary);
+            background: var(--color-primary-soft);
         }
 
         .nav-actions {
@@ -79,24 +135,41 @@
         }
 
         .btn {
-            padding: 8px 16px;
-            border: 1px solid var(--color-primary);
-            background: rgba(0, 255, 157, 0.1);
-            color: var(--color-primary);
+            padding: 10px 20px;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            color: var(--color-text);
             text-decoration: none;
-            border-radius: 4px;
-            transition: all 0.3s;
+            border-radius: 8px;
+            transition: all 0.2s ease;
             cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
 
         .btn:hover {
             background: var(--color-primary);
-            color: #000;
+            border-color: var(--color-primary);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-color-light);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
         }
 
         /* Articles Page Styles */
         .articles-page {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -112,61 +185,83 @@
 
         .page-header h1 {
             margin: 0;
-            color: var(--color-primary);
-            text-shadow: 0 0 10px var(--color-primary);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 2rem;
         }
 
         .search-section {
             display: flex;
             gap: 12px;
-            max-width: 500px;
+            max-width: 600px;
             margin-bottom: 24px;
         }
 
         .search-section input {
             flex: 1;
             padding: 12px 16px;
-            border: 1px solid var(--color-primary);
-            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--color-border);
+            background: var(--color-background);
             color: var(--color-text);
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
         }
 
         .search-section input:focus {
             outline: none;
-            box-shadow: 0 0 10px var(--color-primary);
+            border-color: var(--color-border-focus);
+            box-shadow: 0 0 0 3px var(--color-primary-soft);
+        }
+
+        .search-section input::placeholder {
+            color: var(--color-text-muted);
         }
 
         .search-section button {
             padding: 12px 24px;
-            background: rgba(0, 255, 157, 0.1);
+            background: var(--color-primary);
             border: 1px solid var(--color-primary);
-            color: var(--color-primary);
-            border-radius: 4px;
+            color: #fff;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
         .search-section button:hover {
-            background: var(--color-primary);
-            color: #000;
+            background: var(--color-primary-dark);
+            border-color: var(--color-primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-color-light);
         }
 
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 60px 20px;
             color: var(--color-text-muted);
-            border: 1px dashed var(--color-text-muted);
-            border-radius: 8px;
+            border: 2px dashed var(--color-border);
+            border-radius: 12px;
+            background: var(--color-surface);
+            font-size: 1rem;
         }
 
         .no-articles {
             text-align: center;
-            padding: 40px;
+            padding: 60px 20px;
             color: var(--color-text-muted);
-            border: 1px dashed var(--color-text-muted);
-            border-radius: 8px;
+            border: 2px dashed var(--color-border);
+            border-radius: 12px;
+            background: var(--color-surface);
+        }
+
+        .no-articles h3 {
+            margin-bottom: 8px;
+            color: var(--color-text);
+            font-size: 1.2rem;
         }
 
         .articles-list {
@@ -178,36 +273,58 @@
         .article-card {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
-            border-radius: 8px;
-            padding: 20px;
-            transition: all 0.3s;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px var(--shadow-color);
         }
 
         .article-card:hover {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
+            border-color: var(--color-border-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow-color);
         }
 
         .article-title {
             font-size: 1.5rem;
             margin-bottom: 8px;
-            color: var(--color-primary);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            line-height: 1.3;
         }
 
         .article-title:hover {
-            text-shadow: 0 0 5px var(--color-primary);
+            opacity: 0.9;
         }
 
         .article-meta {
             font-size: 0.9rem;
             color: var(--color-text-muted);
             margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .article-meta a {
+            color: var(--color-primary-light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .article-meta a:hover {
+            text-decoration: underline;
         }
 
         .article-summary {
             margin-bottom: 16px;
             color: var(--color-text);
+            line-height: 1.6;
         }
 
         .article-tags {
@@ -217,17 +334,49 @@
         }
 
         .tag {
-            background: rgba(0, 255, 157, 0.1);
+            background: var(--color-primary-soft);
             color: var(--color-primary);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 0.85rem;
             text-decoration: none;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            border: 1px solid rgba(59, 130, 246, 0.2);
         }
 
         .tag:hover {
             background: var(--color-primary);
-            color: #000;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-color-light);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--color-primary);
+        }
+
+        .breadcrumb span {
+            color: var(--color-text-muted);
+            margin: 0 8px;
+        }
+
+        /* Auth indicator */
+        .auth-indicator {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
         }
 
         /* Pagination */
@@ -240,27 +389,33 @@
         }
 
         .pagination button {
-            padding: 8px 16px;
-            background: rgba(0, 255, 157, 0.1);
-            border: 1px solid var(--color-primary);
-            color: var(--color-primary);
-            border-radius: 4px;
+            padding: 10px 20px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
         .pagination button:hover:not(:disabled) {
             background: var(--color-primary);
-            color: #000;
+            border-color: var(--color-primary);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-color-light);
         }
 
         .pagination button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
         }
 
         .pagination span {
             color: var(--color-text-muted);
+            font-size: 0.95rem;
         }
     </style>
 </head>
@@ -270,15 +425,15 @@
         <div class="nav-container">
             <a href="index.html" class="nav-logo">Wiki Platform</a>
             <div class="nav-links">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="articles.html" class="nav-link">Articles</a>
-                <a href="categories.html" class="nav-link">Categories</a>
-                <a href="metro.html" class="nav-link">Metro</a>
-                <a href="music.html" class="nav-link">Music</a>
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="articles.html" class="nav-link active">文章</a>
+                <a href="categories.html" class="nav-link">分类</a>
+                <a href="metro.html" class="nav-link">地铁图</a>
+                <a href="music.html" class="nav-link">音乐</a>
             </div>
             <div class="nav-actions">
-                <a href="login.html" class="btn">Login</a>
-                <a href="register.html" class="btn">Register</a>
+                <a href="login.html" class="btn">登录</a>
+                <a href="register.html" class="btn btn-primary">注册</a>
             </div>
         </div>
     </nav>
@@ -286,7 +441,9 @@
     <!-- Articles Page Content -->
     <div class="articles-page">
         <!-- 面包屑导航 -->
-        <div id="breadcrumb" class="breadcrumb"></div>
+        <div id="breadcrumb" class="breadcrumb">
+            <a href="index.html">首页</a> <span>/</span> <span>文章列表</span>
+        </div>
         
         <!-- 登录状态指示器 -->
         <div style="text-align: right; margin-bottom: 16px;">
@@ -294,21 +451,22 @@
         </div>
         
         <div class="page-header">
-            <h1>Articles</h1>
-            <a href="create-article.html" class="btn">Create Article</a>
+            <h1>全部文章</h1>
+            <a href="create-article.html" class="btn btn-primary">创建文章</a>
         </div>
         
         <div class="search-section">
-            <input type="search" placeholder="Search articles..." id="searchInput">
-            <button onclick="handleSearch()">Search</button>
+            <input type="search" placeholder="搜索文章标题或摘要..." id="searchInput">
+            <button onclick="handleSearch()">搜索</button>
         </div>
         
         <div id="loading" class="loading">
-            Loading articles...
+            加载中...
         </div>
         
         <div id="noArticles" class="no-articles" style="display: none;">
-            No articles found.
+            <h3>暂无文章</h3>
+            <p>还没有符合条件的文章，快来创建第一篇吧！</p>
         </div>
         
         <div id="articlesList" class="articles-list" style="display: none;">
@@ -316,9 +474,9 @@
         </div>
         
         <div id="pagination" class="pagination" style="display: none;">
-            <button id="prevBtn" onclick="changePage(currentPage - 1)">Previous</button>
+            <button id="prevBtn" onclick="changePage(currentPage - 1)">上一页</button>
             <span id="pageInfo"></span>
-            <button id="nextBtn" onclick="changePage(currentPage + 1)">Next</button>
+            <button id="nextBtn" onclick="changePage(currentPage + 1)">下一页</button>
         </div>
     </div>
 
@@ -343,60 +501,62 @@
         const mockArticles = [
             {
                 id: "1",
-                title: "Getting Started with Wiki Platform",
+                title: "Wiki Platform 入门指南",
                 slug: "getting-started-with-wiki-platform",
-                summary: "Learn how to start using our wiki platform to create and share knowledge.",
+                summary: "学习如何使用我们的 wiki 平台创建和分享知识。",
                 author: { username: "admin", id: "1" },
                 created_at: "2026-02-19T10:00:00Z",
-                categories: [{ name: "Guides", slug: "guides" }],
-                tags: [{ name: "getting-started", slug: "getting-started" }, { name: "wiki", slug: "wiki" }]
+                categories: [{ name: "指南", slug: "guides" }],
+                tags: [{ name: "入门", slug: "getting-started" }, { name: "wiki", slug: "wiki" }]
             },
             {
                 id: "2",
-                title: "Understanding the Metro Map Feature",
+                title: "了解地铁图功能",
                 slug: "understanding-the-metro-map-feature",
-                summary: "Explore the interactive metro map feature and how to navigate through different stations.",
+                summary: "探索交互式地铁图功能，了解如何在不同站点之间导航。",
                 author: { username: "moderator", id: "2" },
                 created_at: "2026-02-18T15:30:00Z",
-                categories: [{ name: "Features", slug: "features" }],
-                tags: [{ name: "metro", slug: "metro" }, { name: "map", slug: "map" }]
+                categories: [{ name: "功能", slug: "features" }],
+                tags: [{ name: "地铁图", slug: "metro" }, { name: "地图", slug: "map" }]
             },
             {
                 id: "3",
-                title: "Music Player Usage Guide",
+                title: "音乐播放器使用指南",
                 slug: "music-player-usage-guide",
-                summary: "How to use the built-in music player to listen to tracks and manage playlists.",
+                summary: "如何使用内置音乐播放器收听曲目和管理播放列表。",
                 author: { username: "user1", id: "3" },
                 created_at: "2026-02-17T09:15:00Z",
-                categories: [{ name: "Guides", slug: "guides" }],
-                tags: [{ name: "music", slug: "music" }, { name: "player", slug: "player" }]
+                categories: [{ name: "指南", slug: "guides" }],
+                tags: [{ name: "音乐", slug: "music" }, { name: "播放器", slug: "player" }]
             },
             {
                 id: "4",
-                title: "Creating Your First Article",
+                title: "创建您的第一篇文章",
                 slug: "creating-your-first-article",
-                summary: "Step-by-step guide to creating and publishing your first article on the platform.",
+                summary: "逐步指导您在平台上创建和发布第一篇文章。",
                 author: { username: "admin", id: "1" },
                 created_at: "2026-02-16T14:45:00Z",
-                categories: [{ name: "Tutorials", slug: "tutorials" }],
-                tags: [{ name: "article", slug: "article" }, { name: "tutorial", slug: "tutorial" }]
+                categories: [{ name: "教程", slug: "tutorials" }],
+                tags: [{ name: "文章", slug: "article" }, { name: "教程", slug: "tutorial" }]
             },
             {
                 id: "5",
-                title: "Advanced Search Techniques",
+                title: "高级搜索技巧",
                 slug: "advanced-search-techniques",
-                summary: "Master the art of finding exactly what you're looking for with our advanced search features.",
+                summary: "掌握使用我们的高级搜索功能找到您想要的内容的技巧。",
                 author: { username: "moderator", id: "2" },
                 created_at: "2026-02-15T11:20:00Z",
-                categories: [{ name: "Guides", slug: "guides" }],
-                tags: [{ name: "search", slug: "search" }, { name: "tips", slug: "tips" }]
+                categories: [{ name: "指南", slug: "guides" }],
+                tags: [{ name: "搜索", slug: "search" }, { name: "技巧", slug: "tips" }]
             }
         ];
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', () => {
             // 初始化页面优化功能
-            initPage('articles', '文章列表');
+            if (typeof initPage === 'function') {
+                initPage('articles', '文章列表');
+            }
             
             fetchArticles();
         });
@@ -410,10 +570,10 @@
 
             // Simulate API call
             setTimeout(() => {
-                allArticles = mockArticles;
+                allArticles = [...mockArticles];
                 totalPages = Math.ceil(allArticles.length / pageSize);
                 displayArticles();
-            }, 800);
+            }, 500);
         }
 
         // Display articles for current page
@@ -449,12 +609,15 @@
             const card = document.createElement('div');
             card.className = 'article-card';
             
-            const formattedDate = new Date(article.created_at).toLocaleDateString();
+            const formattedDate = new Date(article.created_at).toLocaleDateString('zh-CN');
             
             card.innerHTML = `
                 <h3><a href="article-detail.html?id=${article.id}" class="article-title">${article.title}</a></h3>
                 <div class="article-meta">
-                    By <a href="user-profile.html?id=${article.author.id}">${article.author.username}</a> 鈥?${formattedDate}
+                    <span>作者</span>
+                    <a href="user-profile.html?id=${article.author.id}">${article.author.username}</a>
+                    <span>•</span>
+                    <span>${formattedDate}</span>
                 </div>
                 <p class="article-summary">${article.summary}</p>
                 <div class="article-tags">
@@ -467,7 +630,7 @@
 
         // Update pagination UI
         function updatePagination() {
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            pageInfo.textContent = `第 ${currentPage} 页 / 共 ${totalPages} 页`;
             prevBtn.disabled = currentPage === 1;
             nextBtn.disabled = currentPage === totalPages;
             paginationElement.style.display = 'flex';
@@ -493,7 +656,7 @@
                     article.summary.toLowerCase().includes(searchQuery.toLowerCase())
                 );
             } else {
-                allArticles = mockArticles;
+                allArticles = [...mockArticles];
             }
             
             totalPages = Math.ceil(allArticles.length / pageSize);
